@@ -1,0 +1,21 @@
+* text=auto eol=lf
+
+# TypeScript/JavaScript
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.jsx text eol=lf
+
+# 設定ファイル
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# ドキュメント
+*.md text eol=lf
+
+# その他
+*.sh text eol=lf
+*.sql text eol=lf
+*.css text eol=lf
+*.html text eol=lf

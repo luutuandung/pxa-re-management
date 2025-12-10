@@ -1,0 +1,49 @@
+{
+  "title": "Calculation Register",
+  "labels": {
+    "location": "Location",
+    "calcType": "Calculation Type",
+    "keyword": "Keyword",
+    "unset": "Unset",
+    "conditionUnset": "Condition not set"
+  },
+  "placeholders": {
+    "calcType": "Select calculation type",
+    "keyword": "Keyword (not implemented)"
+  },
+  "buttons": {
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "table": {
+    "headers": {
+      "costItemCd": "Cost Item",
+      "costItemName": "Cost Item Name",
+      "expression": "Expression",
+      "validation": "Validation",
+      "judgement": "Judgement",
+      "message": "Message"
+    }
+  },
+  "hints": {
+    "dblclickToEdit": "Double-click to edit"
+  },
+  "dialogs": {
+    "editor": {
+      "title": "Edit Calculation",
+      "sections": {
+        "conditionBranch": "Condition Branches"
+      }
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "Confirm Save",
+      "message": "Save the current edits?",
+      "confirm": "Save",
+      "cancel": "Cancel"
+    }
+  }
+}
+

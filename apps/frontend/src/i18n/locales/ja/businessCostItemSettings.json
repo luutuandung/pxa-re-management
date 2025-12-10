@@ -1,0 +1,116 @@
+{
+  "title": "事業部原価項目設定",
+  "description": "事業部原価項目の設定・編集を行います",
+  "controls": {
+    "locationFilter": "拠点絞り込み:",
+    "nameSearch": "原価項目名検索",
+    "nameSearchPlaceholder": "原価項目名を入力...",
+    "fileUpload": "ファイルU/L",
+    "fileDownload": "ファイルD/L"
+  },
+  "table": {
+    "headers": {
+      "code": "コード",
+      "costItemName": "原価項目名",
+      "startDate": "適用開始年月",
+      "endDate": "適用終了年月",
+      "currency": "通貨",
+      "amount": "額",
+      "rate": "レート",
+      "calculation": "計算",
+      "actions": "操作",
+      "autoCreate": "自動作成"
+    },
+    "labels": {
+      "year": "年",
+      "month": "月",
+      "new": "新規",
+      "edited": "編集済み"
+    }
+  },
+  "buttons": {
+    "copy": "複製",
+    "save": "保 存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "register": "登録"
+  },
+  "modals": {
+    "save": {
+      "title": "確認",
+      "newItems": "新規追加: {{count}}件 を保存します。よろしいですか？",
+      "updatedItems": "更新: {{count}}件 を保存します。よろしいですか？",
+      "bothItems": "新規追加: {{newCount}}件、更新: {{updateCount}}件 を保存します。よろしいですか？",
+      "cancel": "キャンセル",
+      "confirm": "OK"
+    },
+    "delete": {
+      "title": "確認",
+      "message": "削除します。よろしいですか？",
+      "cancel": "キャンセル",
+      "confirm": "OK"
+    },
+    "activate": {
+      "title": "確認",
+      "message": "有効にします。よろしいですか？",
+      "cancel": "キャンセル",
+      "confirm": "OK"
+    },
+    "fileUpload": {
+      "title": "ファイルアップロード確認",
+      "errorTitle": "ファイルアップロードエラー",
+      "successTitle": "ファイルアップロード成功",
+      "errorMessage": "以下のエラーが発生しました:",
+      "successMessage": "アップロードされたデータ件数: {{count}}件",
+      "lineNumber": "行番号: {{line}}",
+      "close": "閉じる",
+      "register": "登録",
+      "cancel": "キャンセル"
+    }
+  },
+  "messages": {
+    "excelImportingExportingGuidance": "Excelインポート・エクスポートを行うには拠点を選んで下さい。",
+    "noChanges": "保存する変更がありません",
+    "saveSuccess": "保存が完了しました",
+    "saveError": "保存中にエラーが発生しました",
+    "fetchError": "データの取得に失敗しました",
+    "uploadSuccess": "ファイルのアップロードが完了しました",
+    "excelDataParsingFailed": "エクセルファイルの読み込み中不具合が発生しました。",
+    "importedFromExcelDataSubmittingError": "エクセルファイルからインポートされたデータの送信中に不具合が発生しました。",
+    "validationError": "データの検証に失敗しました",
+    "spreadsheetFileGeneratingError": "XLSXファイルの生成に失敗しました",
+    "duplicateError": "同じbuCostCodeIdと通貨の組み合わせが既に存在します"
+  },
+  "currency": {
+    "JPY": "JPY",
+    "CNY": "CNY",
+    "USD": "USD"
+  },
+  "validation": {
+    "intro": "インポートされたエクセルファイルにおいて下記の不備がありました。",
+    "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "原価項目のIDが必須になっていますが、指定されていません。",
+    "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "原価項目のIDが指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
+    "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "原価項目のIDが指定され、文字列になってはいますが、空文字です。",
+    "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "このIDの原価項目が同じファイルの中に一回以上ありました。",
+    "STARTING_YEAR_MONTH-NOT_EXISTS": "原価項目の開始年月が必須になっていますが、指定されていません。",
+    "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "原価項目の開始年月が指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
+    "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "原価項目の開始年月が数字以外の文字を含めていますが、「202509」のように４文字の年と２文字の月を表さなければけません。",
+    "STARTING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "原価項目の開始年月が正しい年月形式(YYYYMM)になっていません。",
+    "ENDING_YEAR_MONTH-NOT_EXISTS": "原価項目の終了年月が必須になっていますが、指定されていません。",
+    "ENDING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "原価項目の終了年月IDが指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
+    "ENDING_YEAR_MONTH-DISALLOWED_CHARACTERS": "原価項目の終了年月が数字以外の文字を含めていますが、「202509」のように４文字の年と２文字の月を表さなければいけません。",
+    "ENDING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "原価項目の終了年月が正しい年月形式(YYYYMM)になっていません。",
+    "CURRENCY_CODE-NOT_EXISTS": "通貨コードが必須になっていますが、指定されていません。",
+    "CURRENCY_CODE-EXISTS_BUT_NOT_STRING": "通貨コード指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
+    "CURRENCY_CODE-DISALLOWED_VARIANT": "指定された通貨コードは許可されておらず、{{ commaSeparatedAllowedVariants }}のみ許可されています。",
+    "AMOUNT_VALID_FLAG-NOT_EXISTS": "金額が指定が必須になっていますが、指定されていません。",
+    "AMOUNT_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "金額が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
+    "RATE_VALID_FLAG-NOT_EXISTS": "レートが指定が必須になっていますが、指定されていません。",
+    "RATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "レートが指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
+    "CALC_VALID_FLAG-NOT_EXISTS": "計算が指定が必須になっていますが、指定されていません。",
+    "CALC_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "計算が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
+    "AUTO_CREATE_VALID_FLAG-NOT_EXISTS": "自動作成が指定が必須になっていますが、指定されていません。",
+    "AUTO_CREATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "自動作成が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。"
+  }
+}

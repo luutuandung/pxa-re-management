@@ -1,0 +1,62 @@
+{
+  "title": "事業部原価項目コード登録",
+  "description": "事業部原価項目コードの登録・編集を行います",
+  "sections": {
+    "businessCostItems": "事業部原価項目"
+  },
+  "controls": {
+    "locationFilter": "拠点絞り込み:",
+    "showAllLocations": "選択してください",
+    "showInvalid": "無効表示",
+    "add": "追加",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "activate": "有効",
+    "delete": "削除",
+    "previous": "前へ",
+    "next": "次へ"
+  },
+  "table": {
+    "headers": {
+      "code": "コード",
+      "japaneseName": "日本語名称",
+      "englishName": "英語名称",
+      "chineseName": "中国語名称",
+      "uniformCode": "統一コード",
+      "modifiedDate": "更新日時"
+    },
+    "placeholders": {
+      "inputCode": "コードを入力",
+      "inputJapaneseName": "日本語名称を入力",
+      "inputEnglishName": "英語名称を入力",
+      "inputChineseName": "中国語名称を入力"
+    }
+  },
+  "pagination": {
+    "showingItems": "件中",
+    "toDisplay": "件を表示",
+    "page": "ページ"
+  },
+  "validation": {
+    "selectLocation": "拠点を選択してください"
+  },
+  "modals": {
+    "save": {
+      "title": "保存確認",
+      "message": "変更データを保存します。よろしいですか？",
+      "cancel": "キャンセル",
+      "confirm": "保存"
+    }
+  },
+  "messages": {
+    "saveSuccess": "保存が完了しました",
+    "saveError": "保存に失敗しました",
+    "deleteSuccess": "項目を無効にしました",
+    "activateSuccess": "項目を有効にしました",
+    "deleteError": "無効化に失敗しました",
+    "activateError": "有効化に失敗しました",
+    "fetchError": "データの取得に失敗しました",
+    "initialDataError": "初期データの取得に失敗しました"
+  }
+}

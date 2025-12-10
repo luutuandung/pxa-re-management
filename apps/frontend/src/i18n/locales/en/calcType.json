@@ -1,0 +1,46 @@
+{
+  "title": "Calculation Types",
+  "controls": {
+    "add": "Add",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "showInvalid": "Show Inactive",
+    "selectBusinessUnit": "Business Unit",
+    "placeholderName": "Calculation type name"
+  },
+  "table": {
+    "headers": {
+      "selection": "Select",
+      "name": "Name",
+      "modifiedDate": "Modified",
+      "actions": "Actions"
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "Confirm",
+      "messageNew": "Save {{count}} new item(s)?",
+      "messageUpdate": "Save {{count}} updated item(s)?",
+      "messageBoth": "Save {{newCount}} new and {{updateCount}} updated items?",
+      "confirm": "OK",
+      "cancel": "Cancel"
+    },
+    "delete": {
+      "title": "Confirm",
+      "message": "Are you sure to delete?",
+      "confirm": "OK",
+      "cancel": "Cancel"
+    }
+  },
+  "messages": {
+    "fetchError": "Failed to fetch calculation types",
+    "saveSuccess": "Saved successfully",
+    "saveError": "Failed to save",
+    "deleteSuccess": "Deleted successfully",
+    "deleteError": "Failed to delete",
+    "activateSuccess": "Activated successfully",
+    "activateError": "Failed to activate",
+    "validationNameRequired": "Name is required"
+  }
+}

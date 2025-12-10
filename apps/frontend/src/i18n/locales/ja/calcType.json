@@ -1,0 +1,46 @@
+{
+  "title": "計算種類",
+  "controls": {
+    "add": "追加",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "showInvalid": "無効を表示",
+    "selectBusinessUnit": "拠点",
+    "placeholderName": "計算種類名"
+  },
+  "table": {
+    "headers": {
+      "selection": "選択",
+      "name": "計算種類",
+      "modifiedDate": "更新日時",
+      "actions": "操作"
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "確認",
+      "messageNew": "新規 {{count}} 件を保存します。よろしいですか？",
+      "messageUpdate": "更新 {{count}} 件を保存します。よろしいですか？",
+      "messageBoth": "新規 {{newCount}} 件、更新 {{updateCount}} 件を保存します。よろしいですか？",
+      "confirm": "OK",
+      "cancel": "キャンセル"
+    },
+    "delete": {
+      "title": "確認",
+      "message": "削除します。よろしいですか？",
+      "confirm": "OK",
+      "cancel": "キャンセル"
+    }
+  },
+  "messages": {
+    "fetchError": "計算種類の取得に失敗しました",
+    "saveSuccess": "保存に成功しました",
+    "saveError": "保存に失敗しました",
+    "deleteSuccess": "削除に成功しました",
+    "deleteError": "削除に失敗しました",
+    "activateSuccess": "有効化に成功しました",
+    "activateError": "有効化に失敗しました",
+    "validationNameRequired": "名称は必須です"
+  }
+}

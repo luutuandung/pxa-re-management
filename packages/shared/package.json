@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "@pxa-re-management/shared",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "node --require tsx/cjs --test \"tests/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "typescript": "^5.7.3",
+    "tsx": "4.21.0"
+  }
+}

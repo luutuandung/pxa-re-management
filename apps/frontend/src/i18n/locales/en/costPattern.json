@@ -1,0 +1,43 @@
+{
+  "title": "Cost Registration - Cost Item Pattern",
+  "labels": {
+    "location": "Location",
+    "costVersion": "Cost Version",
+    "patternDetail": "Pattern Detail",
+    "patternCode": "Pattern Code"
+  },
+  "table": {
+    "headers": {
+      "select": "Select",
+      "buCostCode": "BU Cost Item Code",
+      "buCostName": "BU Cost Item Name",
+      "costType": "Cost Type",
+      "currency": "Currency",
+      "patternName": "Pattern Detail Name",
+      "patternCd": "Pattern Code"
+    },
+    "empty": "No results."
+  },
+  "buttons": {
+    "openPatternDialog": "Register Pattern Detail",
+    "assign": "Assign",
+    "add": "Add",
+    "close": "Close",
+    "register": "Register"
+  },
+  "modals": {
+    "pattern": {
+      "title": "Register Pattern Detail",
+      "name": "Pattern Detail Name",
+      "readonly": "Already registered, editing disabled"
+    }
+  },
+  "messages": {
+    "assignSuccess": "Pattern assigned successfully",
+    "assignError": "Failed to assign pattern",
+    "validation": {
+      "selectLocation": "Please select a location",
+      "selectPatternDetail": "Please select a pattern detail"
+    }
+  }
+}

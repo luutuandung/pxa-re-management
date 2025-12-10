@@ -1,0 +1,194 @@
+import type { CalcCondition, CalcOperation, Calculation } from '@pxa-re-management/shared';
+import type { EditorBranchNode } from '@/store/calcRegister';
+
+export type BuCostCodeLike = { buCostCd: string; buCostNameJa: string };
+
+export const CostItemLabel = ({
+  buCostCd,
+  costType,
+  buCostCodes,
+}: {
+  buCostCd: string;
+  costType: 'G' | 'R' | 'K';
+  buCostCodes: BuCostCodeLike[];
+}) => {
+  const code = buCostCodes.find((b) => b.buCostCd === buCostCd);
+  // 特別コードは見た目の表記を置換
+  const special = buCostCd === 'ZERO' ? '0' : buCostCd === 'MINUS' ? '-1' : buCostCd === 'RATE' ? '100' : null;
+  const name = special ?? code?.buCostNameJa ?? buCostCd;
+  // 種別の色分け: 特別コードはK扱い（緑）で統一
+  const typeForColor = special ? 'K' : costType;
+  const color =
+    typeForColor === 'G'
+      ? 'bg-yellow-100 text-yellow-900'
+      : typeForColor === 'R'
+        ? 'bg-pink-100 text-pink-900'
+        : 'bg-green-100 text-green-900';
+  const typeLabel = typeForColor === 'G' ? '額' : typeForColor === 'R' ? 'レート' : '計算式';
+  return (
+    <span className={`px-1 rounded ${color}`}>
+      {name}
+      <span className="ml-1 text-xs text-gray-700">{typeLabel}</span>
+    </span>
+  );
+};
+
+export const renderCondition = (cond: CalcCondition | undefined, buCostCodes: BuCostCodeLike[]) => {
+  if (!cond) return <span className="text-gray-500">条件未設定</span>;
+  return (
+    <span className="space-x-1">
+      <CostItemLabel
+        buCostCd={cond.leftConBuCostCd}
+        costType={cond.leftConCostType as 'G' | 'R' | 'K'}
+        buCostCodes={buCostCodes}
+      />
+      <span>{cond.conOperator}</span>
+      <CostItemLabel
+        buCostCd={cond.rightConBuCostCd}
+        costType={cond.rightConCostType as 'G' | 'R' | 'K'}
+        buCostCodes={buCostCodes}
+      />
+    </span>
+  );
+};
+
+export const renderOpsExpr = (ops: CalcOperation[], buCostCodes: BuCostCodeLike[]) => {
+  if (ops.length === 0) return <span className="text-gray-500">未設定</span>;
+  return (
+    <span className="space-x-1">
+      {ops.map((o, idx) => (
+        <span key={`${o.calcOperationId}-${o.opeSeq}-${idx}`} className="space-x-1">
+          {o.opeOperator !== 'S' ? <span>{o.opeOperator}</span> : null}
+          <CostItemLabel
+            buCostCd={o.opeBuCostCd}
+            costType={o.opeCostType as 'G' | 'R' | 'K'}
+            buCostCodes={buCostCodes}
+          />
+        </span>
+      ))}
+    </span>
+  );
+};
+
+export const splitIfElseOps = (
+  ops: CalcOperation[],
+  calc: Calculation
+): { ifOps: CalcOperation[]; elseOps: CalcOperation[] } => {
+  const f0 = calc.calcFormulas?.[0];
+  if (!f0) return { ifOps: [], elseOps: [] };
+  const ifOps = ops.filter((o) => o.calcOperationId === f0.calcOperationId).sort((a, b) => a.opeSeq - b.opeSeq);
+  const elseOps = ops.filter((o) => o.calcOperationId === f0.elseCalcOperationId).sort((a, b) => a.opeSeq - b.opeSeq);
+  return { ifOps, elseOps };
+};
+
+export const renderTreeInline = (node: EditorBranchNode, tree: EditorBranchNode[], buCostCodes: BuCostCodeLike[]) => {
+  const ifChildren = tree.filter((b) => b.parentId === node.id && b.side === 'IF');
+  const elseChildren = tree.filter((b) => b.parentId === node.id && b.side === 'ELSE');
+  // 条件なし・ELSEなしの場合は演算式のみ
+  if (!node.condition && (node.elseOps?.length ?? 0) === 0 && ifChildren.length === 0 && elseChildren.length === 0) {
+    return <>{renderOpsExpr(node.ifOps, buCostCodes)}</>;
+  }
+  return (
+    <>
+      <span>IF(</span>
+      {renderCondition(node.condition ?? undefined, buCostCodes)}
+      <span>)</span>
+      <span>{'{'} </span>
+      {renderOpsExpr(node.ifOps, buCostCodes)}
+      <span> {'}'} </span>
+      {ifChildren.length > 0
+        ? ifChildren.map((ch) => (
+            <span key={ch.id}>
+              <span> </span>
+              {renderTreeInline(ch, tree, buCostCodes)}
+            </span>
+          ))
+        : null}
+      <span> ELSE </span>
+      <span>{'{'}</span>
+      <span> </span>
+      {renderOpsExpr(node.elseOps, buCostCodes)}
+      <span> {'}'}</span>
+      {elseChildren.length > 0
+        ? elseChildren.map((ch) => (
+            <span key={ch.id}>
+              <span> </span>
+              {renderTreeInline(ch, tree, buCostCodes)}
+            </span>
+          ))
+        : null}
+    </>
+  );
+};
+
+export const renderCalculationInline = (
+  calculation: Calculation,
+  treeForDisplay: EditorBranchNode[] | undefined,
+  buCostCodes: BuCostCodeLike[]
+) => {
+  if (treeForDisplay && treeForDisplay.length > 0) {
+    const root = treeForDisplay.find((b) => b.id === 'root') ?? treeForDisplay.find((b) => !b.parentId);
+    if (root) return <span className="whitespace-nowrap">{renderTreeInline(root, treeForDisplay, buCostCodes)}</span>;
+  }
+  // ツリーが無い場合: CalcFormula のネスト構造から再帰的に全体式を描画
+  const formulas = calculation.calcFormulas ?? [];
+  if (formulas.length === 0) {
+    return <span className="whitespace-nowrap">{renderOpsExpr(calculation.calcOperations ?? [], buCostCodes)}</span>;
+  }
+  const byId = new Map(formulas.map((f) => [f.calcFormulaId, f]));
+  const referenced = new Set<string>();
+  formulas.forEach((f) => {
+    if (f.nestCalcFormulaId) referenced.add(f.nestCalcFormulaId);
+    if (f.elseNestCalcFormulaId) referenced.add(f.elseNestCalcFormulaId);
+  });
+  const roots = formulas.filter((f) => !referenced.has(f.calcFormulaId));
+
+  const operations = calculation.calcOperations ?? [];
+  const conditions = calculation.calcConditions ?? [];
+  const opsByGroup = new Map<string, CalcOperation[]>(
+    Array.from(
+      operations.reduce((m, o) => {
+        const list = m.get(o.calcOperationId) ?? [];
+        list.push(o);
+        m.set(o.calcOperationId, list);
+        return m;
+      }, new Map<string, CalcOperation[]>())
+    ).map(([k, list]) => [k, list.sort((a, b) => a.opeSeq - b.opeSeq)])
+  );
+  const condById = new Map(conditions.map((c) => [c.calcConditionId, c]));
+
+  const renderFormulaInline = (f: typeof formulas[number]): React.ReactNode => {
+    const cond = f.calcConditionId ? condById.get(f.calcConditionId) : undefined;
+    const ifOps = opsByGroup.get(f.calcOperationId) ?? [];
+    const elseOps = f.elseCalcOperationId ? opsByGroup.get(f.elseCalcOperationId) ?? [] : [];
+    return (
+      <>
+        <span>IF(</span>
+        {renderCondition(cond, buCostCodes)}
+        <span>)</span>
+        <span>{'{'} </span>
+        {renderOpsExpr(ifOps, buCostCodes)}
+        {f.nestCalcFormulaId && byId.get(f.nestCalcFormulaId) ? (
+          <>
+            <span> </span>
+            {renderFormulaInline(byId.get(f.nestCalcFormulaId)!)}
+          </>
+        ) : null}
+        <span> {'}'} </span>
+        <span>ELSE</span>
+        <span>{' {'} </span>
+        {renderOpsExpr(elseOps, buCostCodes)}
+        {f.elseNestCalcFormulaId && byId.get(f.elseNestCalcFormulaId) ? (
+          <>
+            <span> </span>
+            {renderFormulaInline(byId.get(f.elseNestCalcFormulaId)!)}
+          </>
+        ) : null}
+        <span> {'}'}</span>
+      </>
+    );
+  };
+
+  const content = roots.length > 0 ? roots.map((r, i) => <span key={r.calcFormulaId}>{i > 0 ? ' ' : ''}{renderFormulaInline(r)}</span>) : renderFormulaInline(formulas[0]!);
+  return <span className="whitespace-nowrap">{content}</span>;
+};

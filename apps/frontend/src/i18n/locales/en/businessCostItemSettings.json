@@ -1,0 +1,116 @@
+{
+  "title": "Business Cost Item Settings",
+  "description": "Configure and edit business cost items",
+  "controls": {
+    "locationFilter": "Location Filter:",
+    "nameSearch": "Cost Item Name Search",
+    "nameSearchPlaceholder": "Enter cost item name...",
+    "fileUpload": "File Upload",
+    "fileDownload": "File Download"
+  },
+  "table": {
+    "headers": {
+      "code": "Code",
+      "costItemName": "Cost Item Name",
+      "startDate": "Effective Start Date",
+      "endDate": "Effective End Date",
+      "currency": "Currency",
+      "amount": "Amount",
+      "rate": "Rate",
+      "calculation": "Calculation",
+      "actions": "Actions",
+      "autoCreate": "Auto Create"
+    },
+    "labels": {
+      "year": "Year",
+      "month": "Month",
+      "new": "New",
+      "edited": "Edited"
+    }
+  },
+  "buttons": {
+    "copy": "Copy",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "close": "Close",
+    "register": "Register"
+  },
+  "modals": {
+    "save": {
+      "title": "Confirmation",
+      "newItems": "Save {{count}} new items. Are you sure?",
+      "updatedItems": "Save {{count}} updated items. Are you sure?",
+      "bothItems": "Save {{newCount}} new items and {{updateCount}} updated items. Are you sure?",
+      "cancel": "Cancel",
+      "confirm": "OK"
+    },
+    "delete": {
+      "title": "Confirmation",
+      "message": "Delete this item. Are you sure?",
+      "cancel": "Cancel",
+      "confirm": "OK"
+    },
+    "activate": {
+      "title": "Confirmation",
+      "message": "Activate this item. Are you sure?",
+      "cancel": "Cancel",
+      "confirm": "OK"
+    },
+    "fileUpload": {
+      "title": "File Upload Confirmation",
+      "errorTitle": "File Upload Error",
+      "successTitle": "File Upload Success",
+      "errorMessage": "The following errors occurred:",
+      "successMessage": "Uploaded data count: {{count}} items",
+      "lineNumber": "Line number: {{line}}",
+      "close": "Close",
+      "register": "Register",
+      "cancel": "Cancel"
+    }
+  },
+  "messages": {
+    "excelImportingExportingGuidance": "To export the data to Excel or import from Excel please select the location.",
+    "noChanges": "No changes to save",
+    "saveSuccess": "Save completed successfully",
+    "saveError": "An error occurred while saving",
+    "fetchError": "Failed to fetch data",
+    "uploadSuccess": "File upload completed successfully",
+    "excelDataParsingFailed": "The malfunction has occurred during the reading of Excel file.",
+    "importedFromExcelDataSubmittingError": "The malfunction has occurred during uploading of data import from the Excel file.",
+    "validationError": "Data validation failed",
+    "spreadsheetFileGeneratingError": "Failed to export the spreadsheet file",
+    "duplicateError": "A combination of the same buCostCodeId and currency already exists"
+  },
+  "currency": {
+    "JPY": "JPY",
+    "CNY": "CNY",
+    "USD": "USD"
+  },
+  "validation": {
+    "intro": "The following violations has been detected in exported Excel file:",
+    "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "The business cost item ID is required while not specified.",
+    "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "The business cost item ID has been specified but has {{ actualType }} type while must be a string.",
+    "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "The business cost item ID has been specified with string, but this string is empty.",
+    "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "It the subsequent occurrence is this file of item with same ID.",
+    "STARTING_YEAR_MONTH-NOT_EXISTS": "The business cost item starting year/month is required while not specified.",
+    "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "The business cost item starting year/month has been specified but has {{ actualType }} type while must be a string.",
+    "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "Specified starting year/month including the non-digits characters, while must be the digits sequence like \"202509\" representing the 4-digits year and 2-digits month.",
+    "STARTING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "Although specified starting year/month consists from digits, this digits sequence does not represent the valid year and month combination.",
+    "ENDING_YEAR_MONTH-NOT_EXISTS": "The business cost item ending year/month is required while not specified.",
+    "ENDING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "The business cost item ending year/month has been specified but has {{ actualType }} type while must be a string",
+    "ENDING_YEAR_MONTH-DISALLOWED_CHARACTERS": "Specified ending year/month including the non-digits characters, while must be the digits sequence like \"202509\" representing the 4-digits year and 2-digits month.",
+    "ENDING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "Although specified ending year/month consists from digits, this digits sequence does not represent the valid year and month combination.",
+    "CURRENCY_ID-NOT_EXISTS": "Currency code is required while not specified.",
+    "CURRENCY_ID-EXISTS_BUT_NOT_STRING": "Currency code has been specified but has {{ actualType }} type while must be a string.",
+    "CURRENCY_ID-DISALLOWED_VARIANT": "Specified currency code is not allowed. Please specify one of the following currency codes: {{ commaSeparatedAllowedVariants }}.",
+    "AMOUNT_VALID_FLAG-NOT_EXISTS": "Amount validity flag　is required while not specified.",
+    "AMOUNT_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Amount validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+    "RATE_VALID_FLAG-NOT_EXISTS": "Rate validity flag　is required while not specified.",
+    "RATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Rate validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+    "CALC_VALID_FLAG-NOT_EXISTS": "Calculation validity flag　is required while not specified.",
+    "CALC_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Calculation validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+    "AUTO_CREATE_VALID_FLAG-NOT_EXISTS": "Auto creating validity flag　is required while not specified.",
+    "AUTO_CREATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Auto creating validity flag has been specified but has {{ actualType }} type while must be a boolean."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "title": "Business Cost Item Code Registration",
+  "description": "Register and edit business cost item codes",
+  "sections": {
+    "businessCostItems": "Business Cost Items"
+  },
+  "controls": {
+    "locationFilter": "Location Filter:",
+    "showAllLocations": "Please select",
+    "showInvalid": "Show Invalid",
+    "add": "Add",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "activate": "Activate",
+    "delete": "Delete",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "table": {
+    "headers": {
+      "code": "Code",
+      "japaneseName": "Japanese Name",
+      "englishName": "English Name",
+      "chineseName": "Chinese Name",
+      "uniformCode": "Uniform Code",
+      "modifiedDate": "Modified Date"
+    },
+    "placeholders": {
+      "inputCode": "Enter code",
+      "inputJapaneseName": "Enter Japanese name",
+      "inputEnglishName": "Enter English name",
+      "inputChineseName": "Enter Chinese name"
+    }
+  },
+  "pagination": {
+    "showingItems": "items out of",
+    "toDisplay": "items displayed",
+    "page": "Page"
+  },
+  "validation": {
+    "selectLocation": "Please select a location"
+  },
+  "modals": {
+    "save": {
+      "title": "Save Confirmation",
+      "message": "Do you want to save the changes?",
+      "cancel": "Cancel",
+      "confirm": "Save"
+    }
+  },
+  "messages": {
+    "saveSuccess": "Save completed successfully",
+    "saveError": "Save failed",
+    "deleteSuccess": "Item has been deactivated",
+    "activateSuccess": "Item has been activated",
+    "deleteError": "Deactivation failed",
+    "activateError": "Activation failed",
+    "fetchError": "Failed to fetch data",
+    "initialDataError": "Failed to fetch initial data"
+  }
+}

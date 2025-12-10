@@ -1,0 +1,48 @@
+{
+  "title": "Cost Registration - Cost Version",
+  "controls": {
+    "create": "Create",
+    "duplicate": "Duplicate",
+    "reportType": "Report Type",
+    "costCopy": "Cost Copy",
+    "saving": "Saving..."
+  },
+  "table": {
+    "headers": {
+      "select": "Select",
+      "version": "Cost Version",
+      "start": "Start",
+      "end": "End",
+      "registeredAt": "Registered At",
+      "description": "Description",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "default": "Default"
+  },
+  "modals": {
+    "create": { "title": "Create Cost Version" },
+    "edit": { "title": "Edit Cost Version" },
+    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?" },
+    "duplicate": { "title": "Duplicate Cost Version" }
+  },
+  "messages": {
+    "fetchError": "Failed to fetch",
+    "createSuccess": "Created successfully",
+    "updateSuccess": "Updated successfully",
+    "deleteSuccess": "Deleted successfully",
+    "duplicateSuccess": "Duplicated successfully",
+    "validationError": "Please check your input",
+    "selectBeforeDuplicate": "Please select a cost version to duplicate"
+  },
+  "fields": {
+    "id": "Cost Version ID",
+    "systemCode": "System Code",
+    "name": "Cost Version Name",
+    "start": "Start",
+    "end": "End",
+    "desc": "Description",
+    "default": "Default",
+    "defaultHint": "Set this cost version as default"
+  }
+}

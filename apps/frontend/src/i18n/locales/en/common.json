@@ -1,0 +1,33 @@
+{
+  "navigation": {
+    "calculation": "Calculation",
+    "costRegistration": "Cost Registration",
+    "quantity": "Quantity",
+    "master": "Master"
+  },
+  "userMenu": {
+    "userSettings": "User Settings",
+    "passwordChange": "Change Password",
+    "logout": "Logout"
+  },
+  "system": {
+    "home": "Home"
+  },
+  "errors": {
+    "applicationError": "An application error occurred",
+    "pageNotFound": "Page not found",
+    "pageLoadFailed": "Failed to load page",
+    "notFound": "404 - Page not found"
+  },
+  "language": {
+    "japanese": "日本語",
+    "chinese": "中文",
+    "english": "English"
+  },
+  "dataTablePagination": {
+    "itemsPerPage": "Items per page"
+  },
+  "locationSelect": {
+    "placeholder": "Select Location"
+  }
+}

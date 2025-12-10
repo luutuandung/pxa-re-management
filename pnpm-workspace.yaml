@@ -1,0 +1,7 @@
+packages:
+  - apps/frontend
+  - apps/backend
+  - packages/shared
+
+onlyBuiltDependencies:
+  - '@prisma/client'

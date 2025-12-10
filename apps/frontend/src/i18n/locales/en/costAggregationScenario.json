@@ -1,0 +1,91 @@
+{
+  "title": "Cost Aggregation Scenario Screen",
+  "description": "Configure and execute cost aggregation scenarios",
+  "form": {
+    "classification": "Classification",
+    "aggregationMonth": "Aggregation Month",
+    "thereafter": "Thereafter",
+    "scenarioType": "Scenario Type",
+    "aggregationCurrency": "Aggregation Currency",
+    "aggregationAxis": "Aggregation Axis",
+    "consolidationTarget": "Consolidation Target",
+    "child": "Child",
+    "parent": "Parent",
+    "aggregationBusiness": "Aggregation Business",
+    "finalAggregation": "Final Aggregation"
+  },
+  "table": {
+    "headers": {
+      "base": "Base",
+      "classification": "Classification",
+      "salesVersion": "Sales Version (Closing)",
+      "costType": "Cost Type"
+    },
+    "classification": {
+      "axis": "Axis",
+      "parent": "Parent",
+      "child": "Child"
+    }
+  },
+  "buttons": {
+    "search": "Search",
+    "apply": "Apply",
+    "execute": "Execute",
+    "cancel": "Cancel"
+  },
+  "modals": {
+    "apply": {
+      "title": "Apply Confirmation",
+      "message": "Do you want to apply?",
+      "confirm": "OK",
+      "cancel": "Cancel"
+    },
+    "execute": {
+      "title": "Execute Confirmation",
+      "message": "Do you want to execute?",
+      "confirm": "OK",
+      "cancel": "Cancel"
+    }
+  },
+  "options": {
+    "classification": {
+      "plan": "Plan",
+      "actual": "Actual",
+      "forecast": "Forecast"
+    },
+    "month": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    },
+    "scenarioType": {
+      "shizuoka2025": "Shizuoka 2025 Edition",
+      "type2": "Aggregation Type 2",
+      "shizuoka2025_3": "Shizuoka 2025 Edition 3"
+    },
+    "currency": {
+      "JPY": "JPY",
+      "USD": "USD",
+      "CNY": "CNY"
+    },
+    "axis": {
+      "shizuokaWashing": "Shizuoka Washing Machine",
+      "axis1": "Aggregation Value 1",
+      "axis2": "Aggregation Value 2"
+    },
+    "business": {
+      "business1": "Aggregation Business 1",
+      "business2": "Aggregation Business 2",
+      "business3": "Aggregation Business 3"
+    }
+  }
+}

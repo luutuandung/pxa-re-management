@@ -1,0 +1,91 @@
+{
+  "title": "原価集計シナリオ画面",
+  "description": "原価集計シナリオの設定・実行を行います",
+  "form": {
+    "classification": "区分",
+    "aggregationMonth": "集計月",
+    "thereafter": "以降",
+    "scenarioType": "シナリオ種類",
+    "aggregationCurrency": "集計通貨",
+    "aggregationAxis": "集計軸",
+    "consolidationTarget": "連結対象",
+    "child": "子",
+    "parent": "親",
+    "aggregationBusiness": "集計事業",
+    "finalAggregation": "最終集計"
+  },
+  "table": {
+    "headers": {
+      "base": "拠点",
+      "classification": "区分",
+      "salesVersion": "販売バージョン（締め）",
+      "costType": "原価種類"
+    },
+    "classification": {
+      "axis": "集計軸",
+      "parent": "親",
+      "child": "子"
+    }
+  },
+  "buttons": {
+    "search": "検索",
+    "apply": "適用",
+    "execute": "実行",
+    "cancel": "キャンセル"
+  },
+  "modals": {
+    "apply": {
+      "title": "適用確認",
+      "message": "適用します。よろしいですか？",
+      "confirm": "OK",
+      "cancel": "キャンセル"
+    },
+    "execute": {
+      "title": "実行確認",
+      "message": "実行します。よろしいですか？",
+      "confirm": "OK",
+      "cancel": "キャンセル"
+    }
+  },
+  "options": {
+    "classification": {
+      "plan": "計画",
+      "actual": "実績",
+      "forecast": "見通し"
+    },
+    "month": {
+      "1": "1月",
+      "2": "2月",
+      "3": "3月",
+      "4": "4月",
+      "5": "5月",
+      "6": "6月",
+      "7": "7月",
+      "8": "8月",
+      "9": "9月",
+      "10": "10月",
+      "11": "11月",
+      "12": "12月"
+    },
+    "scenarioType": {
+      "shizuoka2025": "25年静岡製版連結",
+      "type2": "集計種類2",
+      "shizuoka2025_3": "25年静岡製版連3"
+    },
+    "currency": {
+      "JPY": "JPY",
+      "USD": "USD",
+      "CNY": "CNY"
+    },
+    "axis": {
+      "shizuokaWashing": "静岡洗濯機",
+      "axis1": "集計値1",
+      "axis2": "集計値2"
+    },
+    "business": {
+      "business1": "集計事業1",
+      "business2": "集計事業2",
+      "business3": "集計事業3"
+    }
+  }
+}

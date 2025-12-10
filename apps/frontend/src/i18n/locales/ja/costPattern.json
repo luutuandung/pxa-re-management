@@ -1,0 +1,43 @@
+{
+  "title": "原価登録ー原価項目パターン",
+  "labels": {
+    "location": "拠点",
+    "costVersion": "原価バージョン",
+    "patternDetail": "パターン明細",
+    "patternCode": "パターンコード"
+  },
+  "table": {
+    "headers": {
+      "select": "選択",
+      "buCostCode": "事業部原価項目コード",
+      "buCostName": "事業部原価項目名",
+      "costType": "原価種類",
+      "currency": "通貨",
+      "patternName": "パターン明細名",
+      "patternCd": "パターンコード"
+    },
+    "empty": "No results."
+  },
+  "buttons": {
+    "openPatternDialog": "パターン明細登録",
+    "assign": "設定",
+    "add": "追加",
+    "close": "閉じる",
+    "register": "登録"
+  },
+  "modals": {
+    "pattern": {
+      "title": "パターン明細登録",
+      "name": "パターン明細名",
+      "readonly": "登録済みのため編集不可"
+    }
+  },
+  "messages": {
+    "assignSuccess": "パターンを設定しました",
+    "assignError": "パターンの設定に失敗しました",
+    "validation": {
+      "selectLocation": "拠点を選択してください",
+      "selectPatternDetail": "パターン明細を選択してください"
+    }
+  }
+}

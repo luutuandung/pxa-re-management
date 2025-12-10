@@ -1,0 +1,33 @@
+{
+  "navigation": {
+    "calculation": "計算式",
+    "costRegistration": "原価登録",
+    "quantity": "台数",
+    "master": "マスタ"
+  },
+  "userMenu": {
+    "userSettings": "ユーザー設定",
+    "passwordChange": "パスワード変更",
+    "logout": "ログアウト"
+  },
+  "system": {
+    "home": "ホーム"
+  },
+  "errors": {
+    "applicationError": "アプリケーションエラーが発生しました",
+    "pageNotFound": "ページが見つかりません",
+    "pageLoadFailed": "ページの読み込みに失敗しました",
+    "notFound": "404 - ページが見つかりません"
+  },
+  "language": {
+    "japanese": "日本語",
+    "chinese": "中文",
+    "english": "English"
+  },
+  "dataTablePagination": {
+    "itemsPerPage": "表示件数"
+  },
+  "locationSelect": {
+    "placeholder": "拠点を選択"
+  }
+}

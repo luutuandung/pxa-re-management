@@ -1,0 +1,66 @@
+{
+  "title": "Uniform Cost Item Code Registration",
+  "description": "Register and edit uniform cost item codes",
+  "sections": {
+    "uniformCostItems": "Uniform Cost Items"
+  },
+  "controls": {
+    "showInvalid": "Show Invalid",
+    "add": "Add",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "activate": "Activate",
+    "delete": "Delete"
+  },
+  "table": {
+    "headers": {
+      "code": "Code",
+      "japaneseName": "Japanese Name",
+      "chineseName": "Chinese Name",
+      "englishName": "English Name"
+    },
+    "placeholders": {
+      "inputCode": "Enter code",
+      "inputJapaneseName": "Enter Japanese name",
+      "inputChineseName": "Enter Chinese name",
+      "inputEnglishName": "Enter English name",
+      "modifiedDate": "Modified Date"
+    }
+  },
+  "validation": {
+    "generalCostCd": "Please enter a code",
+    "japaneseName": "Please enter a Japanese name",
+    "chineseName": "Please enter a Chinese name",
+    "englishName": "Please enter an English name"
+  },
+  "modals": {
+    "save": {
+      "title": "Save Confirmation",
+      "message": "Do you want to save the changes?",
+      "cancel": "Cancel",
+      "confirm": "Save"
+    },
+    "cancel": {
+      "title": "Cancel Confirmation",
+      "message": "There are unsaved changes. Do you want to discard them?",
+      "continue": "Continue",
+      "discard": "Discard"
+    },
+    "delete": {
+      "title": "Delete Confirmation",
+      "message": "Do you want to delete this item?",
+      "warning": "※ Deleting will invalidate all language item names associated with this code.",
+      "code": "Code:",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+  "messages": {
+    "saveSuccess": "Save completed successfully",
+    "saveError": "Save failed",
+    "deleteError": "Delete failed",
+    "activateError": "Activation failed",
+    "fetchError": "Failed to fetch data"
+  }
+}

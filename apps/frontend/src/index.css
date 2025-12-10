@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+[data-radix-portal] {
+  z-index: 9999 !important;
+}
+
+[data-slot="select-content"] {
+  background-color: white !important;
+  backdrop-filter: none !important;
+}
+
+body {
+  background-color: #ecf2fa;
+}

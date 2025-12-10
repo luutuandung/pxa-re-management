@@ -1,0 +1,36 @@
+{
+  "name": "pxa-re-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm shared:build && pnpm --parallel --filter=frontend --filter=backend run dev",
+    "build": "pnpm shared:build && pnpm --parallel --filter=frontend --filter=backend run build",
+    "start": "pnpm shared:build && pnpm --parallel --filter=frontend --filter=backend run start",
+    "frontend:dev": "pnpm --filter=frontend run dev",
+    "frontend:build": "pnpm shared:build && pnpm --filter=frontend run build",
+    "backend:dev": "pnpm shared:build && pnpm --filter=backend run dev",
+    "backend:build": "pnpm shared:build && pnpm --filter=backend run build",
+    "backend:start": "pnpm shared:build && pnpm --filter=backend run start:prod",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "generate:erd": "pnpm --filter=backend run generate:erd",
+    "shared:build": "pnpm --filter=@pxa-re-management/shared run build",
+    "shared:dev": "pnpm --filter=@pxa-re-management/shared run dev",
+    "shared:clean": "pnpm --filter=@pxa-re-management/shared run clean",
+    "update:deps": "pnpm install",
+    "rebuild:all": "pnpm shared:clean && pnpm shared:build && pnpm update:deps && pnpm build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
+    "typescript": "^5.0.0"
+  }
+}

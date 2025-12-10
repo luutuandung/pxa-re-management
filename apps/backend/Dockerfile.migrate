@@ -1,0 +1,35 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# pnpmをインストール
+RUN npm install -g pnpm
+
+# ルートのpnpm設定をコピー（monorepo対応）
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY apps/backend/package.json ./apps/backend/
+COPY packages/shared/package.json ./packages/shared/
+
+# 依存関係をインストール
+# RUN pnpm install --frozen-lockfile
+RUN pnpm install
+
+# Prismaスキーマをコピー
+COPY apps/backend/prisma ./apps/backend/prisma
+
+# 共有パッケージのソースをコピー
+COPY packages/shared/src ./packages/shared/src
+COPY packages/shared/tsconfig.json ./packages/shared/
+
+# Prismaクライアントを生成（monorepo方式）
+RUN pnpm --filter backend prisma generate
+
+# バックエンドディレクトリに移動
+WORKDIR /app/apps/backend
+
+# マイグレーション実行スクリプトをコピー
+COPY apps/backend/migrate.sh ./
+RUN chmod +x migrate.sh
+
+# マイグレーションを実行
+CMD ["./migrate.sh"]

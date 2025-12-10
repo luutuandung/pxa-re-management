@@ -1,0 +1,66 @@
+{
+  "title": "統一原価項目コード登録",
+  "description": "統一原価項目コードの登録・編集を行います",
+  "sections": {
+    "uniformCostItems": "統一原価項目"
+  },
+  "controls": {
+    "showInvalid": "無効表示",
+    "add": "追加",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "activate": "有効",
+    "delete": "削除"
+  },
+  "table": {
+    "headers": {
+      "code": "コード",
+      "japaneseName": "日本語名称",
+      "chineseName": "中国語名称",
+      "englishName": "英語名称",
+      "modifiedDate": "更新日時"
+    },
+    "placeholders": {
+      "inputCode": "コードを入力",
+      "inputJapaneseName": "日本語名称を入力",
+      "inputChineseName": "中国語名称を入力",
+      "inputEnglishName": "英語名称を入力"
+    }
+  },
+  "validation": {
+    "generalCostCd": "コードを入力してください",
+    "japaneseName": "日本語名称を入力してください",
+    "chineseName": "中国語名称を入力してください",
+    "englishName": "英語名称を入力してください"
+  },
+  "modals": {
+    "save": {
+      "title": "保存確認",
+      "message": "変更内容を保存しますか？",
+      "cancel": "キャンセル",
+      "confirm": "保存"
+    },
+    "cancel": {
+      "title": "キャンセル確認",
+      "message": "未保存の変更があります。破棄しますか？",
+      "continue": "続行",
+      "discard": "破棄"
+    },
+    "delete": {
+      "title": "削除確認",
+      "message": "この項目を削除しますか？",
+      "warning": "※ 削除すると、このコードに紐づく全ての言語の項目名が一律無効になります。",
+      "code": "コード:",
+      "cancel": "キャンセル",
+      "confirm": "削除"
+    }
+  },
+  "messages": {
+    "saveSuccess": "保存が完了しました",
+    "saveError": "保存に失敗しました",
+    "deleteError": "削除に失敗しました",
+    "activateError": "有効化に失敗しました",
+    "fetchError": "データの取得に失敗しました"
+  }
+}

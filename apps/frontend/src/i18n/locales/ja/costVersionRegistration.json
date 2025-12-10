@@ -1,0 +1,48 @@
+{
+  "title": "原価登録ー原価バージョン",
+  "controls": {
+    "create": "作成",
+    "duplicate": "複製",
+    "reportType": "帳票種類",
+    "costCopy": "原価複製",
+    "saving": "保存中..."
+  },
+  "table": {
+    "headers": {
+      "select": "選択",
+      "version": "原価バージョン",
+      "start": "適用開始",
+      "end": "適用終了",
+      "registeredAt": "登録日",
+      "description": "説明",
+      "edit": "編集",
+      "delete": "削除"
+    },
+    "default": "デフォルト"
+  },
+  "modals": {
+    "create": { "title": "原価バージョン作成" },
+    "edit": { "title": "原価バージョン編集" },
+    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？" },
+    "duplicate": { "title": "原価バージョン複製" }
+  },
+  "messages": {
+    "fetchError": "取得に失敗しました",
+    "createSuccess": "作成しました",
+    "updateSuccess": "更新しました",
+    "deleteSuccess": "削除しました",
+    "duplicateSuccess": "複製しました",
+    "validationError": "入力内容を確認してください",
+    "selectBeforeDuplicate": "複製する原価バージョンを選択してください"
+  },
+  "fields": {
+    "id": "原価バージョンID",
+    "businessUnit": "事業部",
+    "name": "原価バージョン名",
+    "start": "適用開始",
+    "end": "適用終了",
+    "desc": "説明",
+    "default": "デフォルト設定",
+    "defaultHint": "この原価バージョンをデフォルトに設定"
+  }
+}

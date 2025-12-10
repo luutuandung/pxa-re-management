@@ -32,7 +32,10 @@
     "generalCostCd": "コードを入力してください",
     "japaneseName": "日本語名称を入力してください",
     "chineseName": "中国語名称を入力してください",
-    "englishName": "英語名称を入力してください"
+    "englishName": "英語名称を入力してください",
+    "codeHalfWidthOnly": "コードは半角文字のみ入力できます",
+    "englishNameHalfWidthOnly": "英語名称は半角文字のみ入力できます",
+    "noEnvironmentDependentChars": "環境依存文字は入力できません"
   },
   "modals": {
     "save": {

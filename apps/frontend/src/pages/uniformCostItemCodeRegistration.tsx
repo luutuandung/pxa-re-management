@@ -16,6 +16,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import deleteIcon from '../assets/btn_delete.svg';
 import { useGeneralCostCodeActions, useGeneralCostCodeSelectors } from '../store/generalCostCode';
 import { useStickyMessageActions } from '../store/stickyMessage';
+import {
+  CommonEnglishNamingValidator,
+  CommonJapaneseNamingValidator,
+  CommonChineseNamingValidator,
+  isHalfWidthOnly,
+} from '@pxa-re-management/shared';
 
 // 統合データ型（既存・新規共通）
 interface UnifiedCostItem {
@@ -56,6 +62,17 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   } = useGeneralCostCodeActions();
   const { generalCostCode } = useGeneralCostCodeSelectors();
   const { addErrorMessage } = useStickyMessageActions();
+
+  // コードのバリデーション（半角文字のみ）
+  const validateCodeField = (value: string): { isValid: boolean; error?: string } => {
+    if (!isHalfWidthOnly(value)) {
+      return {
+        isValid: false,
+        error: 'validation.codeHalfWidthOnly',
+      };
+    }
+    return { isValid: true };
+  };
 
   // 統合データ変換ユーティリティ
   const convertToUnifiedItem = (item: GeneralCostCode): UnifiedCostItem => ({
@@ -217,6 +234,49 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   // 項目の更新
   const updateItem = React.useCallback(
     (id: string, field: keyof UnifiedCostItem, value: string | boolean): void => {
+      // 文字列値の場合、バリデーションを実行
+      if (typeof value === 'string') {
+        // フィールドごとにバリデーション
+        if (field === 'generalCostCd') {
+          const codeValidation = validateCodeField(value);
+          if (!codeValidation.isValid && codeValidation.error) {
+            addErrorMessage(t(codeValidation.error));
+            return;
+          }
+        } else if (field === 'generalCostNameEn') {
+          const englishValidation = CommonEnglishNamingValidator.validate(value);
+          if (englishValidation.isInvalid) {
+            // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
+            const halfWidthCheck = validateCodeField(value);
+            if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+              addErrorMessage(t(halfWidthCheck.error));
+              return;
+            }
+            // CommonEnglishNamingValidatorのエラーもチェック
+            if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+              addErrorMessage(t('validation.englishNameHalfWidthOnly'));
+              return;
+            }
+          }
+        } else if (field === 'generalCostNameJa') {
+          const japaneseValidation = CommonJapaneseNamingValidator.validate(value);
+          if (japaneseValidation.isInvalid) {
+            if (japaneseValidation.validationErrorData.code === CommonJapaneseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+              addErrorMessage(t('validation.noEnvironmentDependentChars'));
+              return;
+            }
+          }
+        } else if (field === 'generalCostNameZh') {
+          const chineseValidation = CommonChineseNamingValidator.validate(value);
+          if (chineseValidation.isInvalid) {
+            if (chineseValidation.validationErrorData.code === CommonChineseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+              addErrorMessage(t('validation.noEnvironmentDependentChars'));
+              return;
+            }
+          }
+        }
+      }
+
       setUnifiedItems(
         (prev) =>
             prev.map((item) => {
@@ -246,7 +306,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
             })
       );
   },
-  [ originalItems ]
+  [ originalItems, addErrorMessage, t ]
 );
 
   // 保存処理
@@ -284,7 +344,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
     console.log('changedItems in handleSave:', changedItems);
 
-    // バリデーション
+    // バリデーション: 必須フィールドチェック
     const hasEmptyFields = changedItems.some(
       (item) => !item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh
     );
@@ -292,6 +352,50 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     if (hasEmptyFields) {
       addErrorMessage(t('validation.generalCostCd'));
       return;
+    }
+
+    // バリデーション: 文字種チェック
+    for (const item of changedItems) {
+      // コードのバリデーション
+      const codeValidation = validateCodeField(item.generalCostCd);
+      if (!codeValidation.isValid && codeValidation.error) {
+        addErrorMessage(t(codeValidation.error));
+        return;
+      }
+
+      // 英語名称のバリデーション
+      const englishValidation = CommonEnglishNamingValidator.validate(item.generalCostNameEn);
+      if (englishValidation.isInvalid) {
+        // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
+        const halfWidthCheck = validateCodeField(item.generalCostNameEn);
+        if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+          addErrorMessage(t(halfWidthCheck.error));
+          return;
+        }
+        // CommonEnglishNamingValidatorのエラーもチェック
+        if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+          addErrorMessage(t('validation.englishNameHalfWidthOnly'));
+          return;
+        }
+      }
+
+      // 日本語名称のバリデーション
+      const japaneseValidation = CommonJapaneseNamingValidator.validate(item.generalCostNameJa);
+      if (japaneseValidation.isInvalid) {
+        if (japaneseValidation.validationErrorData.code === CommonJapaneseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+          addErrorMessage(t('validation.noEnvironmentDependentChars'));
+          return;
+        }
+      }
+
+      // 中国語名称のバリデーション
+      const chineseValidation = CommonChineseNamingValidator.validate(item.generalCostNameZh);
+      if (chineseValidation.isInvalid) {
+        if (chineseValidation.validationErrorData.code === CommonChineseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
+          addErrorMessage(t('validation.noEnvironmentDependentChars'));
+          return;
+        }
+      }
     }
 
     // 重複チェック

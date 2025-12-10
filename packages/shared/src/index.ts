@@ -29,3 +29,4 @@ export * from './validators/UpdatedBusinessCostItemRequestDataValidator';
 export * from './validators/common_naming/CommonChineseNamingValidator';
 export * from './validators/common_naming/CommonEnglishNamingValidator';
 export * from './validators/common_naming/CommonJapaneseNamingValidator';
+export * from './validators/common_naming/CharacterValidationUtils';

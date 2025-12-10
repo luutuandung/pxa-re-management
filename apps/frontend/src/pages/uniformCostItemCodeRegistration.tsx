@@ -408,12 +408,36 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const handleReactivate = React.useCallback(
     async (item: UnifiedCostItem) => {
       try {
-        await reactivateGeneralCostCode(item.id);
+        // 新規項目の場合は、保存してから有効化する
+        if (item.isNew) {
+          // バリデーション
+          if (!item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh) {
+            addErrorMessage(t('validation.generalCostCd'));
+            return;
+          }
+
+          // 新規項目を保存（deleteFlg: falseで作成して有効状態にする）
+          await bulkCreateGeneralCostCodes([
+            {
+              generalCostCd: item.generalCostCd,
+              generalCostNameJa: item.generalCostNameJa,
+              generalCostNameEn: item.generalCostNameEn,
+              generalCostNameZh: item.generalCostNameZh,
+              deleteFlg: false, // 有効状態で作成
+            },
+          ]);
+
+          // データ再取得
+          await fetchGeneralCostCode();
+        } else {
+          // 既存項目の場合は通常の有効化処理
+          await reactivateGeneralCostCode(item.id);
+        }
       } catch (error) {
         console.error('有効化に失敗しました:', error);
       }
     },
-    [ reactivateGeneralCostCode ]
+    [ reactivateGeneralCostCode, bulkCreateGeneralCostCodes, fetchGeneralCostCode, addErrorMessage, t ]
   );
 
   // ソート機能
@@ -573,26 +597,44 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         header: (): React.ReactNode => (<></>),
         cell: (
           { row: { original: unifiedCostItem } }: ReactTable.CellContext<UnifiedCostItem, unknown>
-        ): React.ReactNode => (
-          unifiedCostItem.isNew ?
-              (
-                <button
-                  type="button"
-                  onClick={() => handleReactivate(unifiedCostItem)}
-                  className="text-blue-600 hover:text-blue-800 underline hover:no-underline text-sm"
-                >
-                  {t('controls.activate')}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleDeleteExistingItem(unifiedCostItem)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <img src={ deleteIcon } alt="削除" className="w-4 h-4" />
-                </button>
-              )
-        )
+        ): React.ReactNode => {
+          // 新規項目の場合は有効化ボタンを表示（クリックで保存＋有効化）
+          if (unifiedCostItem.isNew) {
+            return (
+              <button
+                type="button"
+                onClick={() => handleReactivate(unifiedCostItem)}
+                className="text-blue-600 hover:text-blue-800 underline hover:no-underline text-sm"
+              >
+                {t('controls.activate')}
+              </button>
+            );
+          }
+          
+          // 既存項目で無効化されている場合は有効化ボタンを表示
+          if (unifiedCostItem.deleteFlg) {
+            return (
+              <button
+                type="button"
+                onClick={() => handleReactivate(unifiedCostItem)}
+                className="text-blue-600 hover:text-blue-800 underline hover:no-underline text-sm"
+              >
+                {t('controls.activate')}
+              </button>
+            );
+          }
+          
+          // 既存項目で有効な場合は削除ボタンを表示
+          return (
+            <button
+              type="button"
+              onClick={() => handleDeleteExistingItem(unifiedCostItem)}
+              className="text-red-600 hover:text-red-800"
+            >
+              <img src={ deleteIcon } alt="削除" className="w-4 h-4" />
+            </button>
+          );
+        }
       },
 
     ],

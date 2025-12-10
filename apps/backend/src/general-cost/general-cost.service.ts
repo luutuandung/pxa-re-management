@@ -235,6 +235,16 @@ export class GeneralCostService {
       throw new ValidationException('General cost code ID is required');
     }
 
+    // UUID形式のバリデーション（IDが一時的なフロントエンドIDでないことを確認）
+    const isUuid = (v: string): boolean =>
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v);
+
+    if (!isUuid(generalCostCodeId)) {
+      throw new ValidationException(
+        `Invalid general cost code ID format. ID must be a valid UUID. Received: ${generalCostCodeId}`
+      );
+    }
+
     // 存在チェック
     const existing = await this.prisma.generalCostCode.findUnique({
       where: { generalCostCodeId },

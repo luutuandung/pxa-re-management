@@ -291,11 +291,11 @@ export class BusinessCostService {
 
     try {
       // トランザクション内で一括保存
-      await this.prisma.$transaction(async (tx) => {
+      await this.prisma.$transaction(async (transaction) => {
         for (const item of request.businessCostItems) {
           if (item.buCostCodeId) {
             /* 【 仕様書 】 「generalCostCd」の更新は禁止。「https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/16」参照。 */
-            await tx.buCostCode.update({
+            await transaction.buCostCode.update({
               where: {
                 buCostCodeId: item.buCostCodeId,
               },
@@ -306,24 +306,46 @@ export class BusinessCostService {
                 buCostNameEn: item.buCostNameEn,
                 buCostNameZh: item.buCostNameZh,
                 deleteFlg: item.deleteFlg ?? false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
                 modifiedBy: uuidv4(),
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 modifiedOn: new Date(),
               },
             });
           } else {
-            await tx.buCostCode.create({
-              data: {
-                businessunitId: item.businessunitId,
-                generalCostCd: item.generalCostCd || '',
-                buCostCd: item.buCostCd,
-                buCostNameJa: item.buCostNameJa,
-                buCostNameEn: item.buCostNameEn,
-                buCostNameZh: item.buCostNameZh,
-                deleteFlg: item.deleteFlg ?? false,
-                createdBy: uuidv4(),
-                modifiedBy: uuidv4(),
+            const data: Prisma.BuCostItemCreateInput = {
+              startDate: `${(new Date()).getFullYear() - 1}04`, // 1年前の4月
+              endDate: '', 
+              curCd: 'JPY',
+              amountValidFlg: false,
+              rateValidFlg: false,
+              calcValidFlg: false,
+              autoCreateValidFlg: false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+              createdBy: uuidv4(),
+              modifiedBy: uuidv4(),
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+              businessUnit: {
+                connect: { businessunitId: item.businessunitId }, // PK（ユニーク）での接続
               },
-            });
+              buCostCode: {
+                create: {
+                  businessunitId: item.businessunitId,
+                  generalCostCd: item.generalCostCd || '',
+                  buCostCd: item.buCostCd,
+                  buCostNameJa: item.buCostNameJa,
+                  buCostNameEn: item.buCostNameEn,
+                  buCostNameZh: item.buCostNameZh,
+                  deleteFlg: item.deleteFlg ?? false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+                  createdBy: uuidv4(),
+                  modifiedBy: uuidv4(),
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                }
+              }
+            };
+
+            await transaction.buCostItem.create({ data });
           }
         }
       });

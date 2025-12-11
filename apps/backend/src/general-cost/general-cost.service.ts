@@ -8,6 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { BusinessException, NotFoundException, ValidationException } from '../common/exceptions';
 import { PrismaService } from '../prisma/prisma.service';
+import type { Prisma } from '@prisma/client';
 
 @Injectable()
 export class GeneralCostService {
@@ -100,23 +101,46 @@ export class GeneralCostService {
 
       const businessUnits = await this.prisma.businessUnit.findMany();
       const businessunitIds = businessUnits.map((item) => item.businessunitId);
-      await Promise.all(
-        businessunitIds.map((businessunitId) =>
-          this.prisma.buCostCode.create({
-            data: {
-              businessunitId,
-              generalCostCd,
-              buCostCd: generalCostCd,
-              buCostNameJa: generalCostNameJa,
-              buCostNameEn: generalCostNameEn,
-              buCostNameZh: generalCostNameZh,
-              deleteFlg: false,
-              createdBy: uid,
-              modifiedBy: uid,
+
+      const startDate = `${(new Date()).getFullYear() - 1}04`; // 開始年月は1年前の4月とする
+
+      await this.prisma.$transaction(async (transaction) => {
+        for (const businessunitId of businessunitIds) {
+          const data: Prisma.BuCostItemCreateInput = {
+            startDate: startDate, 
+            endDate: '', 
+            curCd: 'JPY',
+            amountValidFlg: false,
+            rateValidFlg: false,
+            calcValidFlg: false,
+            autoCreateValidFlg: false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+            createdBy: uid,
+            modifiedBy: uid,
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            businessUnit: {
+              connect: { businessunitId }, // PK（ユニーク）での接続
             },
-          })
-        )
-      );
+            buCostCode: {
+              create: {
+                businessunitId,
+                generalCostCd,
+                buCostCd: generalCostCd,
+                buCostNameJa: generalCostNameJa,
+                buCostNameEn: generalCostNameEn,
+                buCostNameZh: generalCostNameZh,
+                deleteFlg: false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+                createdBy: uid,
+                modifiedBy: uid,
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+              }
+            }
+          };
+
+          await transaction.buCostItem.create({ data });
+        }
+      });
       return generalCostCode;
     } catch (error) {
       throw new BusinessException('Failed to create general cost', ERROR_CODES.GENERAL_COST.CREATE_ERROR, error);
@@ -301,11 +325,11 @@ export class GeneralCostService {
     }
 
     try {
-      return await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (transaction) => {
         const results: GeneralCostCode[] = [];
 
         // 全拠点データを取得（一度だけ）
-        const businessUnits = await prisma.businessUnit.findMany();
+        const businessUnits = await transaction.businessUnit.findMany();
         const businessUnitsIDs = businessUnits.map((item) => item.businessunitId);
 
         if (businessUnitsIDs.length === 0) {
@@ -316,16 +340,18 @@ export class GeneralCostService {
         for (const createData of createDataList) {
           const uid = uuidv4();
 
-          const result = await prisma.generalCostCode.create({
+          const result = await transaction.generalCostCode.create({
             data: {
               generalCostCd: createData.generalCostCd,
               generalCostNameJa: createData.generalCostNameJa,
               generalCostNameEn: createData.generalCostNameEn,
               generalCostNameZh: createData.generalCostNameZh,
               deleteFlg: createData.deleteFlg ?? false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
               createdBy: uid,
               createdOn: new Date(),
               modifiedBy: uid,
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
               modifiedOn: new Date(),
             },
           });
@@ -333,32 +359,52 @@ export class GeneralCostService {
           results.push(result);
         }
 
+        const startDate = `${(new Date()).getFullYear() - 1}04`; // 開始年月は1年前の4月とする
+
         // 2. 全てのGeneralCostCodeが作成された後、BuCostCodeを作成
         for (const createData of createDataList) {
           const uid = uuidv4();
 
-          // 全拠点分のBuCostCodeデータを一括で準備
-          const buCostCodeData = businessUnitsIDs.map((businessUnitID) => ({
-            businessunitId: businessUnitID,
-            generalCostCd: createData.generalCostCd,
-            buCostCd: createData.generalCostCd,
-            buCostNameJa: createData.generalCostNameJa,
-            buCostNameEn: createData.generalCostNameEn,
-            buCostNameZh: createData.generalCostNameZh,
-            deleteFlg: false,
-            createdBy: uid,
-            createdOn: new Date(),
-            modifiedBy: uid,
-            modifiedOn: new Date(),
-          }));
+          for (const businessunitId of businessUnitsIDs) {
+            const data: Prisma.BuCostItemCreateInput = {
+              startDate: startDate, 
+              endDate: '', 
+              curCd: 'JPY',
+              amountValidFlg: false,
+              rateValidFlg: false,
+              calcValidFlg: false,
+              autoCreateValidFlg: false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+              createdBy: uid,
+              modifiedBy: uid,
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+              businessUnit: {
+                connect: { businessunitId }, // PK（ユニーク）での接続
+              },
+              buCostCode: {
+                create: {
+                  businessunitId: businessunitId,
+                  generalCostCd: createData.generalCostCd,
+                  buCostCd: createData.generalCostCd,
+                  buCostNameJa: createData.generalCostNameJa,
+                  buCostNameEn: createData.generalCostNameEn,
+                  buCostNameZh: createData.generalCostNameZh,
+                  deleteFlg: false,
+// ━━━ TODO < 対応予定 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/44/ ━━━
+                  createdBy: uid,
+                  modifiedBy: uid,
+// ━━━ TODO > ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                }
+              }
+            };
 
-          // 一括作成
-          await prisma.buCostCode.createMany({
-            data: buCostCodeData,
-          });
+            await transaction.buCostItem.create({ data });
+          }
         }
 
         return results;
+      }, {
+        timeout: 20000, // 20秒に延長
       });
     } catch (error) {
       throw new BusinessException('Failed to bulk create general costs', ERROR_CODES.GENERAL_COST.CREATE_ERROR, error);

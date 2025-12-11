@@ -1,5 +1,7 @@
-import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { join } from 'path';
+import { existsSync } from 'fs';
 import { BaseException } from '../exceptions/base.exception';
 
 @Catch()
@@ -10,6 +12,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    // SPAフォールバック: 404エラーでAPIルートでない場合、index.htmlを返す
+    if (exception instanceof NotFoundException && !request.path.startsWith('/api') && !request.path.startsWith('/docs')) {
+      const frontendDistPath = join(__dirname, '../../../frontend/dist');
+      const indexPath = join(frontendDistPath, 'index.html');
+      
+      // 静的ファイルのリクエストかどうかをチェック
+      const staticFileExtensions = ['.js', '.css', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.map'];
+      const hasStaticFileExtension = staticFileExtensions.some(ext => request.path.toLowerCase().endsWith(ext));
+      
+      // 静的ファイルでなく、frontend distが存在する場合、index.htmlを返す
+      if (!hasStaticFileExtension && existsSync(indexPath)) {
+        return response.sendFile(indexPath);
+      }
+    }
 
     const { statusCode, errorResponse } = this.buildErrorResponse(exception, request);
 

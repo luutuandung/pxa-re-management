@@ -74,6 +74,18 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     return { isValid: true };
   };
 
+  // Error codeをcamelCaseのtranslation keyに変換（他のvalidation keysと統一するため）
+  const convertErrorCodeToTranslationKey = (errorCode: string): string => {
+    return errorCode
+      .split(/[-_]/)
+      .map((word, index) =>
+        index === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join('');
+  };
+
   // 統合データ変換ユーティリティ
   const convertToUnifiedItem = (item: GeneralCostCode): UnifiedCostItem => ({
     id: item.generalCostCodeId,
@@ -247,32 +259,34 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
           const englishValidation = CommonEnglishNamingValidator.validate(value);
           if (englishValidation.isInvalid) {
             // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
-            const halfWidthCheck = validateCodeField(value);
-            if (!halfWidthCheck.isValid && halfWidthCheck.error) {
-              addErrorMessage(t(halfWidthCheck.error));
-              return;
-            }
-            // CommonEnglishNamingValidatorのエラーもチェック
             if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-              addErrorMessage(t('validation.englishNameHalfWidthOnly'));
-              return;
+              const halfWidthCheck = validateCodeField(value);
+              if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+                addErrorMessage(t(halfWidthCheck.error));
+                return;
+              }
             }
+            // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
+            const { code, ...parameters } = englishValidation.validationErrorData;
+            const translationKey = convertErrorCodeToTranslationKey(code);
+            addErrorMessage(t(`validation.${ translationKey }`, parameters));
+            return;
           }
         } else if (field === 'generalCostNameJa') {
           const japaneseValidation = CommonJapaneseNamingValidator.validate(value);
           if (japaneseValidation.isInvalid) {
-            if (japaneseValidation.validationErrorData.code === CommonJapaneseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-              addErrorMessage(t('validation.noEnvironmentDependentChars'));
-              return;
-            }
+            const { code, ...parameters } = japaneseValidation.validationErrorData;
+            const translationKey = convertErrorCodeToTranslationKey(code);
+            addErrorMessage(t(`validation.${ translationKey }`, parameters));
+            return;
           }
         } else if (field === 'generalCostNameZh') {
           const chineseValidation = CommonChineseNamingValidator.validate(value);
           if (chineseValidation.isInvalid) {
-            if (chineseValidation.validationErrorData.code === CommonChineseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-              addErrorMessage(t('validation.noEnvironmentDependentChars'));
-              return;
-            }
+            const { code, ...parameters } = chineseValidation.validationErrorData;
+            const translationKey = convertErrorCodeToTranslationKey(code);
+            addErrorMessage(t(`validation.${ translationKey }`, parameters));
+            return;
           }
         }
       }
@@ -344,12 +358,12 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
     console.log('changedItems in handleSave:', changedItems);
 
-    // バリデーション: 必須フィールドチェック
-    const hasEmptyFields = changedItems.some(
-      (item) => !item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh
+    // バリデーション: 必須フィールドチェック（generalCostCdのみ。他のフィールドはCommon***NamingValidatorでチェック済み）
+    const hasEmptyCode = changedItems.some(
+      (item) => !item.generalCostCd
     );
 
-    if (hasEmptyFields) {
+    if (hasEmptyCode) {
       addErrorMessage(t('validation.generalCostCd'));
       return;
     }
@@ -367,34 +381,36 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       const englishValidation = CommonEnglishNamingValidator.validate(item.generalCostNameEn);
       if (englishValidation.isInvalid) {
         // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
-        const halfWidthCheck = validateCodeField(item.generalCostNameEn);
-        if (!halfWidthCheck.isValid && halfWidthCheck.error) {
-          addErrorMessage(t(halfWidthCheck.error));
-          return;
-        }
-        // CommonEnglishNamingValidatorのエラーもチェック
         if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-          addErrorMessage(t('validation.englishNameHalfWidthOnly'));
-          return;
+          const halfWidthCheck = validateCodeField(item.generalCostNameEn);
+          if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+            addErrorMessage(t(halfWidthCheck.error));
+            return;
+          }
         }
+        // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
+        const { code, ...parameters } = englishValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
       }
 
       // 日本語名称のバリデーション
       const japaneseValidation = CommonJapaneseNamingValidator.validate(item.generalCostNameJa);
       if (japaneseValidation.isInvalid) {
-        if (japaneseValidation.validationErrorData.code === CommonJapaneseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-          addErrorMessage(t('validation.noEnvironmentDependentChars'));
-          return;
-        }
+        const { code, ...parameters } = japaneseValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
       }
 
       // 中国語名称のバリデーション
       const chineseValidation = CommonChineseNamingValidator.validate(item.generalCostNameZh);
       if (chineseValidation.isInvalid) {
-        if (chineseValidation.validationErrorData.code === CommonChineseNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-          addErrorMessage(t('validation.noEnvironmentDependentChars'));
-          return;
-        }
+        const { code, ...parameters } = chineseValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
       }
     }
 

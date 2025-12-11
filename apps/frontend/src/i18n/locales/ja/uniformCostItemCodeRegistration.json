@@ -35,7 +35,10 @@
     "englishName": "英語名称を入力してください",
     "codeHalfWidthOnly": "コードは半角文字のみ入力できます",
     "englishNameHalfWidthOnly": "英語名称は半角文字のみ入力できます",
-    "noEnvironmentDependentChars": "環境依存文字は入力できません"
+    "noEnvironmentDependentChars": "環境依存文字は入力できません",
+    "commonEnglishNamingInvalidCharacters": "英語名称に不正な文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonJapaneseNamingInvalidCharacters": "日本語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingInvalidCharacters": "中国語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}"
   },
   "modals": {
     "save": {

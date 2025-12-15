@@ -64,7 +64,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const { addErrorMessage } = useStickyMessageActions();
 
   // コードのバリデーション（半角文字のみ）
-  const validateCodeField = (value: string): { isValid: boolean; error?: string } => {
+  const validateCodeField = (value: string): { isValid: true; error?: never } | { isValid: false; error: string } => {
     if (!isHalfWidthOnly(value)) {
       return {
         isValid: false,
@@ -251,7 +251,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         // フィールドごとにバリデーション
         if (field === 'generalCostCd') {
           const codeValidation = validateCodeField(value);
-          if (!codeValidation.isValid && codeValidation.error) {
+          if (!codeValidation.isValid) {
             addErrorMessage(t(codeValidation.error));
             return;
           }
@@ -261,7 +261,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
             // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
             if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
               const halfWidthCheck = validateCodeField(value);
-              if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+              if (!halfWidthCheck.isValid) {
                 addErrorMessage(t(halfWidthCheck.error));
                 return;
               }
@@ -372,7 +372,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     for (const item of changedItems) {
       // コードのバリデーション
       const codeValidation = validateCodeField(item.generalCostCd);
-      if (!codeValidation.isValid && codeValidation.error) {
+      if (!codeValidation.isValid) {
         addErrorMessage(t(codeValidation.error));
         return;
       }
@@ -383,7 +383,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
         if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
           const halfWidthCheck = validateCodeField(item.generalCostNameEn);
-          if (!halfWidthCheck.isValid && halfWidthCheck.error) {
+          if (!halfWidthCheck.isValid) {
             addErrorMessage(t(halfWidthCheck.error));
             return;
           }

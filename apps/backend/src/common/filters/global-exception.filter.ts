@@ -1,6 +1,6 @@
 import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { join, extname } from 'path';
+import { join, extname, dirname, normalize, resolve } from 'path';
 import { existsSync } from 'fs';
 import { BaseException } from '../exceptions/base.exception';
 
@@ -17,8 +17,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof NotFoundException && !request.path.startsWith('/docs')) {
       const publicPath = this.getPublicFolderPath();
       if (publicPath) {
-        const filePath = this.resolveFilePath(request.path, publicPath);
-        if (filePath && existsSync(filePath)) {
+        const filePath = GlobalExceptionFilter.resolveFilePath(request.path, publicPath);
+        if (filePath) {
           return response.sendFile(filePath);
         }
       }
@@ -100,23 +100,43 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   /**
    * publicフォルダのパスを取得する
    * 開発環境ではapps/frontend/dist、本番環境ではwebapps/publicを確認
+   * 
+   * @returns publicフォルダの絶対パス、見つからない場合はnull
    */
   private getPublicFolderPath(): string | null {
-    // リポジトリルートへのパス（apps/backend/dist/common/filters から 4階層上）
-    const repoRoot = join(__dirname, '../../../../..');
+    let currentDir = normalize(resolve(__dirname));
+    const visitedDirs = new Set<string>();
     
-    // 本番環境: webapps/public
-    const productionPublicPath = join(repoRoot, 'webapps/public');
-    if (existsSync(productionPublicPath)) {
-      return productionPublicPath;
+    while (true) {
+      // 循環参照の防止
+      if (visitedDirs.has(currentDir)) {
+        break;
+      }
+      visitedDirs.add(currentDir);
+      
+      // 本番環境: webapps/public を優先的に確認
+      const productionPublicPath = resolve(currentDir, 'webapps', 'public');
+      if (existsSync(productionPublicPath)) {
+        return productionPublicPath;
+      }
+      
+      // 開発環境: apps/frontend/dist を確認
+      const developmentPublicPath = resolve(currentDir, 'apps', 'frontend', 'dist');
+      if (existsSync(developmentPublicPath)) {
+        return developmentPublicPath;
+      }
+      
+      // 親ディレクトリに移動
+      const parentDir = dirname(currentDir);
+      if (parentDir === currentDir) {
+        // ファイルシステムのルートに到達
+        break;
+      }
+      currentDir = parentDir;
     }
     
-    // 開発環境: apps/frontend/dist
-    const developmentPublicPath = join(repoRoot, 'apps/frontend/dist');
-    if (existsSync(developmentPublicPath)) {
-      return developmentPublicPath;
-    }
-    
+    // Public folderが見つからない場合のみログ出力（デバッグ用）
+    this.logger.warn(`Public folder not found. Searched from: ${__dirname}`);
     return null;
   }
 
@@ -127,15 +147,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
    * 2. ファイル名拡張子が明示的に指定されていて、対象ファイルが存在している場合、publicフォルダから該当ファイルを返す
    * 3. 上記の条件がどちらも満たされていない場合、index.htmlファイルを返す
    */
-  private resolveFilePath(requestPath: string, publicPath: string): string | null {
+  private static resolveFilePath(requestPath: string, publicPath: string): string | null {
     const indexPath = join(publicPath, 'index.html');
     
-    // 1. パスが明示的に「index.html」になっている場合
+    // パスが明示的に「index.html」になっている場合
     if (requestPath.toLowerCase().endsWith('/index.html') || requestPath.toLowerCase() === 'index.html') {
       return indexPath;
     }
     
-    // 2. ファイル名拡張子が明示的に指定されている場合
+    // ファイル名拡張子が明示的に指定されている場合
     const fileExtension = extname(requestPath);
     if (fileExtension) {
       // 拡張子がある場合、publicフォルダから該当ファイルを探す
@@ -148,7 +168,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       }
     }
     
-    // 3. 上記の条件がどちらも満たされていない場合、index.htmlファイルを返す
+    // 上記の条件がどちらも満たされていない場合、index.htmlファイルを返す
     return indexPath;
   }
 }

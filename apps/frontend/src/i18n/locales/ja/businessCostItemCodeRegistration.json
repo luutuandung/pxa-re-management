@@ -31,7 +31,9 @@
       "inputJapaneseName": "日本語名称を入力",
       "inputEnglishName": "英語名称を入力",
       "inputChineseName": "中国語名称を入力"
-    }
+    },
+    "deleteAlt": "削除",
+    "noResults": "データがありません"
   },
   "pagination": {
     "showingItems": "件中",

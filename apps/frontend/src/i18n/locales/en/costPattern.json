@@ -16,7 +16,27 @@
       "patternName": "Pattern Detail Name",
       "patternCd": "Pattern Code"
     },
-    "empty": "No results."
+    "empty": "No results.",
+    "categoryHeaders": {
+      "select": "Select",
+      "seq": "Sequence",
+      "category": "Category",
+      "delete": "Delete"
+    }
+  },
+  "costType": {
+    "amount": "Amount",
+    "rate": "Rate"
+  },
+  "category": {
+    "model": "Model Category",
+    "dest": "Destination Category",
+    "secondDest": "Secondary Destination Category"
+  },
+  "placeholders": {
+    "selectCategory": "Please select",
+    "newPatternEditing": "New (Editing)",
+    "newPatternOnly": "Only editable when creating new"
   },
   "buttons": {
     "openPatternDialog": "Register Pattern Detail",

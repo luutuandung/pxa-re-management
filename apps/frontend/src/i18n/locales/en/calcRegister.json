@@ -14,7 +14,10 @@
   "buttons": {
     "search": "Search",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "addBranch": "+ Add Condition Branch"
   },
   "table": {
     "headers": {

@@ -14,7 +14,10 @@
   "buttons": {
     "search": "検索",
     "save": "保存",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "addBranch": "+ 条件分岐を追加"
   },
   "table": {
     "headers": {

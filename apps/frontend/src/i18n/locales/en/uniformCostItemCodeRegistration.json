@@ -18,15 +18,17 @@
       "code": "Code",
       "japaneseName": "Japanese Name",
       "chineseName": "Chinese Name",
-      "englishName": "English Name"
+      "englishName": "English Name",
+      "modifiedDate": "Modified Date"
     },
     "placeholders": {
       "inputCode": "Enter code",
       "inputJapaneseName": "Enter Japanese name",
       "inputChineseName": "Enter Chinese name",
-      "inputEnglishName": "Enter English name",
-      "modifiedDate": "Modified Date"
-    }
+      "inputEnglishName": "Enter English name"
+    },
+    "deleteAlt": "Delete",
+    "noResults": "No results."
   },
   "validation": {
     "generalCostCd": "Please enter a code",

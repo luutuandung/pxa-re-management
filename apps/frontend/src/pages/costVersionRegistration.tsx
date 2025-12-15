@@ -208,9 +208,9 @@ const CostVersionRegistration: FC = () => {
                 onChange={(e) => setReportType(e.target.value)}
                 className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="製造原価">製造原価</option>
-                <option value="個別原価">個別原価</option>
-                <option value="製版連結収支">製版連結収支</option>
+                <option value="製造原価">{t('reportType.manufacturing')}</option>
+                <option value="個別原価">{t('reportType.individual')}</option>
+                <option value="製版連結収支">{t('reportType.consolidated')}</option>
               </select>
             </div>
 
@@ -296,7 +296,7 @@ const CostVersionRegistration: FC = () => {
                         onClick={() => handleDelete(costVersion.costVersionId)}
                         className="p-1 rounded hover:bg-gray-100"
                       >
-                        <img src={deleteIcon} alt="delete" className="h-4 w-4" />
+                        <img src={deleteIcon} alt={t('buttons.deleteAlt')} className="h-4 w-4" />
                       </button>
                     </TableCell>
                   </TableRow>
@@ -321,7 +321,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.costVersionId}
                 onChange={(e) => setFormData({ ...formData, costVersionId: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="CV_2024_001"
+                placeholder={t('placeholders.costVersionId')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -340,7 +340,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.costVersionName}
                 onChange={(e) => setFormData({ ...formData, costVersionName: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="2024年度原価"
+                placeholder={t('placeholders.costVersionName')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -350,7 +350,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="202404"
+                placeholder={t('placeholders.startDate')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -360,7 +360,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="202503"
+                placeholder={t('placeholders.endDate')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -370,7 +370,7 @@ const CostVersionRegistration: FC = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
-                placeholder="原価バージョンの説明を入力してください"
+                placeholder={t('placeholders.description')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -508,7 +508,7 @@ const CostVersionRegistration: FC = () => {
               onClick={confirmDelete}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >
-              OK
+              {t('modals.delete.ok')}
             </button>
             <button
               type="button"
@@ -535,7 +535,7 @@ const CostVersionRegistration: FC = () => {
                 value={duplicateData.newCostVersionId}
                 onChange={(e) => setDuplicateData({ ...duplicateData, newCostVersionId: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="CV_2024_002"
+                placeholder={t('placeholders.costVersionId')}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -545,7 +545,7 @@ const CostVersionRegistration: FC = () => {
                 value={duplicateData.newCostVersionName}
                 onChange={(e) => setDuplicateData({ ...duplicateData, newCostVersionName: e.target.value })}
                 className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="2024年度原価(複製)"
+                placeholder={t('placeholders.duplicateName')}
               />
             </div>
           </div>

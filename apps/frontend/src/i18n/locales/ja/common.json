@@ -25,7 +25,13 @@
     "english": "English"
   },
   "dataTablePagination": {
-    "itemsPerPage": "表示件数"
+    "itemsPerPage": "表示件数",
+    "page": "ページ",
+    "of": "/",
+    "goToFirstPage": "最初のページへ",
+    "goToPreviousPage": "前のページへ",
+    "goToNextPage": "次のページへ",
+    "goToLastPage": "最後のページへ"
   },
   "locationSelect": {
     "placeholder": "拠点を選択"

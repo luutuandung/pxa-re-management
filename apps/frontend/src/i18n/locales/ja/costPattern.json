@@ -16,7 +16,27 @@
       "patternName": "パターン明細名",
       "patternCd": "パターンコード"
     },
-    "empty": "No results."
+    "empty": "データがありません",
+    "categoryHeaders": {
+      "select": "選択",
+      "seq": "項順",
+      "category": "カテゴリ",
+      "delete": "削除"
+    }
+  },
+  "costType": {
+    "amount": "額",
+    "rate": "レート"
+  },
+  "category": {
+    "model": "機種カテゴリ",
+    "dest": "販売先カテゴリ",
+    "secondDest": "2次販売先カテゴリ"
+  },
+  "placeholders": {
+    "selectCategory": "選択してください",
+    "newPatternEditing": "新規（編集中）",
+    "newPatternOnly": "新規登録時のみ入力可能"
   },
   "buttons": {
     "openPatternDialog": "パターン明細登録",

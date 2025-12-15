@@ -330,7 +330,7 @@ const CostPatternPage = () => {
                         </TableCell>
                         <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.buCostCode}</TableCell>
                         <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.buCostName}</TableCell>
-                        <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.costType === 'G' ? '額' : 'レート'}</TableCell>
+                        <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.costType === 'G' ? t('costType.amount') : t('costType.rate')}</TableCell>
                         <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.curCd}</TableCell>
                         <TableCell className="border-r border-gray-200 px-4 py-3 text-sm text-gray-800">{r.costPatternName ?? ''}</TableCell>
                         <TableCell className="px-4 py-3 text-sm text-gray-800">{r.costPatternCd ?? ''}</TableCell>
@@ -386,7 +386,7 @@ const CostPatternPage = () => {
                     {isCreatingNew && (
                       <TableRow className="bg-blue-50">
                         <TableCell className="border-r border-gray-200 px-3 py-2 text-sm">
-                          {newPatternName || '新規（編集中）'}
+                          {newPatternName || t('placeholders.newPatternEditing')}
                         </TableCell>
                         <TableCell className="px-3 py-2 text-sm">{computedPatternCd}</TableCell>
                       </TableRow>
@@ -427,7 +427,7 @@ const CostPatternPage = () => {
                     className="bg-white border border-gray-300 rounded px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={newPatternName}
                     onChange={(e) => setNewPatternName(e.target.value)}
-                    placeholder="新規登録時のみ入力可能"
+                    placeholder={t('placeholders.newPatternOnly')}
                   />
                 ) : (
                   <div className="px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded">{newPatternName || '-'}</div>
@@ -435,9 +435,9 @@ const CostPatternPage = () => {
               </div>
 
               <div className="flex flex-col gap-4">
-                <CategoryTable title="機種カテゴリ" type="model" options={categoryOptions} rows={modelRows} setRows={setModelRows} readOnly={!isCreatingNew} />
-                <CategoryTable title="販売先カテゴリ" type="dest" options={categoryOptions} rows={destRows} setRows={setDestRows} readOnly={!isCreatingNew} />
-                <CategoryTable title="2次販売先カテゴリ" type="secondDest" options={categoryOptions} rows={secondDestRows} setRows={setSecondDestRows} readOnly={!isCreatingNew} />
+                <CategoryTable title={t('category.model')} type="model" options={categoryOptions} rows={modelRows} setRows={setModelRows} readOnly={!isCreatingNew} />
+                <CategoryTable title={t('category.dest')} type="dest" options={categoryOptions} rows={destRows} setRows={setDestRows} readOnly={!isCreatingNew} />
+                <CategoryTable title={t('category.secondDest')} type="secondDest" options={categoryOptions} rows={secondDestRows} setRows={setSecondDestRows} readOnly={!isCreatingNew} />
               </div>
 
               <DialogFooter>
@@ -481,6 +481,7 @@ type CategoryTableProps = {
 };
 
 const CategoryTable = ({ title, type, options, rows, setRows, readOnly = false }: CategoryTableProps) => {
+  const { t } = useTranslation('costPattern');
   const addRow = () => {
     const nextSeq = rows.length === 0 ? 1 : Math.max(...rows.map((r) => r.seq)) + 1;
     setRows([...rows, { selected: rows.length === 0, seq: nextSeq }]);
@@ -553,7 +554,7 @@ const CategoryTable = ({ title, type, options, rows, setRows, readOnly = false }
             onClick={addRow}
             disabled={readOnly}
           >
-            追加
+            {t('buttons.add')}
           </button>
         </div>
       </div>
@@ -562,15 +563,15 @@ const CategoryTable = ({ title, type, options, rows, setRows, readOnly = false }
         <thead>
           <tr className="bg-gray-50">
             <th className="border-r border-gray-200 px-2 py-2 text-left text-sm font-medium text-gray-700 w-16">
-              選択
+              {t('table.categoryHeaders.select')}
             </th>
             <th className="border-r border-gray-200 px-2 py-2 text-left text-sm font-medium text-gray-700 w-16">
-              項順
+              {t('table.categoryHeaders.seq')}
             </th>
             <th className="border-r border-gray-200 px-2 py-2 text-left text-sm font-medium text-gray-700">
-              カテゴリ
+              {t('table.categoryHeaders.category')}
             </th>
-            <th className="px-2 py-2 text-left text-sm font-medium text-gray-700 w-16">削除</th>
+            <th className="px-2 py-2 text-left text-sm font-medium text-gray-700 w-16">{t('table.categoryHeaders.delete')}</th>
           </tr>
         </thead>
         <tbody>
@@ -592,7 +593,7 @@ const CategoryTable = ({ title, type, options, rows, setRows, readOnly = false }
                   onChange={(e) => onChangeOption(r.seq, e.target.value)}
                   disabled={readOnly}
                 >
-                  <option value="">選択してください</option>
+                  <option value="">{t('placeholders.selectCategory')}</option>
                   {availableOptions.map((op) => (
                     <option
                       key={type === 'model' ? (op as any).modelCategoryId : (op as any).destCategoryId}
@@ -610,7 +611,7 @@ const CategoryTable = ({ title, type, options, rows, setRows, readOnly = false }
                   onClick={() => removeRow(r.seq)}
                   disabled={readOnly}
                 >
-                  削除
+                  {t('table.categoryHeaders.delete')}
                 </button>
               </td>
             </tr>

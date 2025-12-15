@@ -44,7 +44,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
-          <span className="sr-only">Go to first page</span>
+          <span className="sr-only">{t('dataTablePagination.goToFirstPage')}</span>
           <ChevronsLeft />
         </Button>
         <Button
@@ -54,7 +54,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          <span className="sr-only">Go to previous page</span>
+          <span className="sr-only">{t('dataTablePagination.goToPreviousPage')}</span>
           <ChevronLeft />
         </Button>
         <Button
@@ -64,7 +64,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          <span className="sr-only">Go to next page</span>
+          <span className="sr-only">{t('dataTablePagination.goToNextPage')}</span>
           <ChevronRight />
         </Button>
         <Button
@@ -74,14 +74,14 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
-          <span className="sr-only">Go to last page</span>
+          <span className="sr-only">{t('dataTablePagination.goToLastPage')}</span>
           <ChevronsRight />
         </Button>
       </div>
 
       {/* 右寄せ：現在のページ表示 */}
       <div className="flex w-[100px] items-center justify-end text-sm font-medium">
-        Page {table.getState().pagination.pageIndex + 1} of{" "}
+        {t('dataTablePagination.page')} {table.getState().pagination.pageIndex + 1} {t('dataTablePagination.of')}{" "}
         {table.getPageCount()}
       </div>
     </div>

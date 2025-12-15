@@ -120,7 +120,7 @@ const CalcRegister = () => {
   // splitIfElseOps は共有化済み
 
   const renderOpsExpr = (ops: CalcOperation[]) => {
-    if (ops.length === 0) return <span className="text-gray-500">未設定</span>;
+    if (ops.length === 0) return <span className="text-gray-500">{t('labels.unset')}</span>;
     return (
       <span className="space-x-1">
         {ops.map((o, idx) => (
@@ -157,11 +157,11 @@ const CalcRegister = () => {
           <div className="text-sm font-medium">{node.label}</div>
           <div className="flex gap-2">
             <Button size="sm" variant="secondary" onClick={() => selectBranch(node.id)}>
-              編集
+              {t('buttons.edit')}
             </Button>
             {node.id !== 'root' ? (
               <Button size="sm" variant="ghost" onClick={() => deleteBranch(node.id)}>
-                削除
+                {t('buttons.delete')}
               </Button>
             ) : null}
           </div>
@@ -179,7 +179,7 @@ const CalcRegister = () => {
                 (
                   <div className="mt-2 ml-6">
                     <Button size="sm" variant="secondary" onClick={() => addChildBranch(node.id, 'IF')}>
-                      + 条件分岐を追加
+                      {t('buttons.addBranch')}
                     </Button>
                   </div>
                 ) :

@@ -44,5 +44,28 @@
     "desc": "説明",
     "default": "デフォルト設定",
     "defaultHint": "この原価バージョンをデフォルトに設定"
+  },
+  "reportType": {
+    "manufacturing": "製造原価",
+    "individual": "個別原価",
+    "consolidated": "製版連結収支"
+  },
+  "placeholders": {
+    "costVersionId": "CV_2024_001",
+    "costVersionName": "2024年度原価",
+    "startDate": "202404",
+    "endDate": "202503",
+    "description": "原価バージョンの説明を入力してください",
+    "duplicateName": "2024年度原価(複製)"
+  },
+  "buttons": {
+    "ok": "OK",
+    "deleteAlt": "削除"
+  },
+  "modals": {
+    "create": { "title": "原価バージョン作成" },
+    "edit": { "title": "原価バージョン編集" },
+    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？", "ok": "OK" },
+    "duplicate": { "title": "原価バージョン複製" }
   }
 }

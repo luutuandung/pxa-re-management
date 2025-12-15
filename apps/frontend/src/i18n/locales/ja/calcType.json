@@ -42,5 +42,8 @@
     "activateSuccess": "有効化に成功しました",
     "activateError": "有効化に失敗しました",
     "validationNameRequired": "名称は必須です"
+  },
+  "validation": {
+    "selectBusinessUnit": "拠点を選択してください"
   }
 }

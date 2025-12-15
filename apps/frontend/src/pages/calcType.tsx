@@ -127,7 +127,7 @@ const CalcTypePage: FC = () => {
   // 項目の追加
   const addNewItem = () => {
     if (!selectedBusinessUnitId) {
-      addErrorMessage('拠点を選択してください');
+      addErrorMessage(t('validation.selectBusinessUnit'));
       return;
     }
     const newItem = createNewUnifiedItem();

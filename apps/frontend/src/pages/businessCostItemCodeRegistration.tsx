@@ -269,7 +269,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                 onClick={() => removeItem(item.id)}
                 className="text-red-600 hover:text-red-800"
               >
-                <img src={deleteIcon} alt="削除" className="w-6 h-6"/>
+                <img src={deleteIcon} alt={t('table.deleteAlt')} className="w-6 h-6"/>
               </button>
             ) :
             (
@@ -297,7 +297,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                           className="text-red-600 hover:text-red-800"
                           disabled={isLoading}
                         >
-                          <img src={deleteIcon} alt="削除" className="w-4 h-4" />
+                          <img src={deleteIcon} alt={t('table.deleteAlt')} className="w-4 h-4" />
                         </button>
                       ) : actionType === 'activate' ? (
                         <button
@@ -667,7 +667,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                       ) : (
                       <TableRow>
                         <TableCell colSpan={columns.length} className="h-24 text-center">
-                          No results.
+                          {t('table.noResults')}
                         </TableCell>
                       </TableRow>
                       )

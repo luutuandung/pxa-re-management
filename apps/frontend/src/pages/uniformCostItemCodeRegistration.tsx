@@ -596,9 +596,13 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         cell: (
           { row: { original: unifiedCostItem } }: ReactTable.CellContext<UnifiedCostItem, unknown>
         ): React.ReactNode => (
-          unifiedCostItem.isNew || unifiedCostItem.deleteFlg ?
+          unifiedCostItem.isNew ?
               (
-                // 新規項目または削除済み項目：有効化ボタン
+                // 新規項目：何も表示しない
+                <></>
+              ) : unifiedCostItem.deleteFlg ?
+              (
+                // 既存項目で無効済み：有効化ボタン
                 <button
                   type="button"
                   onClick={() => handleReactivate(unifiedCostItem)}
@@ -607,7 +611,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                   {t('controls.activate')}
                 </button>
               ) : (
-                // 既存項目で有効な場合：削除ボタン
+                // 既存項目で有効：削除ボタン
                 <button
                   type="button"
                   onClick={() => handleDeleteExistingItem(unifiedCostItem)}

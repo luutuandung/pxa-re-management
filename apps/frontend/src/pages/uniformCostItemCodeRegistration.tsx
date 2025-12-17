@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Backdrop from '@/components/molecules/Backdrop.tsx';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useGeneralCostCodeActions, useGeneralCostCodeSelectors } from '../store/generalCostCode';
 import { useStickyMessageActions } from '../store/stickyMessage';
@@ -39,6 +40,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const [showSaveModal, setShowSaveModal] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isDeletingSelectedItem, setIsDeletingSelectedItem] = React.useState(false);
   const [selectedDeleteItem, setSelectedDeleteItem] = React.useState<UnifiedCostItem | null>(null);
   const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc' | null>(null);
   const [highlightedItemID, setHighlightedItemID] = React.useState<string | null>(null);
@@ -387,8 +389,9 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   ) ;
 
   const confirmDelete = async () => {
-    if (!selectedDeleteItem) return;
+    if (!selectedDeleteItem || isDeletingSelectedItem) return;
 
+    setIsDeletingSelectedItem(true);
     try {
       if (selectedDeleteItem.isNew) {
         // 新規項目の場合は単純に削除
@@ -401,6 +404,8 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       setSelectedDeleteItem(null);
     } catch (error) {
       console.error('削除に失敗しました:', error);
+    } finally {
+      setIsDeletingSelectedItem(false);
     }
   };
 
@@ -408,12 +413,34 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const handleReactivate = React.useCallback(
     async (item: UnifiedCostItem) => {
       try {
-        await reactivateGeneralCostCode(item.id);
+        if (item.isNew) {
+          // 新規項目の場合：作成処理
+          // バリデーション
+          if (!item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh) {
+            addErrorMessage(t('validation.generalCostCd'));
+            return;
+          }
+
+          await bulkCreateGeneralCostCodes([
+            {
+              generalCostCd: item.generalCostCd,
+              generalCostNameJa: item.generalCostNameJa,
+              generalCostNameEn: item.generalCostNameEn,
+              generalCostNameZh: item.generalCostNameZh,
+            },
+          ]);
+
+          // 作成成功後、ローカルの新規項目を削除（データ再取得で反映される）
+          removeItem(item.id);
+        } else {
+          // 既存項目で削除済みの場合：有効化処理
+          await reactivateGeneralCostCode(item.id);
+        }
       } catch (error) {
-        console.error('有効化に失敗しました:', error);
+        console.error('有効化/作成に失敗しました:', error);
       }
     },
-    [ reactivateGeneralCostCode ]
+    [ reactivateGeneralCostCode, bulkCreateGeneralCostCodes, removeItem, addErrorMessage, t ]
   );
 
   // ソート機能
@@ -576,6 +603,11 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         ): React.ReactNode => (
           unifiedCostItem.isNew ?
               (
+                // 新規項目：何も表示しない
+                <></>
+              ) : unifiedCostItem.deleteFlg ?
+              (
+                // 既存項目で無効済み：有効化ボタン
                 <button
                   type="button"
                   onClick={() => handleReactivate(unifiedCostItem)}
@@ -584,10 +616,12 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                   {t('controls.activate')}
                 </button>
               ) : (
+                // 既存項目で有効：削除ボタン
                 <button
                   type="button"
                   onClick={() => handleDeleteExistingItem(unifiedCostItem)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-red-600 hover:text-red-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  disabled={isDeletingSelectedItem}
                 >
                   <img src={ deleteIcon } alt="削除" className="w-4 h-4" />
                 </button>
@@ -596,7 +630,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       },
 
     ],
-    [ t, updateItem, removeItem, handleDeleteExistingItem, handleReactivate ]
+    [ t, updateItem, removeItem, handleDeleteExistingItem, handleReactivate, isDeletingSelectedItem ]
   );
 
   const tableModel: ReactTable.Table<UnifiedCostItem> = ReactTable.useReactTable({
@@ -841,19 +875,24 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                 setSelectedDeleteItem(null);
               }}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+              disabled={isDeletingSelectedItem}
             >
               {t('modals.delete.cancel')}
             </button>
             <button
               type="button"
               onClick={confirmDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400"
+              disabled={isDeletingSelectedItem}
             >
-              {t('modals.delete.confirm')}
+              {isDeletingSelectedItem ? t('controls.saving') : t('modals.delete.confirm')}
             </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* ローディングオーバーレイ */}
+      {(isDeletingSelectedItem || isSaving) && <Backdrop />}
     </div>
   );
 };

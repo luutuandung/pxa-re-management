@@ -8,11 +8,34 @@ const validSamples: ReadonlyArray<string> = [
   "漢字のみ",
   "カタカナ",
   "ひらがな",
-  "全額数字１"
+  "全額数字１",
+  "LatinCharactersOnly",
+  "Latin characters with regular spaces",
+  "LatinCharactersWithDigits123",
+  "Latin characters with digits and spaces",
+  "︒",
+  "〱"
 ];
 
 const invalidSamples: ReadonlyArray<string> = [
-  ""
+  "",
+  "Ⅰ",
+  "㌔",
+  "㍻",
+  "㈱",
+  "①",
+  "Ⅷ",
+  "🄫",
+  "🈁",
+  "🌸",
+  "😀",
+  "🚀",
+  "🧩",
+  "🪐",
+  "☀",
+  "✿",
+  "㈱",
+  "㎏"
 ];
 
 
@@ -42,7 +65,7 @@ Testing.suite(
       ),
 
       Testing.suite(
-        "妥当な例",
+        "不正な例",
         async (): Promise<void> => {
 
           await Promise.all(

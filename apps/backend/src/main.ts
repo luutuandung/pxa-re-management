@@ -2,12 +2,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
 
+  // Expressの機能を利用してpublic配下を静的ファイル公開フォルダに指定
+  app.use(express.static(join(process.cwd(), '../public')));
+  
   // バリデーションパイプの設定
   app.useGlobalPipes(
     new ValidationPipe({
@@ -26,12 +31,8 @@ async function bootstrap() {
     .addTag('language', '言語マスター関連API')
     .build();
 
-  // Global prefix設定
-  app.setGlobalPrefix('api');
-
   const document = SwaggerModule.createDocument(app, config);
-  
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   // CORS設定（必要に応じて）
   app.enableCors();

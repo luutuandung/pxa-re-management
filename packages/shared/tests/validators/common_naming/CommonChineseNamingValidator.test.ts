@@ -3,13 +3,38 @@ import Testing from "node:test";
 import Assert from "assert"
 
 
+/* ┅┅┅ Basic Latin ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 const validSamples: ReadonlyArray<string> = [
   "漢字",
-  "Latin Letters Digits and Spaces Only 123"
+  "啞",
+  "LatinCharactersOnly",
+  "Latin characters with regular spaces",
+  "LatinCharactersWithDigits123",
+  "Latin characters with digits and spaces",
+  "︒",
+  "〱"
 ];
 
+/* ━━━ Invalid Sample ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 const invalidSamples: ReadonlyArray<string> = [
-  ""
+  "",
+  "Ⅰ",
+  "㌔",
+  "㍻",
+  "㈱",
+  "①",
+  "Ⅷ",
+  "🄫",
+  "🈁",
+  "🌸",
+  "😀",
+  "🚀",
+  "🧩",
+  "🪐",
+  "☀",
+  "✿",
+  "㈱",
+  "㎏"
 ];
 
 
@@ -39,7 +64,7 @@ Testing.suite(
       ),
 
       Testing.suite(
-        "妥当な例",
+        "不正な例",
         async (): Promise<void> => {
 
           await Promise.all(

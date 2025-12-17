@@ -230,10 +230,12 @@ const CalcRegister = () => {
 
         {/* 検索行 */}
         <div className="p-6">
-          <div className="flex justify-between items-end mb-6">
+          <div className="flex justify-between items-end">
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-700">{t('labels.location')}</span>
+                <label className="text-sm text-gray-700">
+                  {t('labels.location')}
+                </label>
                 <LocationSelectField
                   value={selectedBusinessUnitId}
                   onValueChange={handleChangeBusinessUnit}
@@ -241,8 +243,8 @@ const CalcRegister = () => {
                   selectClassName="w-64"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="ct-select" className="text-sm font-medium text-gray-700">
+              <div className="flex items-center space-x-2">
+                <label htmlFor="ct-select" className="text-sm text-gray-700">
                   {t('labels.calcType')}
                 </label>
                 <Select value={selectedCalcTypeId} onValueChange={handleChangeCalcType} disabled={calcTypes.length === 0}>
@@ -258,8 +260,8 @@ const CalcRegister = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="keyword" className="text-sm font-medium text-gray-700">
+              <div className="flex items-center space-x-2">
+                <label htmlFor="keyword" className="text-sm text-gray-700 w-18">
                   {t('labels.keyword')}
                 </label>
                 <Input id="keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder={t('placeholders.keyword')} />
@@ -280,9 +282,6 @@ const CalcRegister = () => {
                   <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">{t('table.headers.costItemCd')}</TableHead>
                   <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">{t('table.headers.costItemName')}</TableHead>
                   <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">{t('table.headers.expression')}</TableHead>
-                  <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">{t('table.headers.validation')}</TableHead>
-                  <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">{t('table.headers.judgement')}</TableHead>
-                  <TableHead className="px-4 py-3 text-left text-sm font-medium">{t('table.headers.message')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="bg-white">
@@ -319,9 +318,6 @@ const CalcRegister = () => {
                     <span className="text-gray-500">{t('labels.unset')}</span>
                   )}
                 </TableCell>
-                <TableCell className="border-r border-gray-200 px-4 py-3" />
-                <TableCell className="border-r border-gray-200 px-4 py-3" />
-                <TableCell className="px-4 py-3" />
               </TableRow>
             ))}
               </TableBody>

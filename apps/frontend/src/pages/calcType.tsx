@@ -42,6 +42,7 @@ const CalcTypePage: FC = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeletingSelectedItem, setIsDeletingSelectedItem] = useState(false);
   const [selectedDeleteItem, setSelectedDeleteItem] = useState<UnifiedCalcType | null>(null);
   const [selectedBusinessUnitId, _setSelectedBusinessUnitId] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
@@ -219,14 +220,17 @@ const CalcTypePage: FC = () => {
 
   // 削除処理
   const handleDelete = async () => {
-    if (!selectedDeleteItem) return;
+    if (!selectedDeleteItem || isDeletingSelectedItem) return;
 
+    setIsDeletingSelectedItem(true);
     try {
       await deleteCalcType(selectedDeleteItem.calcTypeId, selectedDeleteItem.businessunitId);
       setShowDeleteModal(false);
       setSelectedDeleteItem(null);
     } catch (error) {
       console.error('Delete error:', error);
+    } finally {
+      setIsDeletingSelectedItem(false);
     }
   };
 
@@ -438,19 +442,38 @@ const CalcTypePage: FC = () => {
         </Dialog>
 
         {/* 削除確認モーダル */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-          <DialogContent className="bg-white">
+        <Dialog
+          open={showDeleteModal}
+          onOpenChange={(open) => {
+            setShowDeleteModal(open);
+            if (!open) setSelectedDeleteItem(null);
+          }}
+        >
+          <DialogContent showCloseButton={false} className="bg-white">
             <DialogHeader>
               <DialogTitle>{t('modals.delete.title')}</DialogTitle>
               <DialogDescription>{t('modals.delete.message')}</DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button onClick={handleDelete} variant="destructive">
-                {t('modals.delete.confirm')}
-              </Button>
-              <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedDeleteItem(null);
+                }}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                disabled={isDeletingSelectedItem}
+              >
                 {t('modals.delete.cancel')}
-              </Button>
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={isDeletingSelectedItem}
+              >
+                {isDeletingSelectedItem ? t('controls.saving') : t('modals.delete.confirm')}
+              </button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

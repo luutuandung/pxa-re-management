@@ -258,14 +258,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         } else if (field === 'generalCostNameEn') {
           const englishValidation = CommonEnglishNamingValidator.validate(value);
           if (englishValidation.isInvalid) {
-            // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
-            if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-              const halfWidthCheck = validateCodeField(value);
-              if (!halfWidthCheck.isValid) {
-                addErrorMessage(t(halfWidthCheck.error));
-                return;
-              }
-            }
             // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
             const { code, ...parameters } = englishValidation.validationErrorData;
             const translationKey = convertErrorCodeToTranslationKey(code);
@@ -380,14 +372,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       // 英語名称のバリデーション
       const englishValidation = CommonEnglishNamingValidator.validate(item.generalCostNameEn);
       if (englishValidation.isInvalid) {
-        // 半角文字のみチェック（CommonEnglishNamingValidatorは全角も許可するため追加チェック）
-        if (englishValidation.validationErrorData.code === CommonEnglishNamingValidator.ValidationErrorsData.Codes.invalidCharacters) {
-          const halfWidthCheck = validateCodeField(item.generalCostNameEn);
-          if (!halfWidthCheck.isValid) {
-            addErrorMessage(t(halfWidthCheck.error));
-            return;
-          }
-        }
         // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
         const { code, ...parameters } = englishValidation.validationErrorData;
         const translationKey = convertErrorCodeToTranslationKey(code);

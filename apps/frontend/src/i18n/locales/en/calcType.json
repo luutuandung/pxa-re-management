@@ -49,6 +49,9 @@
     "selectBusinessUnit": "Please select a business unit",
     "nameJaRequired": "Calculation type name (Japanese) is required",
     "nameEnRequired": "Calculation type name (English) is required",
-    "nameZhRequired": "Calculation type name (Chinese) is required"
+    "nameZhRequired": "Calculation type name (Chinese) is required",
+    "nameJaInvalidCharacters": "Calculation type name (Japanese) contains invalid characters: {{characters}}",
+    "nameEnInvalidCharacters": "Calculation type name (English) contains invalid characters: {{characters}}",
+    "nameZhInvalidCharacters": "Calculation type name (Chinese) contains invalid characters: {{characters}}"
   }
 }

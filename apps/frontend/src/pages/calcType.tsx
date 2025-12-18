@@ -48,6 +48,39 @@ type ValidationErrorForItem = {
   messages: string[];
 };
 
+const convertErrorCodeToTranslationKey = (errorCode: string): string => {
+  return errorCode
+    .split(/[-_]/)
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join('');
+};
+
+const validateField = (
+  value: unknown,
+  validator: typeof CommonJapaneseNamingValidator | typeof CommonEnglishNamingValidator | typeof CommonChineseNamingValidator,
+  fieldPrefix: 'nameJa' | 'nameEn' | 'nameZh',
+  t: (key: string, params?: Record<string, string>) => string
+): string | null => {
+  const validation = validator.validate(value);
+  if (validation.isInvalid) {
+    const { code, ...parameters } = validation.validationErrorData;
+    convertErrorCodeToTranslationKey(code);
+    const translationKey = code.includes('INVALID_CHARACTERS')
+      ? `${fieldPrefix}InvalidCharacters`
+      : `${fieldPrefix}Required`;
+    const params: Record<string, string> = {};
+    if ('commaSeparatedFoundInvalidCharacters' in parameters) {
+      params.characters = parameters.commaSeparatedFoundInvalidCharacters;
+    }
+    return t(`validation.${translationKey}`, params);
+  }
+  return null;
+};
+
 const CalcTypePage: FC = () => {
   const { t } = useTranslation('calcType');
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -192,30 +225,20 @@ const CalcTypePage: FC = () => {
   };
 
 
-  // 全アイテムのバリデーション関数
   const validateAllItems = (items: UnifiedCalcType[]): ValidationErrorForItem[] => {
     const validationErrors: ValidationErrorForItem[] = [];
 
     for (const [itemIndex, item] of items.entries()) {
       const messages: string[] = [];
 
-      // 日本語名のバリデーション
-      const jaResult = CommonJapaneseNamingValidator.validate(item.calcTypeNameJa);
-      if (jaResult.isInvalid) {
-        messages.push(t('validation.nameJaRequired'));
-      }
+      const jaError = validateField(item.calcTypeNameJa, CommonJapaneseNamingValidator, 'nameJa', t);
+      if (jaError) messages.push(jaError);
 
-      // 英語名のバリデーション
-      const enResult = CommonEnglishNamingValidator.validate(item.calcTypeNameEn);
-      if (enResult.isInvalid) {
-        messages.push(t('validation.nameEnRequired'));
-      }
+      const enError = validateField(item.calcTypeNameEn, CommonEnglishNamingValidator, 'nameEn', t);
+      if (enError) messages.push(enError);
 
-      // 中国語名のバリデーション
-      const zhResult = CommonChineseNamingValidator.validate(item.calcTypeNameZh);
-      if (zhResult.isInvalid) {
-        messages.push(t('validation.nameZhRequired'));
-      }
+      const zhError = validateField(item.calcTypeNameZh, CommonChineseNamingValidator, 'nameZh', t);
+      if (zhError) messages.push(zhError);
 
       if (messages.length > 0) {
         validationErrors.push({

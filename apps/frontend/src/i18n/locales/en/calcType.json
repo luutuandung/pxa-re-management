@@ -13,6 +13,8 @@
     "headers": {
       "selection": "Select",
       "name": "Name",
+      "nameEn": "Name (English)",
+      "nameZh": "Name (Chinese)",
       "modifiedDate": "Modified",
       "actions": "Actions"
     }
@@ -42,5 +44,11 @@
     "activateSuccess": "Activated successfully",
     "activateError": "Failed to activate",
     "validationNameRequired": "Name is required"
+  },
+  "validation": {
+    "selectBusinessUnit": "Please select a business unit",
+    "nameJaRequired": "Calculation type name (Japanese) is required",
+    "nameEnRequired": "Calculation type name (English) is required",
+    "nameZhRequired": "Calculation type name (Chinese) is required"
   }
 }

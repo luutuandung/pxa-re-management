@@ -13,6 +13,8 @@
     "headers": {
       "selection": "選択",
       "name": "計算種類",
+      "nameEn": "計算種類（英語）",
+      "nameZh": "計算種類（中国語）",
       "modifiedDate": "更新日時",
       "actions": "操作"
     }
@@ -42,5 +44,11 @@
     "activateSuccess": "有効化に成功しました",
     "activateError": "有効化に失敗しました",
     "validationNameRequired": "名称は必須です"
+  },
+  "validation": {
+    "selectBusinessUnit": "拠点を選択してください",
+    "nameJaRequired": "計算種類名（日本語）を入力してください",
+    "nameEnRequired": "計算種類名（英語）を入力してください",
+    "nameZhRequired": "計算種類名（中国語）を入力してください"
   }
 }

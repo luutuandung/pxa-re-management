@@ -42,5 +42,8 @@
     "activateSuccess": "Activated successfully",
     "activateError": "Failed to activate",
     "validationNameRequired": "Name is required"
+  },
+  "validation": {
+    "selectBusinessUnit": "Please select a business unit"
   }
 }

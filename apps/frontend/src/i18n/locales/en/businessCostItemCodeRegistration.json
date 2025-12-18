@@ -31,7 +31,9 @@
       "inputJapaneseName": "Enter Japanese name",
       "inputEnglishName": "Enter English name",
       "inputChineseName": "Enter Chinese name"
-    }
+    },
+    "deleteAlt": "Delete",
+    "noResults": "No results."
   },
   "pagination": {
     "showingItems": "items out of",

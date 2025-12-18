@@ -1,5 +1,46 @@
 {
   "title": "ホーム",
   "welcome": "ようこそ",
-  "description": "PXA RE Management Systemへようこそ"
+  "description": "PXA RE Management Systemへようこそ",
+  "menu": {
+    "title": "管理メニュー",
+    "items": {
+      "uniformCostItemCodeRegistration": {
+        "title": "統一原価項目コード登録",
+        "description": "原価項目コードの登録・管理"
+      },
+      "businessCostItemCodeRegistration": {
+        "title": "事業別原価項目コード登録",
+        "description": "事業別原価項目コードの登録・管理"
+      },
+      "businessCostItemSettings": {
+        "title": "事業別原価項目設定",
+        "description": "事業別原価項目の設定・管理"
+      },
+      "costAggregationScenario": {
+        "title": "原価集計シナリオ",
+        "description": "集計シナリオの作成・管理"
+      },
+      "calcType": {
+        "title": "計算種類",
+        "description": "計算種類の登録・管理"
+      },
+      "calcRegister": {
+        "title": "計算式登録",
+        "description": "計算式の登録・管理"
+      },
+      "costVersionRegistration": {
+        "title": "原価バージョン",
+        "description": "原価バージョンの登録・管理"
+      },
+      "costPattern": {
+        "title": "原価パターン",
+        "description": "原価パターンの登録・管理"
+      },
+      "costRegister": {
+        "title": "原価登録",
+        "description": "原価値の登録・管理"
+      }
+    }
+  }
 }

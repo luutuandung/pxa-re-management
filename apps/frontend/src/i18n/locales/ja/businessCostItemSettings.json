@@ -26,7 +26,8 @@
       "month": "月",
       "new": "新規",
       "edited": "編集済み"
-    }
+    },
+    "noResults": "データがありません"
   },
   "buttons": {
     "copy": "複製",

@@ -44,5 +44,28 @@
     "desc": "Description",
     "default": "Default",
     "defaultHint": "Set this cost version as default"
+  },
+  "reportType": {
+    "manufacturing": "Manufacturing Cost",
+    "individual": "Individual Cost",
+    "consolidated": "Consolidated P&L"
+  },
+  "placeholders": {
+    "costVersionId": "CV_2024_001",
+    "costVersionName": "2024 Cost Version",
+    "startDate": "202404",
+    "endDate": "202503",
+    "description": "Enter cost version description",
+    "duplicateName": "2024 Cost Version (Duplicate)"
+  },
+  "buttons": {
+    "ok": "OK",
+    "deleteAlt": "Delete"
+  },
+  "modals": {
+    "create": { "title": "Create Cost Version" },
+    "edit": { "title": "Edit Cost Version" },
+    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK" },
+    "duplicate": { "title": "Duplicate Cost Version" }
   }
 }

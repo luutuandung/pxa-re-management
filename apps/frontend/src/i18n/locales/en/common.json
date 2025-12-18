@@ -25,7 +25,13 @@
     "english": "English"
   },
   "dataTablePagination": {
-    "itemsPerPage": "Items per page"
+    "itemsPerPage": "Items per page",
+    "page": "Page",
+    "of": "of",
+    "goToFirstPage": "Go to first page",
+    "goToPreviousPage": "Go to previous page",
+    "goToNextPage": "Go to next page",
+    "goToLastPage": "Go to last page"
   },
   "locationSelect": {
     "placeholder": "Select Location"

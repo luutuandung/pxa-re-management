@@ -1,5 +1,46 @@
 {
   "title": "Home",
   "welcome": "Welcome",
-  "description": "Welcome to PXA RE Management System"
+  "description": "Welcome to PXA RE Management System",
+  "menu": {
+    "title": "Management Menu",
+    "items": {
+      "uniformCostItemCodeRegistration": {
+        "title": "Uniform Cost Item Code Registration",
+        "description": "Register and manage cost item codes"
+      },
+      "businessCostItemCodeRegistration": {
+        "title": "Business Cost Item Code Registration",
+        "description": "Register and manage business cost item codes"
+      },
+      "businessCostItemSettings": {
+        "title": "Business Cost Item Settings",
+        "description": "Configure and manage business cost items"
+      },
+      "costAggregationScenario": {
+        "title": "Cost Aggregation Scenario",
+        "description": "Create and manage aggregation scenarios"
+      },
+      "calcType": {
+        "title": "Calculation Types",
+        "description": "Register and manage calculation types"
+      },
+      "calcRegister": {
+        "title": "Calculation Formula Registration",
+        "description": "Register and manage calculation formulas"
+      },
+      "costVersionRegistration": {
+        "title": "Cost Version",
+        "description": "Register and manage cost versions"
+      },
+      "costPattern": {
+        "title": "Cost Pattern",
+        "description": "Register and manage cost patterns"
+      },
+      "costRegister": {
+        "title": "Cost Registration",
+        "description": "Register and manage cost values"
+      }
+    }
+  }
 }

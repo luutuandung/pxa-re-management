@@ -3,6 +3,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '../utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
+import i18n from '../i18n';
 
 const calcTypeAtom = atom<CalcType[]>([]);
 
@@ -15,14 +16,13 @@ export const useCalcTypeActions = () => {
       try {
         const url = `calc-type?businessunitId=${businessunitId}`;
         const response = await api.get<CalcType[]>(url).json();
-        console.log('[store] fetchCalcType:', response);
         setCalcType(response);
       } catch (error) {
         console.error('fetchCalcType error:', error);
-        addErrorMessage('計算種類の取得に失敗しました');
+        addErrorMessage(i18n.t('messages.fetchError', { ns: 'calcType' }));
       }
     },
-    [setCalcType]
+    [setCalcType, addErrorMessage]
   );
 
   const createCalcType = useCallback(
@@ -37,16 +37,15 @@ export const useCalcTypeActions = () => {
         await api.post('calc-type', {
           json: calcType,
         });
-        addSuccessMessage('計算種類を作成しました');
-        // 作成成功後にデータを再取得
+        addSuccessMessage(i18n.t('messages.saveSuccess', { ns: 'calcType' }));
         await fetchCalcType(calcType.businessunitId);
       } catch (error) {
         console.error('createCalcType error:', error);
-        addErrorMessage('計算種類の作成に失敗しました');
+        addErrorMessage(i18n.t('messages.saveError', { ns: 'calcType' }));
         throw error;
       }
     },
-    [fetchCalcType]
+    [fetchCalcType, addSuccessMessage, addErrorMessage]
   );
 
   const updateCalcType = useCallback(
@@ -64,52 +63,48 @@ export const useCalcTypeActions = () => {
         await api.put(`calc-type/${calcTypeId}`, {
           json: updateData,
         });
-        addSuccessMessage('計算種類を更新しました');
-        // 更新成功後にデータを再取得
+        addSuccessMessage(i18n.t('messages.saveSuccess', { ns: 'calcType' }));
         await fetchCalcType(updateData.businessunitId);
       } catch (error) {
         console.error('updateCalcType error:', error);
-        addErrorMessage('計算種類の更新に失敗しました');
+        addErrorMessage(i18n.t('messages.saveError', { ns: 'calcType' }));
         throw error;
       }
     },
-    [fetchCalcType]
+    [fetchCalcType, addSuccessMessage, addErrorMessage]
   );
 
   const deleteCalcType = useCallback(
     async (calcTypeId: string, businessunitId: string) => {
       try {
         await api.delete(`calc-type/${calcTypeId}`);
-        addSuccessMessage('計算種類を削除しました');
-        // 削除成功後にデータを再取得
+        addSuccessMessage(i18n.t('messages.deleteSuccess', { ns: 'calcType' }));
         await fetchCalcType(businessunitId);
       } catch (error) {
         console.error('deleteCalcType error:', error);
-        addErrorMessage('計算種類の削除に失敗しました');
+        addErrorMessage(i18n.t('messages.deleteError', { ns: 'calcType' }));
         throw error;
       }
     },
-    [fetchCalcType]
+    [fetchCalcType, addSuccessMessage, addErrorMessage]
   );
 
   const reactivateCalcType = useCallback(
     async (calcTypeId: string, businessunitId: string) => {
       try {
         await api.put(`calc-type/${calcTypeId}/reactivate`);
-        addSuccessMessage('計算種類を有効化しました');
-        // 有効化成功後にデータを再取得
+        addSuccessMessage(i18n.t('messages.activateSuccess', { ns: 'calcType' }));
         await fetchCalcType(businessunitId);
       } catch (error) {
         console.error('reactivateCalcType error:', error);
-        addErrorMessage('計算種類の有効化に失敗しました');
+        addErrorMessage(i18n.t('messages.activateError', { ns: 'calcType' }));
         throw error;
       }
     },
-    [fetchCalcType]
+    [fetchCalcType, addSuccessMessage, addErrorMessage]
   );
 
   const clearCalcType = useCallback(() => {
-    console.log('[store] clearCalcType');
     setCalcType([]);
   }, [setCalcType]);
 

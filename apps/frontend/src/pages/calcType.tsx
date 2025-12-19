@@ -3,6 +3,7 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import ButtonAtom from '@/components/atoms/Button';
 import {
   Dialog,
   DialogContent,
@@ -455,25 +456,25 @@ const CalcTypePage: FC = () => {
               <DialogDescription>{t('modals.delete.message')}</DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <button
+              <ButtonAtom
                 type="button"
                 onClick={() => {
                   setShowDeleteModal(false);
                   setSelectedDeleteItem(null);
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                variant="secondary"
                 disabled={isDeletingSelectedItem}
               >
                 {t('modals.delete.cancel')}
-              </button>
-              <button
+              </ButtonAtom>
+              <ButtonAtom
                 type="button"
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                variant="danger"
                 disabled={isDeletingSelectedItem}
               >
                 {isDeletingSelectedItem ? t('controls.saving') : t('modals.delete.confirm')}
-              </button>
+              </ButtonAtom>
             </DialogFooter>
           </DialogContent>
         </Dialog>

@@ -327,7 +327,7 @@ model BusinessUnit {
   scenarioAxisunits       ScenarioAxisunit[]
   scenarioAxisunitDetails ScenarioAxisunitDetail[]
 
-  @@map("M_BUSINESS_UNIT")
+  @@map("M_BUSINESS_UNIT_tmp")
 }
 
 model AggPreset {

@@ -29,4 +29,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
   },
+  css: {
+    preprocessorOptions: {
+      sass: {
+        additionalData: '@use "@/assets/styles/mixins.sass" as *\n'
+      }
+    }
+  }
 });

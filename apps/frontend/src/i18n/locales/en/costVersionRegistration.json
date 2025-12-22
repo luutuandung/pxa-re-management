@@ -23,7 +23,7 @@
   "modals": {
     "create": { "title": "Create Cost Version" },
     "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?" },
+    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK", "cancel": "Cancel" },
     "duplicate": { "title": "Duplicate Cost Version" }
   },
   "messages": {
@@ -33,7 +33,9 @@
     "deleteSuccess": "Deleted successfully",
     "duplicateSuccess": "Duplicated successfully",
     "validationError": "Please check your input",
-    "selectBeforeDuplicate": "Please select a cost version to duplicate"
+    "selectBeforeDuplicate": "Please select a cost version to duplicate",
+    "startDateAfterEndDate": "Start date must be before end date",
+    "periodExceeds36Months": "Period must be within 36 months"
   },
   "fields": {
     "id": "Cost Version ID",
@@ -61,11 +63,5 @@
   "buttons": {
     "ok": "OK",
     "deleteAlt": "Delete"
-  },
-  "modals": {
-    "create": { "title": "Create Cost Version" },
-    "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK" },
-    "duplicate": { "title": "Duplicate Cost Version" }
   }
 }

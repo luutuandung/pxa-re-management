@@ -17,6 +17,8 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "generate:erd": "pnpm --filter=backend run generate:erd",
+    "db:push": "pnpm --filter=backend prisma db push",
+    "db:migrate": "pnpm --filter=backend prisma migrate dev",
     "shared:build": "pnpm --filter=@pxa-re-management/shared run build",
     "shared:dev": "pnpm --filter=@pxa-re-management/shared run dev",
     "shared:clean": "pnpm --filter=@pxa-re-management/shared run clean",

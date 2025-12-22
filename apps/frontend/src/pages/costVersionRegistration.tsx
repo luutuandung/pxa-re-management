@@ -100,46 +100,7 @@ const CostVersionRegistration: FC = () => {
 
   const normalizeYm = (v: string) => (v || '').replaceAll('/', '').replaceAll('-', '').slice(0, 6);
 
-  const validateDateRange = (startDate: string, endDate: string): string | null => {
-    const normalizedStart = normalizeYm(startDate);
-    const normalizedEnd = normalizeYm(endDate);
-
-    // 日付形式のチェック（YYYYMM形式、6桁）
-    if (!normalizedStart || normalizedStart.length !== 6 || !/^\d{6}$/.test(normalizedStart)) {
-      return null; // 日付が未入力の場合は他のバリデーションで処理
-    }
-    if (!normalizedEnd || normalizedEnd.length !== 6 || !/^\d{6}$/.test(normalizedEnd)) {
-      return null; // 日付が未入力の場合は他のバリデーションで処理
-    }
-
-    // 開始日と終了日の比較
-    if (normalizedStart > normalizedEnd) {
-      return t('messages.startDateAfterEndDate');
-    }
-
-    // 期間が36か月以内であることをチェック
-    const startYear = parseInt(normalizedStart.substring(0, 4), 10);
-    const startMonth = parseInt(normalizedStart.substring(4, 6), 10);
-    const endYear = parseInt(normalizedEnd.substring(0, 4), 10);
-    const endMonth = parseInt(normalizedEnd.substring(4, 6), 10);
-
-    // 月数の差を計算
-    const monthsDiff = (endYear - startYear) * 12 + (endMonth - startMonth) + 1; // +1は開始月を含めるため
-
-    if (monthsDiff > 36) {
-      return t('messages.periodExceeds36Months');
-    }
-
-    return null;
-  };
-
   const confirmCreate = async () => {
-    const dateError = validateDateRange(formData.startDate, formData.endDate);
-    if (dateError) {
-      addErrorMessage(dateError);
-      return;
-    }
-
     try {
       await createCostVersion({
         ...formData,
@@ -155,12 +116,6 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmEdit = async () => {
-    const dateError = validateDateRange(formData.startDate, formData.endDate);
-    if (dateError) {
-      addErrorMessage(dateError);
-      return;
-    }
-
     try {
       const { costVersionId, ...updateData } = formData;
       await updateCostVersion(costVersionId, {

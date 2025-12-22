@@ -18,10 +18,9 @@ const CostVersionRegistration: FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [selectedCostVersion, setSelectedCostVersion] = useState<string | null>(null);
-  const [reportType, setReportType] = useState('製造原価');
+  const [selectedBusinessUnitCd, setSelectedBusinessUnitCd] = useState<string>('all');
   const [costCopy, setCostCopy] = useState(false);
 
-  // Form states for create/edit modal
   const [formData, setFormData] = useState({
     costVersionId: '',
     businessunitId: '',
@@ -32,7 +31,6 @@ const CostVersionRegistration: FC = () => {
     defaultFlg: false,
   });
 
-  // Duplicate modal state
   const [duplicateData, setDuplicateData] = useState({
     newCostVersionId: '',
     newCostVersionName: '',
@@ -47,14 +45,25 @@ const CostVersionRegistration: FC = () => {
   const { businessUnits } = useBusinessUnitSelectors();
 
   useEffect(() => {
-    fetchCostVersions();
     fetchBusinessUnit();
-  }, [fetchCostVersions, fetchBusinessUnit]);
+  }, [fetchBusinessUnit]);
+
+  useEffect(() => {
+    if (selectedBusinessUnitCd === 'all') {
+      fetchCostVersions();
+    } else if (selectedBusinessUnitCd) {
+      fetchCostVersions(selectedBusinessUnitCd);
+    }
+  }, [selectedBusinessUnitCd, fetchCostVersions]);
 
   const handleCreate = () => {
+    const selectedBu =
+      selectedBusinessUnitCd === 'all'
+        ? businessUnits[0]
+        : businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
     setFormData({
       costVersionId: '',
-      businessunitId: businessUnits[0]?.businessunitId ?? '',
+      businessunitId: selectedBu?.businessunitId ?? businessUnits[0]?.businessunitId ?? '',
       costVersionName: '',
       startDate: '',
       endDate: '',
@@ -89,10 +98,11 @@ const CostVersionRegistration: FC = () => {
     }
     const selected = costVersions.find((cv) => cv.costVersionId === selectedCostVersion);
     if (selected) {
+      const selectedBu = businessUnits.find((bu) => bu.businessunitId === selected.businessunitId);
       setDuplicateData({
         newCostVersionId: '',
         newCostVersionName: '',
-        ktnCd: selected.businessunitId,
+        ktnCd: selectedBu?.buCd || selectedBusinessUnitCd,
       });
       setShowDuplicateModal(true);
     }
@@ -109,6 +119,11 @@ const CostVersionRegistration: FC = () => {
       });
       addSuccessMessage(t('messages.createSuccess'));
       setShowCreateModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to create cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -125,6 +140,11 @@ const CostVersionRegistration: FC = () => {
       });
       addSuccessMessage(t('messages.updateSuccess'));
       setShowEditModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to update cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -138,6 +158,11 @@ const CostVersionRegistration: FC = () => {
       addSuccessMessage(t('messages.deleteSuccess'));
       setShowDeleteModal(false);
       setSelectedCostVersion(null);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to delete cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -155,6 +180,11 @@ const CostVersionRegistration: FC = () => {
       });
       addSuccessMessage(t('messages.duplicateSuccess'));
       setShowDuplicateModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to duplicate cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -162,7 +192,6 @@ const CostVersionRegistration: FC = () => {
   };
 
   const formatDateForDisplay = (date: string) => {
-    // Convert YYYYMM to YYYY/MM for display
     if (!date || date.length !== 6) return '';
     return `${date.substring(0, 4)}/${date.substring(4, 6)}`;
   };
@@ -202,15 +231,21 @@ const CostVersionRegistration: FC = () => {
             </button>
 
             <div className="flex items-center gap-2 ml-6">
-              <label className="text-sm text-gray-700">{t('controls.reportType')}</label>
+              <label className="text-sm text-gray-700">{t('fields.businessUnit')}</label>
               <select
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedBusinessUnitCd}
+                onChange={(e) => {
+                  setSelectedBusinessUnitCd(e.target.value);
+                  setSelectedCostVersion(null);
+                }}
+                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
               >
-                <option value="製造原価">{t('reportType.manufacturing')}</option>
-                <option value="個別原価">{t('reportType.individual')}</option>
-                <option value="製版連結収支">{t('reportType.consolidated')}</option>
+                <option value="all">{t('controls.allBusinessUnits', { defaultValue: 'すべて' })}</option>
+                {businessUnits.map((bu) => (
+                  <option key={bu.businessunitId} value={bu.buCd}>
+                    {bu.businessunitNameJa}
+                  </option>
+                ))}
               </select>
             </div>
 

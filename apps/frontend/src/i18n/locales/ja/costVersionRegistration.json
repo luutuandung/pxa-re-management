@@ -5,7 +5,8 @@
     "duplicate": "複製",
     "reportType": "帳票種類",
     "costCopy": "原価複製",
-    "saving": "保存中..."
+    "saving": "保存中...",
+    "allBusinessUnits": "すべて"
   },
   "table": {
     "headers": {
@@ -38,6 +39,7 @@
   "fields": {
     "id": "原価バージョンID",
     "businessUnit": "事業部",
+    "systemCode": "系統コード",
     "name": "原価バージョン名",
     "start": "適用開始",
     "end": "適用終了",

@@ -5,7 +5,8 @@
     "duplicate": "Duplicate",
     "reportType": "Report Type",
     "costCopy": "Cost Copy",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "allBusinessUnits": "All"
   },
   "table": {
     "headers": {
@@ -37,6 +38,7 @@
   },
   "fields": {
     "id": "Cost Version ID",
+    "businessUnit": "Business Unit",
     "systemCode": "System Code",
     "name": "Cost Version Name",
     "start": "Start",

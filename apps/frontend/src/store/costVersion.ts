@@ -1,10 +1,10 @@
-import type { CostVersion } from '@pxa-re-management/shared';
+import type { CostPriceVersion } from '@pxa-re-management/shared';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '../utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
 
-const costVersionsAtom = atom<CostVersion[]>([]);
+const costVersionsAtom = atom<CostPriceVersion[]>([]);
 
 export const useCostVersionActions = () => {
   const setCostVersions = useSetAtom(costVersionsAtom);
@@ -14,7 +14,7 @@ export const useCostVersionActions = () => {
     async (ktnCd?: string) => {
       try {
         const url = ktnCd ? `costVersion?ktnCd=${ktnCd}` : 'costVersion';
-        const response = await api.get<CostVersion[]>(url).json();
+        const response = await api.get<CostPriceVersion[]>(url).json();
         setCostVersions(response);
       } catch (error) {
         console.error('fetchCostVersions error:', error);

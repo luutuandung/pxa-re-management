@@ -1,0 +1,16 @@
+@mixin loadingPlaceholder
+
+  background-image: linear-gradient(to right, var(--color-gray-300) 0%, var(--color-gray-300) 25%, var(--color-gray-400) 50%, var(--color-gray-300) 75%, var(--color-gray-300) 100%)
+  background-size: 300% 100%
+  animation: loadingPlaceholder 3s linear infinite
+
+
+@keyframes loadingPlaceholder
+
+  0%
+
+    background-position: 0 0
+
+  100%
+
+    background-position: 300% 0

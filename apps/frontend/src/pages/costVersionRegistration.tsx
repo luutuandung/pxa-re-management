@@ -1,5 +1,5 @@
-import type { CostVersion } from '@pxa-re-management/shared';
-import LocationSelectField from '@/components/molecules/LocationSelectField';
+import type { CostPriceVersion } from '@pxa-re-management/shared';
+import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/businessUnit';
 import { type FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +64,7 @@ const CostVersionRegistration: FC = () => {
     setShowCreateModal(true);
   };
 
-  const handleEdit = (costVersion: CostVersion) => {
+  const handleEdit = (costVersion: CostPriceVersion) => {
     setFormData({
       costVersionId: costVersion.costVersionId,
       businessunitId: costVersion.businessunitId,
@@ -330,7 +330,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
                 locations={businessUnits}
-                selectClassName="w-full"
+                className="w-full"
               />
             </div>
             <div className="flex items-center gap-4">
@@ -425,7 +425,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
                 locations={businessUnits}
-                selectClassName="w-full"
+                className="w-full"
                 disabled
               />
             </div>

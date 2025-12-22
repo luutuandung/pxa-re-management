@@ -1,19 +1,18 @@
-import type { BusinessUnitItem, GetBusinessUnitListResponse } from '@pxa-re-management/shared';
+import { type BusinessUnit, BusinessUnitTransactions } from '@pxa-re-management/shared';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '@/utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
 
-const businessUnitAtom = atom<BusinessUnitItem[]>([]);
+const businessUnitAtom = atom<BusinessUnit[]>([]);
 
 export const useBusinessUnitActions = () => {
   const setBusinessUnit = useSetAtom(businessUnitAtom);
   const { addErrorMessage } = useStickyMessageActions();
 
-  const fetchBusinessUnit = useCallback(async () => {
+  const fetchBusinessUnit = useCallback(async (): Promise<void> => {
     try {
-      const response = await api.get<GetBusinessUnitListResponse>('business-unit').json();
-      setBusinessUnit(response.businessUnits ?? []);
+      setBusinessUnit(await api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json());
     } catch (error) {
       console.error('fetchBusinessUnit error:', error);
       addErrorMessage('拠点情報の取得に失敗しました');

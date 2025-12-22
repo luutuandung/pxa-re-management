@@ -1,4 +1,4 @@
-import type { AxisOption, BusinessUnitItem } from '@pxa-re-management/shared';
+import type { AxisOption, BusinessUnit } from '@pxa-re-management/shared';
 
 type Lang = 'ja' | 'en' | 'zh';
 
@@ -13,19 +13,19 @@ export const getAxisLabel = (axis: AxisOption, lang: string): string => {
   return l === 'ja' ? axis.nameJa : l === 'en' ? axis.nameEn : axis.nameZh;
 };
 
-export const getBusinessUnitName = (bu: BusinessUnitItem, lang: string): string => {
+export const getBusinessUnitName = (bu: BusinessUnit, lang: string): string => {
   const l = normalizeLang(lang);
   return l === 'ja' ? bu.businessunitNameJa : l === 'en' ? bu.businessunitNameEn : bu.businessunitNameZh;
 };
 
-export const getProductName = (bu: BusinessUnitItem, lang: string): string => {
+export const getProductName = (bu: BusinessUnit, lang: string): string => {
   const l = normalizeLang(lang);
   return l === 'ja' ? bu.productNameJa : l === 'en' ? bu.productNameEn : bu.productNameZh;
 };
 
 export const joinBaseAndProduct = (
   base: string | undefined,
-  bu: BusinessUnitItem | undefined,
+  bu: BusinessUnit | undefined,
   lang: string
 ): string => {
   const b = base ?? '';

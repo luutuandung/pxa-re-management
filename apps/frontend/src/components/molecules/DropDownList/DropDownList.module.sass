@@ -1,0 +1,49 @@
+.rootElement
+
+  display: flex
+
+
+  &__verticalOrientation
+
+    flex-direction: column
+    row-gap: calc(var(--spacing) * 1)
+
+
+  &__horizontalOrientation
+
+    align-items: center
+    column-gap: calc(var(--spacing) * 2)
+
+
+.label
+
+  font-size: var(--text-sm)
+  line-height: var(--tw-leading, var(--text-sm--line-height))
+
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+
+  color: var(--color-gray-700)
+
+  flex-shrink: 0
+
+
+  @at-root .rootElement__horizontalOrientation &
+
+    max-width: 120px
+
+
+.skeletonLoading
+
+  height: calc(var(--spacing) * 9)
+  border-radius: var(--radius-md)
+
+  background-color: var(--color-gray-200)
+
+  @include loadingPlaceholder
+
+
+  @at-root .rootElement__horizontalOrientation &
+
+    min-width: calc(var(--spacing) * 32)

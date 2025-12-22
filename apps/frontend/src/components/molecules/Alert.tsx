@@ -1,3 +1,4 @@
+import Button from "@/components/atoms/Button"
 import * as React from "react";
 
 
@@ -73,6 +74,12 @@ class Alert extends React.Component<Alert.Props> {
   }
 
   public render(): React.ReactNode {
+
+    if (this.props.mustDisplayIf === false) {
+      return null;
+    }
+
+
     return (
       <div
         role="alert"
@@ -99,11 +106,22 @@ class Alert extends React.Component<Alert.Props> {
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
         </svg>
 
-        <span className="sr-only">Info</span>
-
         <div className="ms-3 text-sm font-medium">
           { this.props.children }
         </div>
+
+        {
+          typeof this.props.actionButton === "undefined" ?
+              null :
+              (
+                <Button
+                  onClick={ this.props.actionButton.onClickEventHandler.bind(this) }
+                  className="ml-2"
+                >
+                  { this.props.actionButton.label }
+                </Button>
+              )
+        }
 
         {
           typeof this.props.onClickDismissingButton === "undefined" ?
@@ -164,7 +182,12 @@ namespace Alert {
     severity: Severities;
     children: React.ReactNode;
     onClickDismissingButton?: () => unknown;
+    mustDisplayIf?: boolean;
     className?: string;
+    actionButton?: Readonly<{
+      label: string;
+      onClickEventHandler: () => unknown;
+    }>;
   }>;
 
   export enum Severities {

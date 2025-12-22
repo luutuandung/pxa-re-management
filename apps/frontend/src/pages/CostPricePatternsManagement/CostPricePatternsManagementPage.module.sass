@@ -1,0 +1,133 @@
+.actionBar
+
+  display: grid
+  grid-template-columns: auto auto minmax(0, 1fr)
+  column-gap: calc(var(--spacing) * 3)
+  row-gap: calc(var(--spacing) * 2)
+  justify-items: start
+
+  margin-top: calc(var(--spacing) * 3)
+
+
+  &-dropDownList
+
+    &:first-of-type
+
+      justify-self: stretch
+
+  &-button
+
+    &:first-of-type
+
+      justify-self: end
+
+
+.alert
+
+  @at-root .actionBar + &
+
+    margin-top: calc(var(--spacing) * 2)
+
+
+.table
+
+  @mixin CellCommonStyles
+
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4)
+    line-height: var(--tw-leading, var(--text-sm--line-height))
+    font-size: var(--text-sm)
+
+
+    &:not(:last-child)
+
+      border-right-width: 1px
+
+      border-right-style: var(--tw-border-style)
+      border-color: var(--color-gray-200)
+
+
+  &-decorativeWrapper
+
+    border-width: 1px
+    border-radius: var(--radius-lg)
+    overflow-x: auto
+
+    border-style: var(--tw-border-style)
+    border-color: var(--color-gray-200)
+    background-color: white
+
+
+    @at-root .actionBar + &
+
+      margin-top: calc(var(--spacing) * 2)
+
+
+    @at-root .alert + &
+
+      margin-top: calc(var(--spacing) * 4)
+
+
+    .alert
+
+      margin: calc(var(--spacing) * 2)
+
+
+  &-headerCell
+
+    @include CellCommonStyles
+    text-align: left
+
+
+    &__small
+
+      width: calc(var(--spacing) * 12)
+      text-align: center
+
+
+  &-bodyCell
+
+    @include CellCommonStyles
+    color: var(--color-gray-800)
+
+
+  &-loadingPlaceholder
+
+    display: block
+
+    height: var(--text-sm)
+    border-radius: var(--radius-sm)
+
+    @include loadingPlaceholder
+
+
+    @at-root .table-bodyCell
+
+      &:first-child .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 4)
+        height: calc(var(--spacing) * 4)
+
+
+      &:nth-child(2) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+      &:nth-child(3) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 36)
+
+
+      &:nth-child(4) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 8)
+
+
+      &:nth-child(5) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+      &:nth-child(6) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 16)

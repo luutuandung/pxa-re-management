@@ -2,14 +2,14 @@ import {
   AggClass,
   type AxisDependentOptionsResponse,
   type AxisOption,
-  type BusinessUnitItem,
-  type GetBusinessUnitListResponse,
+  type BusinessUnit,
   type GetConcatTargetsResponse,
   type GetCostScenarioOptionsResponse,
   type ScenarioBusinessOption,
   type ScenarioTypeOption,
   type SelectOption,
   type TableRowData,
+  BusinessUnitTransactions
 } from '@pxa-re-management/shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useLanguage } from '@/store/languageSettings';
@@ -23,7 +23,7 @@ type MultilingualOption = {
 };
 
 export const useCostAggregationScenario = () => {
-  const [businessUnits, setBusinessUnits] = useState<BusinessUnitItem[]>([]);
+  const [businessUnits, setBusinessUnits] = useState<BusinessUnit[]>([]);
   const [options, setOptions] = useState<GetCostScenarioOptionsResponse | null>(null);
   const [concatTargets, setConcatTargets] = useState<GetConcatTargetsResponse['targets']>([]);
   const [parentConcatTargets, setParentConcatTargets] = useState<GetConcatTargetsResponse['targets']>([]);
@@ -31,9 +31,8 @@ export const useCostAggregationScenario = () => {
   const [rateTypeOptions, setRateTypeOptions] = useState<SelectOption[]>([]);
   const { currentLanguage } = useLanguage();
 
-  const fetchBusinessUnit = async () => {
-    const response = await api.get<GetBusinessUnitListResponse>('business-unit').json();
-    setBusinessUnits(response.businessUnits);
+  const fetchBusinessUnit = async (): Promise<void> => {
+    setBusinessUnits(await api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json());
   };
 
   const fetchOptions = async () => {
@@ -134,7 +133,8 @@ export const useCostAggregationScenario = () => {
 
   // APIから取得したオプションをUI向けの配列に変換
   const getScenarioTypeOptions = (): { value: string; label: string }[] => {
-    return (options?.scenarioTypes ?? []).map((s: ScenarioTypeOption) => ({ value: s.id, label: s.name }));
+    const scenarioTypes: ScenarioTypeOption[] = options?.scenarioTypes ?? [];
+    return scenarioTypes.map((s: ScenarioTypeOption) => ({ value: s.id, label: s.name }));
   };
 
   const getCurrencyOptions = (): { value: string; label: string }[] => {
@@ -153,7 +153,7 @@ export const useCostAggregationScenario = () => {
   };
 
   // 事業単位の多言語対応ラベルを取得
-  const getBusinessUnitLabel = (businessUnit: BusinessUnitItem): string =>
+  const getBusinessUnitLabel = (businessUnit: BusinessUnit): string =>
     getBusinessUnitName(businessUnit, currentLanguage);
 
   // テーブルデータを生成する関数

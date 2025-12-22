@@ -1,0 +1,154 @@
+.content
+
+  background-color: white
+
+
+.body
+
+  display: grid
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  column-gap: calc(var(--spacing) * 4)
+
+
+@mixin section
+
+  border-width: 1px
+  border-radius: 0.25rem
+  padding: calc(var(--spacing) * 3)
+
+  border-style: var(--tw-border-style)
+
+
+.listGroup
+
+  @include section
+
+  display: grid
+  grid-template-columns: minmax(0, 1fr) auto
+  grid-template-rows: auto 1fr
+  row-gap: calc(var(--spacing) * 2)
+  column-gap: calc(var(--spacing) * 4)
+
+
+  .alert
+
+    grid-column: span 2
+    align-self: start
+
+
+.listBox
+
+  grid-column: span 2
+
+  overflow-y: scroll
+
+
+  &-item
+
+    display: block
+    padding:  calc(var(--spacing) * 2)
+
+    color: var(--color-gray-700)
+    cursor: pointer
+
+
+    &:nth-child(odd)
+
+      background-color: var(--color-gray-200)
+
+
+    &:nth-child(even)
+
+      background-color: var(--color-gray-50)
+
+
+    &:hover
+
+      background-color: var(--color-yellow-50)
+
+
+    &:focus-visible
+
+      outline: 2px solid var(--color-blue-500)
+      outline-offset: -2px
+
+
+    &:active
+
+      background-color: var(--color-yellow-100)
+
+
+    &:has([aria-checked=true])
+
+      pointer-events: none
+
+      background-color: var(--color-yellow-200)
+
+
+    &-radioButton
+
+      overflow: hidden
+
+
+    &--loadingPlaceholder
+
+      height:  calc(var(--spacing) * 12)
+      @include loadingPlaceholder
+
+
+      + .listBox-item--loadingPlaceholder
+
+        margin-top: 1px
+
+
+
+
+
+
+
+.inputsForm
+
+  @include section
+
+
+  .alert
+
+    ul
+
+      list-style-type: disc
+      list-style-position: inside
+
+      margin-top: calc(var(--spacing) * 1)
+
+
+  .textBox
+
+    + .textBox
+
+      margin-top: calc(var(--spacing) * 2)
+
+
+    @at-root .inputsForm .alert + .textBox
+
+      margin-top: calc(var(--spacing) * 4)
+
+
+  .costPricePatternsCategoriesManager
+
+    @at-root .inputsForm .textBox + .costPricePatternsCategoriesManager
+
+      margin-top: calc(var(--spacing) * 4)
+
+
+    + .costPricePatternsCategoriesManager
+
+      margin-top: calc(var(--spacing) * 3)
+
+
+  >.button
+
+    position: relative
+    left: 100%
+    transform: translateX(-100%)
+
+    margin-top: calc(var(--spacing) * 2)

@@ -1,11 +1,11 @@
 import {
   type BusinessCostItemResponse,
   type BusinessCostItemWithCode,
-  type BusinessUnitItem,
-  type GetBusinessUnitListResponse,
+  type BusinessUnit,
   type UpdatedBusinessCostItemRequestData,
   UpdatedBusinessCostItemRequestDataValidator,
-  CodesOfAvailableCurrencies
+  CodesOfAvailableCurrencies,
+  BusinessUnitTransactions
 } from '@pxa-re-management/shared';
 import {
   type ColumnDef,
@@ -20,7 +20,7 @@ import * as React from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { DataTablePagination } from '@/components/molecules/DataTablePagination';
-import LocationSelectField from '@/components/molecules/LocationSelectField';
+import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 import Alert from "@/components/molecules/Alert.tsx";
 import Backdrop from "@/components/molecules/Backdrop.tsx";
 import { Button } from '@/components/ui/button';
@@ -82,7 +82,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
 
   /* ━━━ ステート管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   const [ selectedBase, setSelectedBase ] = React.useState<null | string>(null);
-  const [ locations, setLocations ] = React.useState<BusinessUnitItem[]>([]);
+  const [ locations, setLocations ] = React.useState<BusinessUnit[]>([]);
   const [ _selectedLanguage, _setSelectedLanguage ] = React.useState('0');
   const [ _showInactive, _setShowInactive ] = React.useState(false);
   const [ showSaveDialog, setShowSaveDialog ] = React.useState(false);
@@ -95,7 +95,6 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
   const [ columnFilters, setColumnFilters ] = React.useState<ColumnFiltersState>([]);
   const [ nameFilter, setNameFilter] = React.useState('');
   const [ isSaving, setIsSaving] = React.useState(false);
-  const [ isExcelDataExportInProgress, setIsExcelDataExportInProgress ] = React.useState(false);
   const [ pagination, setPagination ] = React.useState({ pageIndex: 0, pageSize: 20, });
 
 
@@ -590,7 +589,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
       }
 
 
-      setIsExcelDataExportInProgress(true);
+      Backdrop.display({ accessibilityGuidance: 'messages.screenReaderOnly.excelFileExportingInProgress' });
 
       let rawUpdatedBusinessCostItemRequestData: ReadonlyArray<RawUpdatedBusinessCostItemRequestData>;
 
@@ -616,7 +615,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
 
         console.error('エクセルファイル処理エラー:', error);
         addErrorToastMessage(t('messages.excelDataParsingFailed'));
-        setIsExcelDataExportInProgress(false);
+        Backdrop.dismiss();
 
         return;
 
@@ -643,7 +642,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
           )
         );
 
-        setIsExcelDataExportInProgress(false);
+        Backdrop.dismiss();
 
         return;
 
@@ -664,7 +663,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
 
         console.error('エクセルファイルからのデータ送信中エラーが発生:', error);
         addErrorToastMessage(t('messages.importedFromExcelDataSubmittingError'));
-        setIsExcelDataExportInProgress(false);
+        Backdrop.dismiss();
 
         return;
 
@@ -676,14 +675,13 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
       const businessCostItems = await fetchBusinessCostItems();
       setValue('items', businessCostItems);
       setCostItemOrigins(businessCostItems);
-      setIsExcelDataExportInProgress(false);
+      Backdrop.dismiss();
 
       (fileInputElementReactReference.current ?? { value: '' }).value = '';
 
     },
     [
       addErrorToastMessage,
-      setIsExcelDataExportInProgress,
       setExportingFromExcelValidationErrors,
       addSuccessToastMessage,
       t,
@@ -719,7 +717,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
             t('table.headers.autoCreate')
           ],
           bodyCellsContent: formItems,
-          transformItemToCellsArray: (businessCostItemWithCode: BusinessCostItemWithCode): Array<string | boolean> =>
+          transformItemToCellsArray: (businessCostItemWithCode: BusinessCostItemWithCode): Array<string | number | boolean> =>
               [
                 businessCostItemWithCode.buCostItemId,
                 businessCostItemWithCode.buCostCode.buCostCd,
@@ -839,10 +837,9 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
     }
   };
 
-  const _fetchLocations = async () => {
+  const _fetchLocations = async (): Promise<Array<BusinessUnit>> => {
     try {
-      const response = await api.get<GetBusinessUnitListResponse>('business-unit').json();
-      return response.businessUnits;
+      return api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json();
     } catch (_error) {
       addErrorToastMessage(t('messages.fetchError'));
       return [];
@@ -956,7 +953,7 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
               value={selectedBase}
               onValueChange={setSelectedBase}
               locations={locations}
-              selectClassName="w-[200px]"
+              className="w-[200px]"
             />
           </div>
 
@@ -1171,8 +1168,6 @@ const BusinessCostItemSettings: React.FC = (): React.ReactNode => {
           onChange={ onExcelFilePickedEventHandler }
           style={ { display: 'none' } }
         />
-
-        { isExcelDataExportInProgress ? <Backdrop/> : null }
 
       </div>
     </div>

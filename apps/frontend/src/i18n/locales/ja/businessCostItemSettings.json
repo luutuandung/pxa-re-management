@@ -81,7 +81,10 @@
     "importedFromExcelDataSubmittingError": "エクセルファイルからインポートされたデータの送信中に不具合が発生しました。",
     "validationError": "データの検証に失敗しました",
     "spreadsheetFileGeneratingError": "XLSXファイルの生成に失敗しました",
-    "duplicateError": "同じbuCostCodeIdと通貨の組み合わせが既に存在します"
+    "duplicateError": "同じbuCostCodeIdと通貨の組み合わせが既に存在します",
+    "screenReaderOnly": {
+      "excelFileExportingInProgress": "ただいまExcelファイルが処理中です。しばらくお待ちください。"
+    }
   },
   "currency": {
     "JPY": "JPY",

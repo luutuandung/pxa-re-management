@@ -1,0 +1,84 @@
+{
+  "topHeading": "原価登録",
+  "guidances": {
+    "tableDataDisplaying": "原価登録データを表示させるには、拠点を選んでから原価バージョンを選んで下さい。その後、任意で原価パターン種類で絞りめます。",
+    "noBusinessUnits": "拠点データがないので、表示可能な関連原価登録データはありません。",
+    "noCostPriceVersions": "選択された拠点と関連している原価登録バージョンデータはありません。",
+    "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
+    "importedFromExcelDataSubmittingSucceeded": "エクセルファイルを元に原価登録データが更新されました。",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "原価登録データを取得中です。しばらくお待ちください。",
+      "excelFileExportingInProgress": "ただいまExcelファイルを処理中です。しばらくお待ちください。"
+    }
+  },
+  "controls": {
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "拠点",
+        "placeholders": {
+          "normal": "拠点を選択",
+          "noData": "拠点がありません"
+        }
+      },
+      "costPriceVersions": {
+        "label": "原価バージョン",
+        "placeholders": {
+          "normal": "原価バージョンを選択",
+          "noData": "原価バージョンがありません"
+        }
+      },
+      "constPricePatterns": {
+        "label": "原価パターン種類",
+        "placeholders": {
+          "normal": "原価パターン種類を選択",
+          "noData": "原価パターン種類はありません"
+        }
+      }
+    },
+    "buttons": {
+      "businessUnitsDataRetrievingRetrying": { "label": "再取得" },
+      "costPriceVersionsDropDownListItemsRetrievingRetrying": { "label": "再取得" },
+      "tableDataRetrievingRetrying": { "label": "再取得" },
+      "excelFileDownloading": { "label": "Excelダウンロード" },
+      "excelFileUploading": { "label": "Excelアップロード" }
+    }
+  },
+  "table": {
+    "headers": {
+      "businessUnitCostPriceCode": "事業部原価登録コード",
+      "businessUnitCostPriceLocalizedName": "事業原価登録名",
+      "costPriceType": "原価種類",
+      "currency": "通貨",
+      "costPricePatternLocalizedName": "原価パターン種類",
+      "formattedModelCategoriesNames": "機種カテゴリ",
+      "formattedSalesDestinations": "販売先カテゴリ",
+      "formattedSecondSalesDestinations": "2次販売先カテゴリ",
+      "startYearAndMonth__YYYYMM": "適用年月",
+      "costPriceAmount": "原価値"
+    },
+    "bodyCells": {
+      "costPriceType": {
+        "amount": "額",
+        "rate": "レート"
+      }
+    }
+  },
+  "errors": {
+    "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中不具合が発生しました。",
+    "hasCostPriceVersionsDropDownListItemsFailed": "原価バージョン絞り込みに必要なデータの取得中不具合が発生しました。",
+    "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
+    "excelDataParsingFailed": "エクセルファイルの読み込み中不具合が発生しました。",
+    "excelFileValidation": {
+      "intro": "インポートされたエクセルファイルにおいて下記の不備がありました。",
+      "lineNumberTitle": "{{ lineNumber }}行目",
+      "COST_PRICE_REGISTRATION_ID-NOT_EXISTS": "原価登録のIDが必須になっていますが、指定されていません。",
+      "COST_PRICE_REGISTRATION_ID-EXISTS_BUT_NOT_STRING": "原価登録のIDが指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
+      "COST_PRICE_REGISTRATION_ID-STRING_BUT_EMPTY": "原価登録のIDが指定され、文字列になってはいますが、空文字です。",
+      "COST_PRICE_REGISTRATION_ID-HAS_DUPLICATE": "同じIDの行がファイルの中に複数存在します。",
+      "COST_PRICE_REGISTRATION_VALUE-NOT_EXISTS": "原価登録の値が必須になっていますが、指定されていません。",
+      "COST_PRICE_REGISTRATION_VALUE-EXISTS_BUT_NOT_NUMBER": "原価登録の値が指定されていますが、数型になっておらず、{{ actualType }}になっています。",
+      "COST_PRICE_REGISTRATION_VALUE-LESS_THAN_0": "原価登録の値がゼロより小さくなっています。"
+    },
+    "importedFromExcelDataSubmittingFailed": "エクセルファイルからインポートされたデータの送信中に不具合が発生しました。"
+  }
+}

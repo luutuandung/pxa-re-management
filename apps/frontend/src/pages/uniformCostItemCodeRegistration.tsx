@@ -317,6 +317,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     if (isSaving) return;
 
     setIsSaving(true);
+    Backdrop.display();
 
     try {
       // 実際に変更されたアイテムのみを取得（handleSaveと同じロジック）
@@ -375,6 +376,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       console.error('保存に失敗しました:', error);
     } finally {
       setIsSaving(false);
+      Backdrop.dismiss();
     }
   };
 
@@ -392,6 +394,8 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     if (!selectedDeleteItem || isDeletingSelectedItem) return;
 
     setIsDeletingSelectedItem(true);
+    Backdrop.display();
+
     try {
       if (selectedDeleteItem.isNew) {
         // 新規項目の場合は単純に削除
@@ -406,6 +410,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
       console.error('削除に失敗しました:', error);
     } finally {
       setIsDeletingSelectedItem(false);
+      Backdrop.dismiss();
     }
   };
 
@@ -890,9 +895,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* ローディングオーバーレイ */}
-      {(isDeletingSelectedItem || isSaving) && <Backdrop />}
     </div>
   );
 };

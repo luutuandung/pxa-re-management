@@ -1,0 +1,26 @@
+{
+  "table": {
+    "columnTitles": {
+      "number": "番号",
+      "ordering": "並べ替え",
+      "category": "カテゴリー",
+      "otherActions": "その他の操作"
+    }
+  },
+  "controls": {
+    "buttons": {
+      "swapWithPreviousCategory": { "accessibilityGuidance": "直前のカテゴリーと並べ替える" },
+      "swapWithNextCategory": { "accessibilityGuidance": "直後のカテゴリーと並べ替える" },
+      "categoryAdding": { "label": "追加" },
+      "categoryDeleting": { "label": "削除" }
+    },
+    "dropDownLists": {
+      "category": {
+        "placeholders": {
+          "normal": "カテゴリー",
+          "noData": "データがありません"
+        }
+      }
+    }
+  }
+}

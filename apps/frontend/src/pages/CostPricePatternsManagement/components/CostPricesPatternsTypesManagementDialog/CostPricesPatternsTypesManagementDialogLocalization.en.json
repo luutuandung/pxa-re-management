@@ -1,0 +1,59 @@
+{
+  "heading": "Cost Price Pattern Types Management",
+  "listView": {
+    "title": "Cost Price Pattern Types"
+  },
+  "controls": {
+    "buttons": {
+      "beingInputtingOfNewCostPricesPatternData": { "label": "Add" },
+      "retryingOfCostPricesPatternsListItemsRetrieving": { "label": "Retry" },
+      "savingOfNewCostPricePattern": { "label": "Save" },
+      "closing": { "label": "Close" }
+    },
+    "textBoxes": {
+      "costPricePatternNames": {
+        "japanese": { "label": "Japanese Name" },
+        "english": { "label": "English Name" },
+        "chinese": { "label": "Chinese Name" }
+      }
+    },
+    "costPricePatternsCategoriesManagers": {
+      "modelsCategories": { "title": "Models Categories" },
+      "salesCategories": { "title": "Sales Categories" },
+      "resailingCategories": { "title": "Reselling Categories" }
+    }
+  },
+  "guidances": {
+    "noCostPricesPatternsListItems": "No cost price patterns types data for selected location.",
+    "newCostPricePatternDataSubmittingSuccess": "Cost price pattern type has been added.",
+    "existingCostPricePatternDataSubmittingSuccess": "Cost price pattern type has been updated.",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "Cost prices patterns types are being retireving now. Please wait.",
+      "newCostPricePatternDataSubmittingInProgress": "Saving the data of new cost price pattern type...",
+      "existingCostPricePatternDataSubmittingInProgress": "Updating the data of new cost price pattern type..."
+    }
+  },
+  "errors": {
+    "costPricesPatternsListItemsRetrievingFailed": "The malfunction has occurred during the retrieving of cost prices patterns.",
+    "newCostPricePatternDataSubmittingFailed": "The malfunction has occurred during the saving of new cost price pattern type.",
+    "existingCostPricePatternDataSubmittingFailed": "The malfunction has occurred during the updating of cost price pattern type.",
+    "validation": {
+      "intro": "Inputted cost price pattern type including the following inaccuracies.",
+      "COMMON_JAPANESE_NAMING-STRING_BUT_EMPTY": "The Japanese name of cost price pattern type is required　but not specified.",
+      "COMMON_JAPANESE_NAMING-INVALID_CHARACTERS": "The Japanese name of cost price pattern type is including the following forbidden characters: {{ commaSeparatedFoundInvalidCharacters }}.",
+      "COMMON_ENGLISH_NAMING-STRING_BUT_EMPTY": "The English name of cost price pattern type is required　but not specified.",
+      "COMMON_ENGLISH_NAMING-INVALID_CHARACTERS": "The English name of cost price pattern type is including the following forbidden characters: {{ commaSeparatedFoundInvalidCharacters }}.",
+      "COMMON_CHINESE_NAMING-STRING_BUT_EMPTY": "The Chinese name of cost price pattern type is required　but not specified.",
+      "COMMON_CHINESE_NAMING-INVALID_CHARACTERS": "The Chinese name of cost price pattern type is including the following forbidden characters: {{ commaSeparatedFoundInvalidCharacters }}.",
+      "COST_PRICE_PATTERN_TYPE-CATEGORY-NO_ONE": "At least one category is request while noone has been inputted."
+    }
+  },
+  "confirmationSubdialog": {
+    "title": "Inputted Data Discarding Confirmation",
+    "question": "The inputted data will be discarded. Proceed?",
+    "buttons": {
+      "confirmation": { "label": "Discard" },
+      "cancellation": { "label": "Continue the Input" }
+    }
+  }
+}

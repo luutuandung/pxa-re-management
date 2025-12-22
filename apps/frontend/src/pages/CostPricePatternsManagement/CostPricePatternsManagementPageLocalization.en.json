@@ -1,0 +1,66 @@
+{
+  "topHeading": "Cost Registration - Cost Item Pattern",
+  "guidances": {
+    "tableDataDisplaying": "To display cost price patterns data table or manager the cost prices categories types, please select the location then select the cost price version.",
+    "noBusinessUnits": "No data to display because no business units available.",
+    "noDataToDisplay": "No data satisfying to current filtering.",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "The cost price patterns data table is loading now. Please wait."
+    }
+  },
+  "controls": {
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "Location",
+        "placeholders": {
+          "normal": "Select the location",
+          "noData": "No locations"
+        }
+      },
+      "costPriceVersions": {
+        "label": "Cost Price Version",
+        "placeholders": {
+          "normal": "Select the cost price version",
+          "noData": "No cost prices versions"
+        }
+      },
+      "costPricesPatternsTypes": {
+        "label": "Cost Price Type",
+        "placeholders": {
+          "normal": "Select the cost price type",
+          "noData": "No cost prices types"
+        }
+      }
+    },
+    "buttons": {
+      "dataSaving": { "label": "Setup" },
+      "costPricesPatternsTypesManagementDialogOpening": { "label": "Manage Cost Prices Pattern Types" },
+      "retryingOfBusinessUnitsDataRetrieving": { "label": "Retry" },
+      "retryingOfCostPricesVersionsDropDownListItemsRetrieving": { "label": "Retry" },
+      "retryingOfCostPricesPatternsTypesListItemsRetrieving": { "label": "Retry" },
+      "retryingOfTableDataRetrieving": { "label": "Retry" }
+    }
+  },
+  "table": {
+    "headers": {
+      "selecting": "Select",
+      "businessUnitCode": "BU Cost Item Code",
+      "businessUnitName": "BU Cost Item Name",
+      "costPriceType": "Cost Type",
+      "currencyCode": "Currency",
+      "costPricePatternLocalizedName": "Cost Price Pattern Category",
+      "patternCd": "Pattern Code"
+    },
+    "bodyCells": {
+      "costPriceType": {
+        "amount": "Amount",
+        "rate": "Rate"
+      }
+    }
+  },
+  "errors": {
+    "businessUnitsDataRetrievingFailed": "The malfunction has occurred during the retrieving of business units data which requires for filtering.",
+    "costPriceVersionsDropDownListItemsRetrievingFailed": "The malfunction has occurred during the retrieving of cost prices versions data which requires for filtering.",
+    "tableDataRetrievingFailed": "The malfunction has occurred during the table data retrieving."
+  }
+}

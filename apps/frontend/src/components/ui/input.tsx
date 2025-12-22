@@ -2,6 +2,8 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+
+/** @deprecated 代わりに「components/molecules/TextBox/TextBox.tsx」をご利用下さい。 */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <input

@@ -13,6 +13,7 @@ interface ActionButtonGroupProps {
 const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({ onApply, onExecute, onCancel }) => {
   const { t } = useTranslation('costAggregationScenario');
   const [openApply, setOpenApply] = useState(false);
+  const [openExecute, setOpenExecute] = useState(false);
 
   return (
     <div className="flex justify-center space-x-4">
@@ -47,24 +48,33 @@ const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({ onApply, onExecut
         </DialogContent>
       </Dialog>
 
-      <Dialog>
+      <Dialog open={openExecute} onOpenChange={setOpenExecute}>
         <DialogTrigger asChild>
           <Button
-            onClick={onExecute}
+            onClick={() => setOpenExecute(true)}
             size="lg"
             className="rounded-full bg-[#34B2D0] hover:bg-white border border-[#34B2D0] color-white hover:color-[#34B2D0] text-lg text-white hover:text-[#34B2D0]"
           >
             {t('buttons.execute')}
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>{t('modals.execute.title')}</DialogTitle>
           </DialogHeader>
           <p className="py-4">{t('modals.execute.message')}</p>
           <div className="flex justify-end space-x-2">
-            <Button variant="outline">{t('modals.execute.cancel')}</Button>
-            <Button>{t('modals.execute.confirm')}</Button>
+            <Button variant="outline" onClick={() => setOpenExecute(false)}>
+              {t('modals.execute.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                onExecute();
+                setOpenExecute(false);
+              }}
+            >
+              {t('modals.execute.confirm')}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

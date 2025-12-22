@@ -1,15 +1,15 @@
-import type {
+import {
   BusinessCostWithNamesResponse,
-  BusinessUnitItem,
-  GeneralCostCode,
-  GetBusinessUnitListResponse,
+  BusinessUnit,
+  BusinessUnitTransactions,
+  GeneralCostCode
 } from '@pxa-re-management/shared';
 import * as ReactTable from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import * as React from "react";
 import { useTranslation } from 'react-i18next';
 import { DataTablePagination } from '@/components/molecules/DataTablePagination';
-import LocationSelectField from '@/components/molecules/LocationSelectField';
+import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 import {
   Dialog,
   DialogContent,
@@ -48,7 +48,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const { t } = useTranslation('businessCostItemCodeRegistration');
   // State
   const [locationFilter, setLocationFilter] = React.useState(''); // 絞り込み用（空文字は全表示）
-  const [locations, setLocations] = React.useState<BusinessUnitItem[]>([]);
+  const [locations, setLocations] = React.useState<BusinessUnit[]>([]);
   const [locationItems, setLocationItems] = React.useState<BusinessCostItem[]>([]);
   const [originalLocationItems, setOriginalLocationItems] = React.useState<BusinessCostItem[]>([]);
   const [showInvalidItems, setShowInvalidItems] = React.useState(false);
@@ -363,11 +363,9 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
   // 初期化
   React.useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchInitialData = async (): Promise<void> => {
       try {
-        // 拠点一覧取得
-        const locationsResponse = await api.get<GetBusinessUnitListResponse>('business-unit').json();
-        setLocations(locationsResponse.businessUnits ?? []);
+        setLocations(await api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json());
       } catch (_error) {
         addErrorMessage(t('messages.initialDataError'));
       }
@@ -569,8 +567,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                     value={locationFilter}
                     onValueChange={setLocationFilter}
                     locations={locations}
-                    selectClassName="w-[200px]"
-                    className="rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-[200px] rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 

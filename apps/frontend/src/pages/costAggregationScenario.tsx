@@ -1,4 +1,4 @@
-import type { TableRowData } from '@pxa-re-management/shared';
+import type { Scenario, TableRowData } from '@pxa-re-management/shared';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import SearchConditionForm from '@/components/molecules/SearchConditionForm';
 import CostAggregationTable from '@/components/organisms/CostAggregationTable';
 import { useCostAggregationScenario } from '@/hooks/useCostAggregationScenario';
 import { useLanguageSelectors } from '@/store/languageSettings';
+import { useStickyMessageActions } from '@/store/stickyMessage';
+import { api } from '@/utils/api-client';
 import { joinBaseAndProduct } from '@/utils/locale';
 
 const CostAggregationScenario: React.FC = () => {
@@ -21,6 +23,7 @@ const CostAggregationScenario: React.FC = () => {
     businessUnits,
   } = useCostAggregationScenario();
   const { currentLanguage } = useLanguageSelectors();
+  const { addSuccessMessage, addErrorMessage } = useStickyMessageActions();
 
   // フォームの状態管理
   const [formData, setFormData] = useState({
@@ -97,21 +100,23 @@ const CostAggregationScenario: React.FC = () => {
       {
         AGG_CYCLE: formData.classification || '',
         TARGET_BU_CD: formData.aggregationAxis || '',
+        SCENARIO_BUSINESS_ID: formData.aggregationBusiness || '',
         SCENARIO_DETAILS: tableData
           .filter((r) => r.rowType === 'parent' || r.rowType === 'child')
           .sort((a, b) => (a.rowType === 'child' ? 0 : 1) - (b.rowType === 'child' ? 0 : 1))
           .map((r, idx) => {
             const bu = businessUnits.find((b) => b.buCd === (r.buCd ?? ''));
             const buNameCombined = joinBaseAndProduct(r.base, bu, currentLanguage);
+            const costTypeOption = r.costType ? costTypeOptions.find((c) => c.value === r.costType) : null;
+            const costVer = costTypeOption?.label || (buNameCombined ? `${buNameCombined}_TEST` : '');
+            
             return {
               AGG_SEQUENCE: String(idx + 1),
               BU_CD: r.buCd ?? '',
               BU_NAME: buNameCombined,
               SH_KB: formData.classification || '',
-              // HBI_VER: r.salesVersion || '',
-              // TODO: テスト用仮実装。実績バージョンを取得する
               HBI_VER: `${buNameCombined}_2024年度_実績TEST`,
-              COST_VER: r.costType ? costTypeOptions.find((c) => c.value === r.costType)?.label : '',
+              COST_VER: costVer,
               RATE_TYPE: '1',
             };
           }),
@@ -121,15 +126,15 @@ const CostAggregationScenario: React.FC = () => {
     // TARGET_DATES: SearchConditionFormで選択された月を使用。
     // thereafter が ON の場合は選択月以降12月まで、OFF の場合は選択月のみ。
     const year = new Date().getFullYear();
-    const month = Number(formData.aggregationMonth);
+    const monthNumber__numerationFrom1 = Number(formData.aggregationMonth);
     const targetDates: string[] = [];
-    if (month && month >= 1 && month <= 12) {
+    if (monthNumber__numerationFrom1 && monthNumber__numerationFrom1 >= 1 && monthNumber__numerationFrom1 <= 12) {
       if (formData.thereafter) {
-        for (let m = month; m <= 12; m += 1) {
+        for (let m = monthNumber__numerationFrom1; m <= 12; m += 1) {
           targetDates.push(`${year}${String(m).padStart(2, '0')}`);
         }
       } else {
-        targetDates.push(`${year}${String(month).padStart(2, '0')}`);
+        targetDates.push(`${year}${String(monthNumber__numerationFrom1).padStart(2, '0')}`);
       }
     }
 
@@ -146,8 +151,161 @@ const CostAggregationScenario: React.FC = () => {
     console.log('Apply payload', JSON.stringify(payload, null, 2));
   };
 
-  const handleExecute = () => {
-    console.log('Execute clicked');
+  const downloadJSON = (data: unknown, filename: string) => {
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const createPayload = () => {
+    const aggregationAxis: string = formData.aggregationAxis || tableData.find((r) => r.rowType === 'axis')?.buCd || '';
+
+    let scenarioDetailsRows = tableData.filter((r) => r.rowType === 'parent' || r.rowType === 'child');
+
+    if (scenarioDetailsRows.length === 0) {
+      const axisRow = tableData.find((r) => r.rowType === 'axis');
+      if (axisRow) {
+        scenarioDetailsRows = [axisRow];
+      }
+    }
+
+    const scenarios: Scenario[] = [
+      {
+        aggCycle: formData.classification || '',
+        targetBuCd: aggregationAxis,
+        scenarioBusinessId: formData.aggregationBusiness || '',
+        scenarioDetails: scenarioDetailsRows
+          .sort((a, b) => {
+            if (a.rowType === 'child' && b.rowType !== 'child') return -1;
+            if (a.rowType !== 'child' && b.rowType === 'child') return 1;
+            if (a.rowType === 'parent' && b.rowType === 'axis') return -1;
+            if (a.rowType === 'axis' && b.rowType === 'parent') return 1;
+            return 0;
+          })
+          .map((r, idx) => {
+            const bu = businessUnits.find((b) => b.buCd === (r.buCd ?? ''));
+            let buNameCombined: string;
+            if (r.rowType === 'axis') {
+              buNameCombined = r.base || '';
+            } else {
+              buNameCombined = joinBaseAndProduct(r.base, bu, currentLanguage);
+            }
+            
+            buNameCombined = buNameCombined.replace(/\s+/g, '_');
+            
+            const costTypeOption = r.costType ? costTypeOptions.find((c) => c.value === r.costType) : null;
+            const costVer = costTypeOption?.label || (buNameCombined ? `${buNameCombined}_TEST` : '');
+            
+            return {
+              aggSequence: String(idx + 1),
+              buCd: r.buCd ?? '',
+              buName: buNameCombined,
+              shKb: formData.classification || '',
+              hbiVer: r.salesVersion || `${buNameCombined}_2024年度_実績TEST`,
+              costVer: costVer,
+              rateType: '1',
+            };
+          }),
+      },
+    ];
+
+    const year = new Date().getFullYear();
+    const monthNumber__numerationFrom1 = Number(formData.aggregationMonth);
+    const targetDates: string[] = [];
+    if (monthNumber__numerationFrom1 && monthNumber__numerationFrom1 >= 1 && monthNumber__numerationFrom1 <= 12) {
+      if (formData.thereafter) {
+        for (let m = monthNumber__numerationFrom1; m <= 12; m += 1) {
+          targetDates.push(`${year}${String(m).padStart(2, '0')}`);
+        }
+      } else {
+        targetDates.push(`${year}${String(monthNumber__numerationFrom1).padStart(2, '0')}`);
+      }
+    }
+
+    // Transform to UPPER_CASE format for external API
+    const transformToUpperCase = (scenario: Scenario): {
+      AGG_CYCLE: string;
+      TARGET_BU_CD: string;
+      SCENARIO_BUSINESS_ID: string;
+      SCENARIO_DETAILS: Array<{
+        AGG_SEQUENCE: string;
+        BU_CD: string;
+        BU_NAME: string;
+        SH_KB: string;
+        HBI_VER: string;
+        COST_VER: string;
+        RATE_TYPE: string;
+      }>;
+    } => ({
+      AGG_CYCLE: scenario.aggCycle,
+      TARGET_BU_CD: scenario.targetBuCd,
+      SCENARIO_BUSINESS_ID: scenario.scenarioBusinessId,
+      SCENARIO_DETAILS: scenario.scenarioDetails.map((detail) => ({
+        AGG_SEQUENCE: detail.aggSequence,
+        BU_CD: detail.buCd,
+        BU_NAME: detail.buName,
+        SH_KB: detail.shKb,
+        HBI_VER: detail.hbiVer,
+        COST_VER: detail.costVer,
+        RATE_TYPE: detail.rateType,
+      })),
+    });
+
+    return {
+      SCENARIOS: scenarios.map(transformToUpperCase),
+      TARGET_DATES: targetDates,
+      TARGET_ITEMS: ['ALL'],
+      AGG_SCENARIO_VER: formData.scenarioType || 'JSON検証',
+      TARGET_CUR_CD: formData.aggregationCurrency || 'JPY',
+      TARGET_LANGUAGE: currentLanguage?.toUpperCase() || 'JA',
+      TARGET_AGG_TYPE: 'single',
+    };
+  };
+
+  const handleExecute = async () => {
+    const aggregationAxis: string = formData.aggregationAxis || tableData.find((r) => r.rowType === 'axis')?.buCd || '';
+    const scenarioDetailsRows = tableData.filter((r) => r.rowType === 'parent' || r.rowType === 'child');
+    const hasAxisRow = tableData.some((r) => r.rowType === 'axis');
+
+    if (!aggregationAxis && !hasAxisRow) {
+      addErrorMessage('Please select an Aggregation Axis before executing.');
+      return;
+    }
+
+    if (scenarioDetailsRows.length === 0 && !hasAxisRow) {
+      addErrorMessage('No scenario details found. Please select Parent or Child targets, or ensure Aggregation Axis is selected.');
+      return;
+    }
+
+    const payload = createPayload();
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+    const filename = `cost-aggregation-scenario-${timestamp}.json`;
+
+    try {
+      const uploadResponse = await api
+        .post('cost-scenario/upload', {
+          json: {
+            payload,
+            filename,
+          },
+        })
+        .json<{ success: boolean; url: string; filename: string }>();
+
+      if (uploadResponse.success) {
+        addSuccessMessage(`JSON file uploaded successfully! URL: ${uploadResponse.url}`);
+      }
+    } catch (error) {
+      console.error('Failed to upload to Azure Blob Storage:', error);
+      addErrorMessage('Failed to upload to Azure Blob Storage. Downloading locally instead.');
+      downloadJSON(payload, filename);
+    }
   };
 
   const handleCancel = () => {

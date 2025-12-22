@@ -81,7 +81,10 @@
     "importedFromExcelDataSubmittingError": "The malfunction has occurred during uploading of data import from the Excel file.",
     "validationError": "Data validation failed",
     "spreadsheetFileGeneratingError": "Failed to export the spreadsheet file",
-    "duplicateError": "A combination of the same buCostCodeId and currency already exists"
+    "duplicateError": "A combination of the same buCostCodeId and currency already exists",
+    "screenReaderOnly": {
+      "excelFileExportingInProgress": "The excel file exporting in progress. Please wait for a while"
+    }
   },
   "currency": {
     "JPY": "JPY",
@@ -93,7 +96,7 @@
     "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "The business cost item ID is required while not specified.",
     "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "The business cost item ID has been specified but has {{ actualType }} type while must be a string.",
     "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "The business cost item ID has been specified with string, but this string is empty.",
-    "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "It the subsequent occurrence is this file of item with same ID.",
+    "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "It the subsequent occurrence in this file of item with same ID.",
     "STARTING_YEAR_MONTH-NOT_EXISTS": "The business cost item starting year/month is required while not specified.",
     "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "The business cost item starting year/month has been specified but has {{ actualType }} type while must be a string.",
     "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "Specified starting year/month including the non-digits characters, while must be the digits sequence like \"202509\" representing the 4-digits year and 2-digits month.",

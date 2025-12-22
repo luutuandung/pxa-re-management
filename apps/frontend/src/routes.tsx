@@ -8,8 +8,8 @@ import CalcTypePage from './pages/calcType';
 import CostVersionRegistration from './pages/costVersionRegistration';
 import Home from './pages/Home';
 import UniformCostItemCodeRegistration from './pages/uniformCostItemCodeRegistration';
-import CostPatternPage from './pages/costPattern';
-import CostRegisterPage from './pages/costRegister';
+import CostPriceRegistrationPage from "@/pages/CostPriceRegistration/CostPriceRegistrationPage.tsx";
+import CostPricePatternsManagementPage from "@/pages/CostPricePatternsManagement/CostPricePatternsManagementPage.tsx";
 
 // エラーコンポーネント
 const ApplicationError = () => {
@@ -86,12 +86,12 @@ export const router = createBrowserRouter([
       },
       {
         path: 'costPattern',
-        element: <CostPatternPage />,
+        element: <CostPricePatternsManagementPage />,
         errorElement: <PageLoadFailed />,
       },
       {
         path: 'costRegister',
-        element: <CostRegisterPage />,
+        element: <CostPriceRegistrationPage />,
         errorElement: <PageLoadFailed />,
       },
     ],

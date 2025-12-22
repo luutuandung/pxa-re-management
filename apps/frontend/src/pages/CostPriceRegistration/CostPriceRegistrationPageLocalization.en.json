@@ -1,0 +1,84 @@
+{
+  "topHeading": "Cost Register",
+  "guidances": {
+    "tableDataDisplaying": "To display cost prices data table, please select the location, then the cost price version. After that, it is possible additionally to filter by cost price pattern.",
+    "noBusinessUnits": "No data cost price registration data to display because no business units available.",
+    "noCostPriceVersions": "No cost prices version data available for selected business usit. Please select another business unit.",
+    "noDataToDisplay": "No data satisfying to current filtering.",
+    "importedFromExcelDataSubmittingSucceeded": "The cost prices registrations has been updated according to data from Excel file.",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "The cost prices table data is loading now. Please wait.",
+      "excelFileExportingInProgress": "The excel file exporting in progress. Please wait for a while"
+    }
+  },
+  "controls": {
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "Location",
+        "placeholders": {
+          "normal": "Select the location",
+          "noData": "No locations"
+        }
+      },
+      "costPriceVersions": {
+        "label": "Cost Price Version",
+        "placeholders": {
+          "normal": "Please select cost price version",
+          "noData": "No cost price versions"
+        }
+      },
+      "constPricePatterns": {
+        "label": "Cost Price Patterns",
+        "placeholders": {
+          "normal": "Please select cost price pattern",
+          "noData": "No cost price patterns"
+        }
+      }
+    },
+    "buttons": {
+      "businessUnitsDataRetrievingRetrying": { "label": "Retry" },
+      "costPriceVersionsDropDownListItemsRetrievingRetrying": { "label": "Retry" },
+      "tableDataRetrievingRetrying": { "label": "Retry" },
+      "excelFileDownloading": { "label": "Download Excel" },
+      "excelFileUploading": { "label": "Upload Excel" }
+    }
+  },
+  "table": {
+    "headers": {
+      "businessUnitCostPriceCode": "Division Cost Item Code",
+      "businessUnitCostPriceLocalizedName": "Division Cost Item Name",
+      "costPriceType": "Cost Type",
+      "currency": "Currency",
+      "costPricePatternLocalizedName": "Cost Price Pattern Category",
+      "formattedModelCategoriesNames": "Model Categories",
+      "formattedSalesDestinations": "Destination Categories",
+      "formattedSecondSalesDestinations": "2nd Destination Categories",
+      "startYearAndMonth__YYYYMM": "Start Date",
+      "costPriceAmount": "Cost Value"
+    },
+    "bodyCells": {
+      "costPriceType": {
+        "amount": "Amount",
+        "rate": "Rate"
+      }
+    }
+  },
+  "errors": {
+    "businessUnitsDataRetrievingFailed": "The malfunction has occurred during the retrieving of business units data which requires for filtering.",
+    "hasCostPriceVersionsDropDownListItemsFailed": "The malfunction has occurred during the retrieving of cost price versions data which required for filtering.",
+    "tableDataRetrievingFailed": "The malfunction has occurred during the table data retrieving.",
+    "excelDataParsingFailed": "The malfunction has occurred during the reading of Excel file.",
+    "excelFileValidation": {
+      "intro": "The following violations has been detected in exported Excel file:",
+      "lineNumberTitle": "Line No. {{ lineNumber }}",
+      "COST_PRICE_REGISTRATION_ID-NOT_EXISTS": "The cost price registration ID is required while not specified.",
+      "COST_PRICE_REGISTRATION_ID-EXISTS_BUT_NOT_STRING": "The cost price registration ID has been specified but has {{ actualType }} type while must be a string.",
+      "COST_PRICE_REGISTRATION_ID-STRING_BUT_EMPTY": "The cost price registration ID has been specified with string, but this string is empty.",
+      "COST_PRICE_REGISTRATION_ID-HAS_DUPLICATE": "It the subsequent occurrence is this file of item with same ID.",
+      "COST_PRICE_REGISTRATION_VALUE-NOT_EXISTS": "The cost price registration value is required while not specified.",
+      "COST_PRICE_REGISTRATION_VALUE-EXISTS_BUT_NOT_NUMBER": "The cost price registration value has been specified but has {{ actualType }} type while must be a number.",
+      "COST_PRICE_REGISTRATION_VALUE-LESS_THAN_0": "Specified cost price value is less than zero."
+    },
+    "importedFromExcelDataSubmittingFailed": "The malfunction has occurred during uploading of data import from the Excel file."
+  }
+}

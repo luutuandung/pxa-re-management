@@ -12,7 +12,7 @@ import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/busine
 import type { EditorBranchNode } from '@/store/calcRegister';
 import { useCalcRegisterActions, useCalcRegisterSelectors } from '@/store/calcRegister';
 import { useCalcTypeActions, useCalcTypeSelectors } from '@/store/calcType';
-import LocationSelectField from '@/components/molecules/LocationSelectField';
+import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 
 const CalcRegister = () => {
   const { t } = useTranslation('calcRegister');
@@ -240,7 +240,7 @@ const CalcRegister = () => {
                   value={selectedBusinessUnitId}
                   onValueChange={handleChangeBusinessUnit}
                   locations={businessUnits}
-                  selectClassName="w-64"
+                  className="w-64"
                 />
               </div>
               <div className="flex items-center space-x-2">

@@ -1,0 +1,59 @@
+{
+  "heading": "原価パターン種類管理",
+  "listView": {
+    "title": "原価パターン種類"
+  },
+  "controls": {
+    "buttons": {
+      "beingInputtingOfNewCostPricesPatternData": { "label": "追加" },
+      "retryingOfCostPricesPatternsListItemsRetrieving": { "label": "再試験" },
+      "savingOfNewCostPricePattern": { "label": "保存" },
+      "closing": { "label": "閉じる" }
+    },
+    "textBoxes": {
+      "costPricePatternNames": {
+        "japanese": { "label": "原価パターン種類 日本語名" },
+        "english": { "label": "原価パターン種類 英語名" },
+        "chinese": { "label": "原価パターン種類 中国語名" }
+      }
+    },
+    "costPricePatternsCategoriesManagers": {
+      "modelsCategories": { "title": "機種カテゴリ" },
+      "salesCategories": { "title": "販売先カテゴリ" },
+      "resailingCategories": { "title": "2次販売先カテゴリ" }
+    }
+  },
+  "guidances": {
+    "noCostPricesPatternsListItems": "選択された拠点に該当している原価パターン種類はありません。",
+    "newCostPricePatternDataSubmittingSuccess": "原価パターン種類が追加されました。",
+    "existingCostPricePatternDataSubmittingSuccess": "原価パターン種類が更新されました。",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "原価パターン種類は取得中です。しばらくお待ちください。",
+      "newCostPricePatternDataSubmittingInProgress": "新規原価パターン種類データを保存中です・・・",
+      "existingCostPricePatternDataSubmittingInProgress": "新規原価パターン種類を保存中です・・・"
+    }
+  },
+  "errors": {
+    "costPricesPatternsListItemsRetrievingFailed": "原価パターン種類一覧取得の際不具合が発生しました。",
+    "newCostPricePatternDataSubmittingFailed": "新規原価パターン種類の保存中不具合が発生しました。",
+    "existingCostPricePatternDataSubmittingFailed": "原価パターン種類の保存中不具合が発生しました。",
+    "validation": {
+      "intro": "入力された原価パターン種類に下記の不備があります。",
+      "COMMON_JAPANESE_NAMING-STRING_BUT_EMPTY": "原価パターン種類の日本語名は必須ですが指定されていません。",
+      "COMMON_JAPANESE_NAMING-INVALID_CHARACTERS": "原価パターン種類の日本語名に禁止文字が含まれています。{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COMMON_ENGLISH_NAMING-STRING_BUT_EMPTY": "原価パターン種類の英語名は必須ですが指定されていません。",
+      "COMMON_ENGLISH_NAMING-INVALID_CHARACTERS": "原価パターン種類の英語名に禁止文字が含まれています。{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COMMON_CHINESE_NAMING-STRING_BUT_EMPTY": "原価パターン種類の中国語名は必須ですが指定されていません。",
+      "COMMON_CHINESE_NAMING-INVALID_CHARACTERS": "原価パターン種類の中国語名は下記の禁止文字を含めています。{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COST_PRICE_PATTERN_TYPE-CATEGORY-NO_ONE": "カテゴリーは少なくともひとつ以上設定が必要です。"
+    }
+  },
+  "confirmationSubdialog": {
+    "title": "入力内容廃棄の確認",
+    "question": "入力された情報が破棄されます。よろしいですか？",
+    "buttons": {
+      "confirmation": { "label": "廃棄する" },
+      "cancellation": { "label": "入力を続ける" }
+    }
+  }
+}

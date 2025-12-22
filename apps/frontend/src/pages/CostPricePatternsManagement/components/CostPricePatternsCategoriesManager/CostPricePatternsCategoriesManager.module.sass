@@ -1,0 +1,85 @@
+.rootElement
+
+  width: 100%
+  border-width: 1px
+
+  border-style: solid
+  border-color: var(--color-gray-200)
+
+
+  caption
+
+    text-align: left
+
+    font-weight: var(--font-weight-semibold)
+
+    margin-bottom: calc(var(--spacing) * 1)
+
+
+  thead
+
+    background-color: var(--color-gray-50)
+
+
+    th
+
+      box-sizing: border-box
+
+
+      &:first-child
+
+        width: calc(var(--spacing) * 14)
+
+
+      &:nth-child(2)
+
+        width: calc(var(--spacing) * 28)
+
+
+      &:last-child
+
+        width: calc(var(--spacing) * 26)
+
+
+  tbody tr:not(:first-child),
+  tfoot
+
+    border-top-width: 1px
+
+    border-top-style: solid
+    border-top-color: var(--color-gray-200)
+
+
+  th,
+  tbody td
+
+    padding: calc(var(--spacing) * 2)
+    text-align: center
+    vertical-align: middle
+
+
+    &:not(:first-child)
+
+      border-left-width: 1px
+
+      border-left-style: solid
+      border-left-color: var(--color-gray-200)
+
+
+  tbody > tr > td
+
+    &:nth-child(2)
+
+      > * + *
+
+        margin-left: calc(var(--spacing) * 2)
+
+
+  tfoot td
+
+    padding-block: calc(var(--spacing) * 1)
+
+
+    &:last-child
+
+      text-align: center

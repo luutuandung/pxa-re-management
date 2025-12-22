@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import type { SupportedLanguage } from '../store/languageSettings';
+import { TagsOfSupportedLanguages } from '@pxa-re-management/shared';
+import { isSupportedLanguageTag } from "@/store/languageSettings.ts";
 
 // 言語リソースの型定義
 interface LanguageResources {
@@ -10,7 +11,8 @@ interface LanguageResources {
 }
 
 // 言語リソースを動的に読み込む関数
-const loadLanguageResources = async (language: SupportedLanguage): Promise<LanguageResources> => {
+async function loadLanguageResources(language: TagsOfSupportedLanguages): Promise<LanguageResources> {
+
   const resources: LanguageResources = {};
 
   try {
@@ -43,21 +45,48 @@ const loadLanguageResources = async (language: SupportedLanguage): Promise<Langu
     const costVersionRegistrationModule = await import(`./locales/${language}/costVersionRegistration.json`);
     resources.costVersionRegistration = costVersionRegistrationModule.default;
 
-    const costPatternModule = await import(`./locales/${language}/costPattern.json`);
-    resources.costPattern = costPatternModule.default;
-
-    const costRegisterModule = await import(`./locales/${language}/costRegister.json`);
-    resources.costRegister = costRegisterModule.default;
+    await Promise.all([
+      import(`./../pages/CostPriceRegistration/CostPriceRegistrationPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.costPriceRegistrationPage = translations;
+        }
+      ),
+      import(`./../pages/CostPricePatternsManagement/CostPricePatternsManagementPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.costPricePatternsManagementPage = translations;
+        }
+      ),
+      import(`./../pages/CostPricePatternsManagement/components/CostPricesPatternsTypesManagementDialog/CostPricesPatternsTypesManagementDialogLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.costPricesPatternsTypesManagementDialog = translations;
+        }
+      ),
+      import(`./../pages/CostPricePatternsManagement/components/CostPricePatternsCategoriesManager/CostPricePatternsCategoriesManagerLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.costPricePatternsCategoriesManager = translations;
+        }
+      ),
+      import (`./../components/molecules/DropDownList/DropDownListLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.dropDownList = translations;
+        }
+      ),
+      import (`./../components/molecules/DropDownList/Specials/BusinessUnits/BusinessUnitsDropDownListLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.businessUnitsDropDownList = translations;
+        }
+      )
+    ]);
 
     return resources;
   } catch (error) {
     console.error(`Failed to load language resources for ${language}:`, error);
     return {};
   }
-};
+}
 
 // 初期言語リソースの読み込み
-const initializeLanguageResources = async (language: SupportedLanguage): Promise<void> => {
+const initializeLanguageResources = async (language: TagsOfSupportedLanguages): Promise<void> => {
   const resources = await loadLanguageResources(language);
 
   Object.keys(resources).forEach((namespace) => {
@@ -106,8 +135,13 @@ i18n.use(initReactI18next).init({
     'calcType',
     'calcRegister',
     'costVersionRegistration',
-    'costPattern',
     'costRegister',
+    'costPriceRegistrationPage',
+    'costPricePatternsManagementPage',
+    'costPricesPatternsTypesManagementDialog',
+    'costPricePatternsCategoriesManager',
+    'dropDownList',
+    'businessUnitsDropDownList'
   ],
   defaultNS: 'common',
 
@@ -122,10 +156,11 @@ i18n.use(initReactI18next).init({
 
 // 初期言語リソースの読み込み
 const initialLanguage = getInitialLanguage();
-initializeLanguageResources(initialLanguage as SupportedLanguage);
+initializeLanguageResources(initialLanguage as TagsOfSupportedLanguages);
 
 // 言語切り替え関数
-export const changeLanguage = async (language: SupportedLanguage): Promise<void> => {
+export async function changeLanguage(language: TagsOfSupportedLanguages): Promise<void> {
+
   try {
     const resources = await loadLanguageResources(language);
 
@@ -139,12 +174,19 @@ export const changeLanguage = async (language: SupportedLanguage): Promise<void>
   } catch (error) {
     console.error(`Failed to change language to ${language}:`, error);
   }
-};
 
-// 現在の言語を取得
-export const getCurrentLanguage = (): SupportedLanguage => {
-  return i18n.language as SupportedLanguage;
-};
+}
+
+export function getTagOfCurrentLanguage (): TagsOfSupportedLanguages {
+
+  if (!isSupportedLanguageTag(i18n.language)) {
+    throw new Error(`選択済み言語タグの取得の際、サポートされていない言語タグ「${ i18n.language }」が発見。`)
+  }
+
+
+  return i18n.language;
+
+}
 
 // 翻訳関数のエイリアス
 export const t = (key: string, options?: any): string => {

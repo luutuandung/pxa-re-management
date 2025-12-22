@@ -1,0 +1,174 @@
+.actionBar
+
+  display: flex
+  align-items: center
+  column-gap: calc(var(--spacing) * 3)
+
+  margin-top: calc(var(--spacing) * 3)
+
+
+  &-dropDownList
+
+    width: 180px
+
+
+  &-button
+
+    &:first-of-type
+
+      margin-left: auto
+
+
+.alert
+
+  @at-root .actionBar + &
+
+    margin-top: calc(var(--spacing) * 2)
+
+
+    & + .alert
+
+      margin-top: calc(var(--spacing) * 1)
+
+
+.table
+
+  @mixin CellCommonStyles
+
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4)
+    line-height: var(--tw-leading, var(--text-sm--line-height))
+    font-size: var(--text-sm)
+
+
+    &:not(:last-child)
+
+      border-right-width: 1px
+
+      border-right-style: var(--tw-border-style)
+      border-color: var(--color-gray-200)
+
+
+  &-decorativeWrapper
+
+    border-width: 1px
+    border-radius: var(--radius-lg)
+    overflow-x: auto
+
+    border-style: var(--tw-border-style)
+    border-color: var(--color-gray-200)
+    background-color: white
+
+
+    @at-root .actionBar + &
+
+      margin-top: calc(var(--spacing) * 2)
+
+
+    @at-root .alert + &
+
+      margin-top: calc(var(--spacing) * 4)
+
+
+    .alert
+
+      margin: calc(var(--spacing) * 2)
+
+
+  &-headerCell
+
+    @include CellCommonStyles
+    text-align: left
+
+
+    &__small
+
+      width: calc(var(--spacing) * 20)
+
+
+    &__medium
+
+      width: calc(var(--spacing) * 28)
+
+
+    &__large
+
+      width: calc(var(--spacing) * 28)
+
+
+  &-bodyCell
+
+    @include CellCommonStyles
+    color: var(--color-gray-800)
+
+
+  &-loadingPlaceholder
+
+    display: block
+
+    height: var(--text-sm)
+    border-radius: var(--radius-sm)
+
+    @include loadingPlaceholder
+
+
+    @at-root .table-bodyCell
+
+      &:first-child .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+      &:nth-child(2) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 26)
+
+
+      &:nth-child(3) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 4)
+
+
+      &:nth-child(4) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 8)
+
+
+      &:nth-child(5) .table-loadingPlaceholder,
+      &:nth-child(6) .table-loadingPlaceholder,
+      &:nth-child(7) .table-loadingPlaceholder,
+      &:nth-child(8) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+      &:nth-child(9) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 16)
+
+
+      &:nth-child(9) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+.excelValidationErrorsMessage
+
+  &-title
+
+    font-weight: var(--font-weight-medium)
+
+
+  &-list
+
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr)
+    column-gap: 16px
+    row-gap: 8px
+
+    margin-top: 8px
+
+
+    ul
+
+      list-style-type: disc
+      list-style-position: inside

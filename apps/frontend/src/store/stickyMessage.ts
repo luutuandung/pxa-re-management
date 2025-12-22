@@ -1,5 +1,10 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useCallback } from 'react';
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useImperativeHandle
+} from 'react';
 
 export interface StickyMessage {
   id: string;
@@ -141,3 +146,48 @@ export const useStickyMessageSelectors = () => {
     successMessages,
   };
 };
+
+
+export function StickyMessageAtomClassComponentAdapter(
+  { adapterReference }: StickyMessageAtomClassComponentAdapter.Props
+): ReactNode {
+
+  const { addErrorMessage, addSuccessMessage } = useStickyMessageActions();
+
+  useImperativeHandle(
+    adapterReference,
+    (): StickyMessageAtomClassComponentAdapter.API =>
+        ({
+          addErrorMessage: ({ text, customDuration }: StickyMessageAtomClassComponentAdapter.API.Options): void => {
+            addErrorMessage(text, customDuration);
+          },
+          addSuccessMessage: ({ text, customDuration }: StickyMessageAtomClassComponentAdapter.API.Options): void => {
+            addSuccessMessage(text, customDuration);
+          }
+        })
+  );
+
+  return null;
+
+}
+
+
+export namespace StickyMessageAtomClassComponentAdapter {
+
+  export type Props = Readonly<{
+    adapterReference: RefObject<API | null>;
+  }>;
+
+  export type API = Readonly<{
+    addErrorMessage: (options: StickyMessageAtomClassComponentAdapter.API.Options) => void;
+    addSuccessMessage: (options: StickyMessageAtomClassComponentAdapter.API.Options) => void;
+  }>;
+
+  export namespace API {
+    export type Options = Readonly<{
+      text: string;
+      customDuration?: number;
+    }>;
+  }
+
+}

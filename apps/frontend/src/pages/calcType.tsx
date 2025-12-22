@@ -18,7 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useBusinessUnitActions, useBusinessUnitSelectors } from '../store/businessUnit';
 import { useCalcTypeActions, useCalcTypeSelectors } from '../store/calcType';
 import { useStickyMessageActions } from '../store/stickyMessage';
-import LocationSelectField from '@/components/molecules/LocationSelectField';
+import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 
 // 統合データ型（既存・新規共通）
 interface UnifiedCalcType {
@@ -281,7 +281,7 @@ const CalcTypePage: FC = () => {
                     value={selectedBusinessUnitId}
                     onValueChange={handleChangeBusinessUnit}
                     locations={businessUnits}
-                    selectClassName="w-[240px]"
+                    className="w-[240px]"
                   />
                 </div>
               </div>

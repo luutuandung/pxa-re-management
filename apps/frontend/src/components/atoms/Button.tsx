@@ -8,6 +8,7 @@ interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   className?: string;
+  accessibilityGuidance?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,9 +18,10 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
   disabled = false,
-  className = '',
+  className,
+  accessibilityGuidance
 }) => {
-  const baseClasses = 'font-medium rounded focus:outline-none focus:ring-2 transition-colors';
+  const baseClasses = 'font-medium rounded cursor-pointer focus:outline-none focus:ring-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
   const variantClasses = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
@@ -34,10 +36,21 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'px-6 py-3 text-base',
   };
 
-  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+  const classNameAttributeValue: string = [
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    ...typeof className === 'string' ? [ className ] : []
+  ].join(' ');
 
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={classNameAttributeValue}
+      aria-label={ accessibilityGuidance }
+    >
       {children}
     </button>
   );

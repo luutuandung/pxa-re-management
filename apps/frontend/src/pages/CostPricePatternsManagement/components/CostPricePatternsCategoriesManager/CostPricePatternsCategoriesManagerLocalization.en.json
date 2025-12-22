@@ -1,0 +1,26 @@
+{
+  "table": {
+    "columnTitles": {
+      "number": "Number",
+      "ordering": "Ordering",
+      "category": "Category",
+      "otherActions": "Other Actions"
+    }
+  },
+  "controls": {
+    "buttons": {
+      "swapWithPreviousCategory": { "accessibilityGuidance": "Swap with previous category" },
+      "swapWithNextCategory": { "accessibilityGuidance": "Swap with next category" },
+      "categoryAdding": { "label": "追加" },
+      "categoryDeleting": { "label": "Delete" }
+    },
+    "dropDownLists": {
+      "category": {
+        "placeholders": {
+          "normal": "Category",
+          "noData": "No Data"
+        }
+      }
+    }
+  }
+}

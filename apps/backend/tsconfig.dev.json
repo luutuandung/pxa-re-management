@@ -24,8 +24,21 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "**/*test.ts", "**/*.e2e-spec.ts", "prisma"],
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "**/*test.ts",
+    "**/*.e2e-spec.ts",
+    "prisma"
+  ],
   "watchOptions": {
-    "excludeDirectories": ["node_modules", "test", "dist", "prisma"]
+    "excludeDirectories": [
+      "node_modules",
+      "test",
+      "dist",
+      "prisma"
+    ]
   }
 }

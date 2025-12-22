@@ -2,14 +2,14 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 generator erd {
- provider = "prisma-erd-generator"
- output   = "../docs/erd.svg"
- theme    = "forest"
+  provider = "prisma-erd-generator"
+  output   = "../docs/erd.svg"
+  theme    = "forest"
 }
 
 datasource db {
@@ -29,7 +29,7 @@ model GeneralCostCode {
   modifiedBy        String   @map("MODIFIED_BY") @db.UniqueIdentifier
   modifiedOn        DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
+  // === Relations =====================================================================================================
   buCostCodes BuCostCode[]
 
   @@map("GENERAL_COST_CODE")
@@ -49,7 +49,7 @@ model BuCostCode {
   modifiedOn     DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   generalCostCode GeneralCostCode? @relation(fields: [generalCostCd], references: [generalCostCd])
   buCostItems     BuCostItem[]
   businessUnit    BusinessUnit     @relation(fields: [businessunitId], references: [businessunitId])
@@ -59,22 +59,22 @@ model BuCostCode {
 }
 
 model BuCostItem {
-  buCostItemId           String   @id @default(uuid()) @map("BU_COST_ITEM_ID") @db.UniqueIdentifier
-  buCostCodeId           String   @map("BU_COST_CODE_ID") @db.UniqueIdentifier
-  startDate              String   @map("START_DATE") @db.VarChar(6)
-  endDate                String   @map("END_DATE") @db.VarChar(6)
-  curCd                  String   @map("CUR_CD") @db.VarChar(3)
-  amountValidFlg         Boolean  @map("AMOUNT_VALID_FLG")
-  rateValidFlg           Boolean  @map("RATE_VALID_FLG")
-  calcValidFlg           Boolean  @map("CALC_VALID_FLG")
-  autoCreateValidFlg     Boolean  @map("AUTO_CREATE_VALID_FLG")
-  createdBy              String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn              DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy             String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn             DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
-  businessunitId         String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  buCostItemId       String   @id @default(uuid()) @map("BU_COST_ITEM_ID") @db.UniqueIdentifier
+  buCostCodeId       String   @map("BU_COST_CODE_ID") @db.UniqueIdentifier
+  startDate          String   @map("START_DATE") @db.VarChar(6)
+  endDate            String   @map("END_DATE") @db.VarChar(6)
+  curCd              String   @map("CUR_CD") @db.VarChar(3)
+  amountValidFlg     Boolean  @map("AMOUNT_VALID_FLG")
+  rateValidFlg       Boolean  @map("RATE_VALID_FLG")
+  calcValidFlg       Boolean  @map("CALC_VALID_FLG")
+  autoCreateValidFlg Boolean  @map("AUTO_CREATE_VALID_FLG")
+  createdBy          String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn          DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy         String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn         DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessunitId     String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   buCostCode    BuCostCode     @relation(fields: [buCostCodeId], references: [buCostCodeId])
   businessUnit  BusinessUnit   @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   costRegisters CostRegister[]
@@ -95,8 +95,8 @@ model CostVersion {
   modifiedOn      DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId  String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  businessUnit BusinessUnit @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  businessUnit  BusinessUnit   @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   costRegisters CostRegister[]
 
   @@map("COST_VERSION")
@@ -114,33 +114,60 @@ model CostRegister {
   modifiedOn          DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId      String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  buCostItem         BuCostItem         @relation(fields: [buCostItemId], references: [buCostItemId], onDelete: NoAction, onUpdate: NoAction)
-  costPatternDetail  CostPatternDetail  @relation(fields: [costPatternDetailId], references: [costPatternDetailId], onDelete: NoAction, onUpdate: NoAction)
-  costVersion        CostVersion        @relation(fields: [costVersionId], references: [costVersionId], onDelete: NoAction, onUpdate: NoAction)
-  businessUnit       BusinessUnit       @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  buCostItem         BuCostItem                        @relation(fields: [buCostItemId], references: [buCostItemId], onDelete: NoAction, onUpdate: NoAction)
+  costPatternDetail  CostPatternDetail                 @relation(fields: [costPatternDetailId], references: [costPatternDetailId], onDelete: NoAction, onUpdate: NoAction)
+  costVersion        CostVersion                       @relation(fields: [costVersionId], references: [costVersionId], onDelete: NoAction, onUpdate: NoAction)
+  businessUnit       BusinessUnit                      @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   costRegisterValues CostRegisterValue[]
+  type               CostPriceRegistrationPatternType? @relation(fields: [costVersionId, buCostItemId, costType], references: [costPriceVersionID, businessUnitCostItemID, costPriceType], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("COST_REGISTER")
 }
 
-model CostRegisterValue {
-  costRegisterId String @id @map("COST_REGISTER_ID") @db.VarChar(60)
-  startDate      String @map("START_DATE") @db.VarChar(10)
-  costValue      Float  @map("COST_VALUE")
+model CostPriceRegistrationPatternType {
+  ID                     String   @id @default(uuid()) @map("COST_REGISTER_TYPE_ID") @db.UniqueIdentifier
+  businessUnitCostItemID String   @map("BU_COST_ITEM_ID") @db.UniqueIdentifier
+  costPriceType          String   @map("COST_TYPE") @db.VarChar(1)
+  costPricePatternID     String   @map("COST_PATTERN_ID") @db.UniqueIdentifier
+  costPriceVersionID     String   @map("COST_VERSION_ID") @db.UniqueIdentifier
+  creatorUserID          String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdAt              DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  updaterUserID          String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedAt             DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessUnitID         String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
+  costPricePattern CostPattern?   @relation(fields: [costPricePatternID], references: [costPatternId], onDelete: NoAction, onUpdate: NoAction)
+  costRegisters    CostRegister[]
+
+  @@unique([costPriceVersionID, businessUnitCostItemID, costPriceType])
+  @@map("COST_REGISTER_TYPE")
+}
+
+model CostRegisterValue {
+  costRegisterValueID String   @id @default(uuid()) @map("COST_REGISTER_VALUE_ID") @db.UniqueIdentifier
+  costRegisterId      String   @map("COST_REGISTER_ID") @db.UniqueIdentifier
+  startDate           String   @map("START_DATE") @db.VarChar(6)
+  costValue           Float    @map("COST_VALUE")
+  createdBy           String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn           DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy          String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn          DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessUnitId      String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+
+  // === Relations =====================================================================================================
   costRegister CostRegister @relation(fields: [costRegisterId], references: [costRegisterId])
 
   @@map("COST_REGISTER_VALUE")
 }
 
 model CostPatternDetail {
-  costPatternDetailId String @id @map("COST_PATTERN_DETAIL_ID") @db.VarChar(40)
+  costPatternDetailId String @id @default(uuid()) @map("COST_PATTERN_DETAIL_ID") @db.VarChar(40)
   costPatternCd       String @map("COST_PATTERN_CD") @db.VarChar(2)
   costPatternName     String @map("COST_PATTERN_NAME") @db.NVarChar(30)
 
-  // Relations
+  // === Relations =====================================================================================================
   costRegisters              CostRegister[]
   costPatternModelCategories CostPatternModelCategory[]
   costPatternDestCategories  CostPatternDestCategory[]
@@ -156,20 +183,22 @@ model CostPatternModelCategory {
   // Relations
   costPatternDetail CostPatternDetail @relation(fields: [costPatternDetailId], references: [costPatternDetailId])
 
+  // === Relations =====================================================================================================
   @@id([costPatternDetailId, modelCategoryId])
   @@map("COST_PATTERN_MODEL_CATEGORY")
 }
 
 model CostPatternDestCategory {
-  costPatternDetailId String  @map("COST_PATTERN_DETAIL_ID") @db.VarChar(40)
-  destCategoryId      String  @map("DEST_CATEGORY_ID") @db.VarChar(20)
-  secFlg              Boolean @map("SEC_FLG")
-  seq                 Int     @map("SEQ")
+  costPatternDestCategoryId String  @id @default(uuid()) @map("COST_PATTERN_DEST_CATEGORY_ID") @db.UniqueIdentifier
+  costPatternDetailId       String  @map("COST_PATTERN_DETAIL_ID") @db.UniqueIdentifier
+  destCategoryId            String  @map("DEST_CATEGORY_ID") @db.UniqueIdentifier
+  secFlg                    Boolean @map("SEC_FLG")
+  seq                       Int     @map("SEQ")
 
-  // Relations
+  // === Relations =====================================================================================================
   costPatternDetail CostPatternDetail @relation(fields: [costPatternDetailId], references: [costPatternDetailId])
+  sale              Sales             @relation(fields: [destCategoryId], references: [salesId])
 
-  @@id([costPatternDetailId, destCategoryId])
   @@map("COST_PATTERN_DEST_CATEGORY")
 }
 
@@ -186,7 +215,7 @@ model CalcType {
   modifiedOn     DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   businessUnit BusinessUnit  @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   calcDisplays CalcDisplay[]
 
@@ -207,7 +236,7 @@ model CalcDisplay {
   modifiedOn        DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId    String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   calcType     CalcType      @relation(fields: [calcTypeId], references: [calcTypeId])
   buCostItem   BuCostItem    @relation(fields: [buCostItemId], references: [buCostItemId])
   businessUnit BusinessUnit  @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
@@ -226,7 +255,7 @@ model CalcFormula {
   elseNestCalcFormulaId String? @map("ELSE_NEST_CALC_FORMULA_ID") @db.UniqueIdentifier
   evalSeq               Int     @map("EVAL_SEQ")
 
-  // Relations
+  // === Relations =====================================================================================================
   calcDisplay            CalcDisplay    @relation(fields: [calcDisplayId], references: [calcDisplayId], map: "FK_CALC_FORMULA_DISPLAY")
   calcCondition          CalcCondition? @relation(fields: [calcConditionId], references: [calcConditionId], map: "FK_CALC_FORMULA_CONDITION")
   calcOperation          CalcOperation  @relation("CalcOperationMain", fields: [calcOperationId], references: [calcOperationId], onDelete: NoAction, onUpdate: NoAction, map: "FK_CALC_FORMULA_OPERATION")
@@ -247,7 +276,7 @@ model CalcCondition {
   rightConBuCostCd String @map("RIGHT_CON_BU_COST_CD") @db.VarChar(10)
   rightConCostType String @map("RIGHT_CON_COST_TYPE") @db.VarChar(1)
 
-  // Relations
+  // === Relations =====================================================================================================
   calcFormulas CalcFormula[]
 
   @@map("CALC_CONDITION")
@@ -260,7 +289,7 @@ model CalcOperation {
   opeCostType     String @map("OPE_COST_TYPE") @db.VarChar(1)
   opeSeq          Int    @map("OPE_SEQ")
 
-  // Relations
+  // === Relations =====================================================================================================
   calcFormulas     CalcFormula[] @relation("CalcOperationMain")
   elseCalcFormulas CalcFormula[] @relation("ElseCalcOperation")
 
@@ -269,7 +298,7 @@ model CalcOperation {
 
 model BusinessUnit {
   businessunitId     String   @id @default(uuid()) @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
-  buCd              String   @map("BU_CD") @db.VarChar(10)
+  buCd               String   @map("BU_CD") @db.VarChar(10)
   name               String   @map("NAME") @db.NVarChar(50)
   baseCurrencyName   String   @map("BASE_CURRENCY_NAME") @db.NVarChar(3)
   businessunitNameJa String   @map("BUSINESSUNIT_NAME_JA") @db.NVarChar(50)
@@ -278,49 +307,49 @@ model BusinessUnit {
   productNameEn      String   @map("PRODUCT_NAME_EN") @db.NVarChar(50)
   businessunitNameZh String   @map("BUSINESSUNIT_NAME_ZH") @db.NVarChar(50)
   productNameZh      String   @map("PRODUCT_NAME_ZH") @db.NVarChar(50)
-  createdBy          String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdBy          String?  @map("CREATED_BY") @db.UniqueIdentifier
   createdOn          DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy         String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedBy         String?  @map("MODIFIED_BY") @db.UniqueIdentifier
   modifiedOn         DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
-  buCostCodes  BuCostCode[]
-  buCostItems  BuCostItem[]
-  calcTypes    CalcType[]
-  calcDisplays CalcDisplay[]
-  costVersions CostVersion[]
-  costRegisters CostRegister[]
-  aggForms     AggForm[]
-  scenarioTypes ScenarioType[]
-  scenarioMains ScenarioMain[]
-  scenarioDetails ScenarioDetail[]
-  scenarioBusinesses ScenarioBusiness[]
-  scenarioAxisunits ScenarioAxisunit[]
+  // === Relations =====================================================================================================
+  buCostCodes             BuCostCode[]
+  buCostItems             BuCostItem[]
+  calcTypes               CalcType[]
+  calcDisplays            CalcDisplay[]
+  costVersions            CostVersion[]
+  costRegisters           CostRegister[]
+  aggForms                AggForm[]
+  scenarioTypes           ScenarioType[]
+  scenarioMains           ScenarioMain[]
+  scenarioDetails         ScenarioDetail[]
+  scenarioBusinesses      ScenarioBusiness[]
+  scenarioAxisunits       ScenarioAxisunit[]
   scenarioAxisunitDetails ScenarioAxisunitDetail[]
 
-  @@map("M_BUSINESS_UNIT_tmp")
+  @@map("M_BUSINESS_UNIT")
 }
 
 model AggPreset {
-  aggPresetId        String   @id @default(uuid()) @map("AGG_PRESET_ID") @db.UniqueIdentifier
-  aggConcatId        String   @map("AGG_CONCAT_ID") @db.UniqueIdentifier
-  beforeBuCostCd     String   @map("BEFORE_BU_COST_CD") @db.VarChar(10)
-  beforeCostType     String   @map("BEFORE_COST_TYPE") @db.VarChar(1)
-  beforeHbiVer       String   @map("BEFORE_HBI_VER") @db.NVarChar(40)
-  beforeCostVer      String   @map("BEFORE_COST_VER") @db.NVarChar(40)
-  beforeRateType     Int      @map("BEFORE_RATE_TYPE")
-  afterBuCostCd      String   @map("AFTER_BU_COST_CD") @db.VarChar(10)
-  afterCostType      String   @map("AFTER_COST_TYPE") @db.VarChar(1)
-  afterHbiVer        String   @map("AFTER_HBI_VER") @db.NVarChar(40)
-  afterCostVer       String   @map("AFTER_COST_VER") @db.NVarChar(40)
-  afterRateType      Int      @map("AFTER_RATE_TYPE")
-  presetType         Boolean  @map("PRESET_TYPE")
-  createdBy          String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn          DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy         String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn         DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  aggPresetId    String   @id @default(uuid()) @map("AGG_PRESET_ID") @db.UniqueIdentifier
+  aggConcatId    String   @map("AGG_CONCAT_ID") @db.UniqueIdentifier
+  beforeBuCostCd String   @map("BEFORE_BU_COST_CD") @db.VarChar(10)
+  beforeCostType String   @map("BEFORE_COST_TYPE") @db.VarChar(1)
+  beforeHbiVer   String   @map("BEFORE_HBI_VER") @db.NVarChar(40)
+  beforeCostVer  String   @map("BEFORE_COST_VER") @db.NVarChar(40)
+  beforeRateType Int      @map("BEFORE_RATE_TYPE")
+  afterBuCostCd  String   @map("AFTER_BU_COST_CD") @db.VarChar(10)
+  afterCostType  String   @map("AFTER_COST_TYPE") @db.VarChar(1)
+  afterHbiVer    String   @map("AFTER_HBI_VER") @db.NVarChar(40)
+  afterCostVer   String   @map("AFTER_COST_VER") @db.NVarChar(40)
+  afterRateType  Int      @map("AFTER_RATE_TYPE")
+  presetType     Boolean  @map("PRESET_TYPE")
+  createdBy      String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn      DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy     String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn     DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
+  // === Relations =====================================================================================================
   aggConcat AggConcat @relation(fields: [aggConcatId], references: [aggConcatId])
 
   @@map("M_AGG_PRESET")
@@ -337,7 +366,7 @@ model AggOffset {
   modifiedBy     String   @map("MODIFIED_BY") @db.UniqueIdentifier
   modifiedOn     DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
+  // === Relations =====================================================================================================
   aggConcat AggConcat @relation(fields: [aggConcatId], references: [aggConcatId])
 
   @@map("M_AGG_OFFSET")
@@ -345,14 +374,14 @@ model AggOffset {
 
 model AggConcat {
   aggConcatId String   @id @default(uuid()) @map("AGG_CONCAT_ID") @db.UniqueIdentifier
-  childBuCd  String   @map("CHILD_BU_CD") @db.VarChar(10)
-  parentBuCd String   @map("PARENT_BU_CD") @db.VarChar(10)
+  childBuCd   String   @map("CHILD_BU_CD") @db.VarChar(10)
+  parentBuCd  String   @map("PARENT_BU_CD") @db.VarChar(10)
   createdBy   String   @map("CREATED_BY") @db.UniqueIdentifier
   createdOn   DateTime @default(now()) @map("CREATED_ON") @db.DateTime
   modifiedBy  String   @map("MODIFIED_BY") @db.UniqueIdentifier
   modifiedOn  DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
+  // === Relations =====================================================================================================
   aggPresets AggPreset[]
   aggOffsets AggOffset[]
 
@@ -372,30 +401,52 @@ model RateExchange {
   modifiedBy     String   @map("MODIFIED_BY") @db.UniqueIdentifier
   modifiedOn     DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
+  // === Relations =====================================================================================================
   scenarioDetails ScenarioDetail[]
 
   @@map("M_RATE_EXCHANGE")
 }
 
 model Sales {
-  salesId       String   @id @default(uuid()) @map("SALES_ID") @db.UniqueIdentifier
-  salesCd       String   @map("SALES_CD") @db.VarChar(10)
-  salesName     String   @map("SALES_NAME") @db.NVarChar(128)
-  countryName   String   @map("COUNTRY_NAME") @db.NVarChar(16)
-  curCd         String   @map("CUR_CD") @db.VarChar(3)
-  parentSalesId String   @map("PARENT_SALES_ID") @db.UniqueIdentifier
-  createdBy     String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn     DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy    String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn    DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  salesId         String   @id @default(uuid()) @map("SALES_ID") @db.UniqueIdentifier
+  salesCd         String   @map("SALES_CD") @db.VarChar(10)
+  salesName       String   @map("SALES_NAME") @db.NVarChar(128)
+  countryName     String   @map("COUNTRY_NAME") @db.NVarChar(16)
+  curCd           String   @map("CUR_CD") @db.VarChar(3)
+  parentSalesId   String   @map("PARENT_SALES_ID") @db.UniqueIdentifier
+  createdBy       String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn       DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy      String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn      DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  salesCategoryId String?  @map("SALES_CATEGORY_ID") @db.UniqueIdentifier
 
-  // Self relation
-  parent   Sales?  @relation("SalesToSales", fields: [parentSalesId], references: [salesId], onDelete: NoAction, onUpdate: NoAction)
-  children Sales[] @relation("SalesToSales")
-  salesCategories SalesCategory[]
+  // === Relations =====================================================================================================
+  parent                  Sales?                    @relation("SalesToSales", fields: [parentSalesId], references: [salesId], onDelete: NoAction, onUpdate: NoAction)
+  children                Sales[]                   @relation("SalesToSales")
+  CostPatternDestCategory CostPatternDestCategory[]
+  SalesCategory           SalesCategory?            @relation(fields: [salesCategoryId], references: [salesCategoryId])
 
   @@map("M_SALES")
+}
+
+model SalesCategory {
+  salesCategoryId     String   @id @default(uuid()) @map("SALES_CATEGORY_ID") @db.UniqueIdentifier
+  salesId             String   @unique @map("SALES_ID") @db.UniqueIdentifier
+  salesTypeNameJa     String   @map("SALES_TYPE_NAME_JA") @db.NVarChar(64)
+  salesTypeNameEn     String   @map("SALES_TYPE_NAME_EN") @db.NVarChar(64)
+  salesTypeNameZh     String   @map("SALES_TYPE_NAME_ZH") @db.NVarChar(64)
+  salesCategoryNameJa String   @map("SALES_CATEGORY_NAME_JA") @db.NVarChar(64)
+  salesCategoryNameEn String   @map("SALES_CATEGORY_NAME_EN") @db.NVarChar(64)
+  salesCategoryNameZh String   @map("SALES_CATEGORY_NAME_ZH") @db.NVarChar(64)
+  createdBy           String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn           DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy          String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn          DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+
+  // === Relations =====================================================================================================
+  sales Sales[]
+
+  @@map("M_SALES_CATEGORY")
 }
 
 model AggForm {
@@ -431,7 +482,7 @@ model AggForm {
   modifiedOn           DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId       String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   buCostCode   BuCostCode   @relation(fields: [buCostCodeId], references: [buCostCodeId], onDelete: NoAction, onUpdate: NoAction)
   businessUnit BusinessUnit @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
 
@@ -450,8 +501,8 @@ model ScenarioType {
   modifiedOn       DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
   businessunitId   String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  businessUnit BusinessUnit @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  businessUnit  BusinessUnit   @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   scenarioMains ScenarioMain[]
 
   @@map("SCENARIO_TYPE")
@@ -486,34 +537,34 @@ model ScenarioMain {
 }
 
 model ScenarioDetail {
-  scenarioDetailId String   @id @default(uuid()) @map("SCENARIO_DETAIL_ID") @db.UniqueIdentifier
-  scenarioMainId   String   @map("SCENARIO_MAIN_ID") @db.UniqueIdentifier
-  businessunitId   String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
-  salesVersionName String   @map("SALES_VERSION_NAME") @db.NVarChar(64)
-  costVersionName  String   @map("COST_VERSION_NAME") @db.NVarChar(64)
-  rateExchangeId   String   @map("RATE_EXCHANGE_ID") @db.UniqueIdentifier
+  scenarioDetailId String @id @default(uuid()) @map("SCENARIO_DETAIL_ID") @db.UniqueIdentifier
+  scenarioMainId   String @map("SCENARIO_MAIN_ID") @db.UniqueIdentifier
+  businessunitId   String @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  salesVersionName String @map("SALES_VERSION_NAME") @db.NVarChar(64)
+  costVersionName  String @map("COST_VERSION_NAME") @db.NVarChar(64)
+  rateExchangeId   String @map("RATE_EXCHANGE_ID") @db.UniqueIdentifier
 
-  // Relations
-  scenarioMain   ScenarioMain  @relation(fields: [scenarioMainId], references: [scenarioMainId], onDelete: NoAction, onUpdate: NoAction)
-  businessUnit   BusinessUnit  @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
-  rateExchange   RateExchange  @relation(fields: [rateExchangeId], references: [rateExchangeId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  scenarioMain ScenarioMain @relation(fields: [scenarioMainId], references: [scenarioMainId], onDelete: NoAction, onUpdate: NoAction)
+  businessUnit BusinessUnit @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  rateExchange RateExchange @relation(fields: [rateExchangeId], references: [rateExchangeId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("SCENARIO_DETAIL_ID")
 }
 
 model ScenarioBusiness {
-  scenarioBusinessId    String   @id @default(uuid()) @map("SCENARIO_BUSINESS_ID") @db.UniqueIdentifier
-  scenarioBusinessNameJa String  @map("SCENARIO_BUSINESS_NAME_JA") @db.NVarChar(64)
-  scenarioBusinessNameEn String  @map("SCENARIO_BUSINESS_NAME_EN") @db.NVarChar(64)
-  scenarioBusinessNameZh String  @map("SCENARIO_BUSINESS_NAME_ZH") @db.NVarChar(64)
-  createdBy             String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn             DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy            String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn            DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
-  businessunitId        String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  scenarioBusinessId     String   @id @default(uuid()) @map("SCENARIO_BUSINESS_ID") @db.UniqueIdentifier
+  scenarioBusinessNameJa String   @map("SCENARIO_BUSINESS_NAME_JA") @db.NVarChar(64)
+  scenarioBusinessNameEn String   @map("SCENARIO_BUSINESS_NAME_EN") @db.NVarChar(64)
+  scenarioBusinessNameZh String   @map("SCENARIO_BUSINESS_NAME_ZH") @db.NVarChar(64)
+  createdBy              String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn              DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy             String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn             DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessunitId         String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  businessUnit           BusinessUnit            @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  businessUnit            BusinessUnit             @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   scenarioBusinessDetails ScenarioBusinessDetail[]
   scenarioMains           ScenarioMain[]
 
@@ -525,27 +576,27 @@ model ScenarioBusinessDetail {
   scenarioBusinessId       String @map("SCENARIO_BUSINESS_ID") @db.UniqueIdentifier
   modelCategoryId          String @map("MODEL_CATEGORY_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   scenarioBusiness ScenarioBusiness @relation(fields: [scenarioBusinessId], references: [scenarioBusinessId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("SCENARIO_BUSINESS_DETAIL")
 }
 
 model ScenarioAxisunit {
-  scenarioAxisunitId   String   @id @default(uuid()) @map("SCENARIO_AXISUNIT_ID") @db.UniqueIdentifier
-  scenarioAxisunitNameJa String @map("SCENARIO_AXISUNIT_NAME_JA") @db.NVarChar(64)
-  scenarioAxisunitNameEn String @map("SCENARIO_AXISUNIT_NAME_EN") @db.NVarChar(64)
-  scenarioAxisunitNameZh String @map("SCENARIO_AXISUNIT_NAME_ZH") @db.NVarChar(64)
-  createdBy             String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn             DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy            String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn            DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
-  businessunitId        String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  scenarioAxisunitId     String   @id @default(uuid()) @map("SCENARIO_AXISUNIT_ID") @db.UniqueIdentifier
+  scenarioAxisunitNameJa String   @map("SCENARIO_AXISUNIT_NAME_JA") @db.NVarChar(64)
+  scenarioAxisunitNameEn String   @map("SCENARIO_AXISUNIT_NAME_EN") @db.NVarChar(64)
+  scenarioAxisunitNameZh String   @map("SCENARIO_AXISUNIT_NAME_ZH") @db.NVarChar(64)
+  createdBy              String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn              DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy             String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn             DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessunitId         String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  businessUnit         BusinessUnit           @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  businessUnit            BusinessUnit             @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
   scenarioAxisunitDetails ScenarioAxisunitDetail[]
-  scenarioMains            ScenarioMain[]
+  scenarioMains           ScenarioMain[]
 
   @@map("SCENARIO_AXISUNIT")
 }
@@ -555,31 +606,11 @@ model ScenarioAxisunitDetail {
   scenarioAxisunitId       String @map("SCENARIO_AXISUNIT_ID") @db.UniqueIdentifier
   businessunitId           String @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
+  // === Relations =====================================================================================================
   scenarioAxisunit ScenarioAxisunit @relation(fields: [scenarioAxisunitId], references: [scenarioAxisunitId], onDelete: NoAction, onUpdate: NoAction)
   businessUnit     BusinessUnit     @relation(fields: [businessunitId], references: [businessunitId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("SCENARIO_AXISUNIT_DETAIL")
-}
-
-model SalesCategory {
-  salesCategoryId   String   @id @default(uuid()) @map("SALES_CATEGORY_ID") @db.UniqueIdentifier
-  salesId           String   @map("SALES_ID") @db.UniqueIdentifier
-  salesTypeNameJa   String   @map("SALES_TYPE_NAME_JA") @db.NVarChar(64)
-  salesTypeNameEn   String   @map("SALES_TYPE_NAME_EN") @db.NVarChar(64)
-  salesTypeNameZh   String   @map("SALES_TYPE_NAME_ZH") @db.NVarChar(64)
-  salesCategoryNameJa String @map("SALES_CATEGORY_NAME_JA") @db.NVarChar(64)
-  salesCategoryNameEn String @map("SALES_CATEGORY_NAME_EN") @db.NVarChar(64)
-  salesCategoryNameZh String @map("SALES_CATEGORY_NAME_ZH") @db.NVarChar(64)
-  createdBy         String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn         DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy        String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn        DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
-
-  // Relations
-  sales Sales @relation(fields: [salesId], references: [salesId], onDelete: NoAction, onUpdate: NoAction)
-
-  @@map("M_SALES_CATEGORY")
 }
 
 model AggProductNumberMapping {
@@ -596,29 +627,106 @@ model AggProductNumberMapping {
 }
 
 model CostPattern {
-  costPatternId      String   @id @default(uuid()) @map("COST_PATTERN_ID") @db.UniqueIdentifier
-  costPatternNameJa  String   @map("COST_PATTERN_NAME_JA") @db.NVarChar(64)
-  costPatternNameEn  String   @map("COST_PATTERN_NAME_EN") @db.NVarChar(64)
-  costPatternNameZh  String   @map("COST_PATTERN_NAME_ZH") @db.NVarChar(64)
-  costPatternCategoryId String @map("COST_PATTERN_CATEGORY_ID") @db.UniqueIdentifier
-  createdBy          String   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn          DateTime @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy         String   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn         DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  costPatternId     String   @id @default(uuid()) @map("COST_PATTERN_ID") @db.UniqueIdentifier
+  costPatternNameJa String   @map("COST_PATTERN_NAME_JA") @db.NVarChar(64)
+  costPatternNameEn String   @map("COST_PATTERN_NAME_EN") @db.NVarChar(64)
+  costPatternNameZh String   @map("COST_PATTERN_NAME_ZH") @db.NVarChar(64)
+  createdBy         String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn         DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy        String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn        DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessUnitID    String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
 
-  // Relations
-  costPatternCategory CostPatternCategory @relation(fields: [costPatternCategoryId], references: [costPatternCategoryId], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  costPatternCategories             CostPatternCategory[]
+  costPriceRegistrationPatternTypes CostPriceRegistrationPatternType[]
 
   @@map("M_COST_PATTERN")
 }
 
 model CostPatternCategory {
   costPatternCategoryId String @id @default(uuid()) @map("COST_PATTERN_CATEGORY_ID") @db.UniqueIdentifier
+  costPatternId         String @map("COST_PATTERN_ID") @db.UniqueIdentifier
   categoryTypeId        String @map("CATEGORY_TYPE_ID") @db.UniqueIdentifier
+  seq                   Int    @map("SEQ")
   categoryDataType      Int    @map("CATEGORY_DATA_TYPE")
 
-  // Relations
-  costPatterns CostPattern[]
+  // === Relations =====================================================================================================
+  costPattern CostPattern @relation(fields: [costPatternId], references: [costPatternId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("M_COST_PATTERN_CATEGORY")
+}
+
+model Language {
+  id                             String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name                           String    @map("NAME") @db.NVarChar(50)
+  code                           String    @map("CODE") @db.NVarChar(5)
+  createdBy                      String?   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn                      DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy                     String?   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn                     DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
+
+  users  User[]
+
+  @@map("M_LANGUAGE")
+}
+
+model User {
+  id                             String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name                           String    @map("NAME") @db.NVarChar(50)
+  emailAddress                   String?   @map("EMAIL_ADDRESS") @db.NVarChar(254)
+  globalId                       String    @unique @map("GLOBAL_ID") @db.NVarChar(7)
+  languageId                     String?   @map("LANGUAGE_ID") @db.UniqueIdentifier
+  businessunitId                 String?   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  userTypeId                     String?   @map("USER_TYPE_ID") @db.UniqueIdentifier
+  pxaApplicationRoleId           String?   @map("PXA_APPLICATION_ROLE_ID") @db.UniqueIdentifier
+  permissionBusinessunitGroupId  String?   @map("PERMISSION_BUSINESSUNIT_GROUP_ID") @db.UniqueIdentifier
+  deleteFlg                      Boolean?  @map("DELETE_FLAG")
+  createdBy                      String?   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn                      DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy                     String?   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn                     DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
+
+  // Relations
+  language  Language? @relation(fields: [languageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("M_USER")
+}
+
+model ModelCategory {
+  ID                    String   @id @map("ID") @db.UniqueIdentifier
+  typeID                String   @unique @map("MODEL_CATEGORY_TYPE_ID") @db.UniqueIdentifier
+  code                  String   @unique @map("CODE") @db.NVarChar()
+  name                  String   @unique @map("NAME") @db.NVarChar()
+  parentModelCategoryID String?  @map("PARENT_MODEL_CATEGORY_ID") @db.UniqueIdentifier
+  sequenceNumber        Int      @map("SEQUENCE_NUMBER")
+  languageID            String   @map("LANGUAGE_ID") @db.UniqueIdentifier
+  creatorUserID         String   @map("CREATED_BY") @db.UniqueIdentifier
+  createdAt             DateTime @default(now()) @map("CREATED_ON") @db.DateTime
+  updaterUserID         String   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedAt            DateTime @default(now()) @map("MODIFIED_ON") @db.DateTime
+  businessUnitID        String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+
+  // === Relations =====================================================================================================
+  type ModelCategoryType @relation(fields: [typeID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("MODEL_CATEGORY")
+}
+
+model ModelCategoryType {
+  ID             String @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name           String @map("NAME") @db.NVarChar(100)
+  businessUnitID String @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+
+  // === Relations =====================================================================================================
+  modelCategories ModelCategory[]
+
+  @@map("MODEL_CATEGORY_TYPE")
+}
+
+model Model {
+  ID   String @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name String @map("NAME") @db.NVarChar(50)
+
+  @@map("MODEL")
 }

@@ -1,5 +1,5 @@
-import type { CostPriceVersion } from '@pxa-re-management/shared';
-import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
+import type { CostVersion } from '@pxa-re-management/shared';
+import LocationSelectField from '@/components/molecules/LocationSelectField';
 import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/businessUnit';
 import { type FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +64,7 @@ const CostVersionRegistration: FC = () => {
     setShowCreateModal(true);
   };
 
-  const handleEdit = (costVersion: CostPriceVersion) => {
+  const handleEdit = (costVersion: CostVersion) => {
     setFormData({
       costVersionId: costVersion.costVersionId,
       businessunitId: costVersion.businessunitId,
@@ -100,7 +100,46 @@ const CostVersionRegistration: FC = () => {
 
   const normalizeYm = (v: string) => (v || '').replaceAll('/', '').replaceAll('-', '').slice(0, 6);
 
+  const validateDateRange = (startDate: string, endDate: string): string | null => {
+    const normalizedStart = normalizeYm(startDate);
+    const normalizedEnd = normalizeYm(endDate);
+
+    // 日付形式のチェック（YYYYMM形式、6桁）
+    if (!normalizedStart || normalizedStart.length !== 6 || !/^\d{6}$/.test(normalizedStart)) {
+      return null; // 日付が未入力の場合は他のバリデーションで処理
+    }
+    if (!normalizedEnd || normalizedEnd.length !== 6 || !/^\d{6}$/.test(normalizedEnd)) {
+      return null; // 日付が未入力の場合は他のバリデーションで処理
+    }
+
+    // 開始日と終了日の比較
+    if (normalizedStart > normalizedEnd) {
+      return t('messages.startDateAfterEndDate');
+    }
+
+    // 期間が36か月以内であることをチェック
+    const startYear = parseInt(normalizedStart.substring(0, 4), 10);
+    const startMonth = parseInt(normalizedStart.substring(4, 6), 10);
+    const endYear = parseInt(normalizedEnd.substring(0, 4), 10);
+    const endMonth = parseInt(normalizedEnd.substring(4, 6), 10);
+
+    // 月数の差を計算
+    const monthsDiff = (endYear - startYear) * 12 + (endMonth - startMonth) + 1; // +1は開始月を含めるため
+
+    if (monthsDiff > 36) {
+      return t('messages.periodExceeds36Months');
+    }
+
+    return null;
+  };
+
   const confirmCreate = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
       await createCostVersion({
         ...formData,
@@ -116,6 +155,12 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmEdit = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
       const { costVersionId, ...updateData } = formData;
       await updateCostVersion(costVersionId, {
@@ -330,7 +375,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
                 locations={businessUnits}
-                className="w-full"
+                selectClassName="w-full"
               />
             </div>
             <div className="flex items-center gap-4">
@@ -425,7 +470,7 @@ const CostVersionRegistration: FC = () => {
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
                 locations={businessUnits}
-                className="w-full"
+                selectClassName="w-full"
                 disabled
               />
             </div>

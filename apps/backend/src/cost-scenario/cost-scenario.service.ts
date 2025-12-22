@@ -60,4 +60,16 @@ export class CostScenarioService {
   async getCurrencies(): Promise<{ afterCurCd: string }[]> {
     return this.prisma.rateExchange.findMany({ select: { afterCurCd: true } });
   }
+
+  async getScenarioTypes(): Promise<{ scenarioTypeId: string; scenarioTypeName: string }[]> {
+    return this.prisma.scenarioType.findMany({
+      select: {
+        scenarioTypeId: true,
+        scenarioTypeName: true,
+      },
+      orderBy: {
+        scenarioTypeName: 'asc',
+      },
+    });
+  }
 }

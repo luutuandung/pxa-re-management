@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { CostVersion, ERROR_CODES } from '@pxa-re-management/shared';
+import { CostPriceVersion, ERROR_CODES } from '@pxa-re-management/shared';
 import { BusinessException, NotFoundException, ValidationException } from '../common/exceptions';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCostVersionDto } from './dto/create-cost-version.dto';
@@ -11,7 +11,7 @@ import { UpdateCostVersionDto } from './dto/update-cost-version.dto';
 export class CostVersionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<CostVersion[]> {
+  async findAll(): Promise<CostPriceVersion[]> {
     try {
       return await this.prisma.costVersion.findMany({
         orderBy: [
@@ -24,7 +24,7 @@ export class CostVersionService {
     }
   }
 
-  async findAllByKtn(ktnCd: string): Promise<CostVersion[]> {
+  async findAllByKtn(ktnCd: string): Promise<CostPriceVersion[]> {
     if (!ktnCd) {
       throw new ValidationException('KTN code is required');
     }
@@ -49,7 +49,7 @@ export class CostVersionService {
     }
   }
 
-  async findOne(costVersionId: string): Promise<CostVersion> {
+  async findOne(costVersionId: string): Promise<CostPriceVersion> {
     if (!costVersionId) {
       throw new ValidationException('Cost version ID is required');
     }
@@ -76,7 +76,7 @@ export class CostVersionService {
     }
   }
 
-  async create(createCostVersionDto: CreateCostVersionDto): Promise<CostVersion> {
+  async create(createCostVersionDto: CreateCostVersionDto): Promise<CostPriceVersion> {
     const { costVersionId, businessunitId, ...rest } = createCostVersionDto as any;
     const { defaultFlg: _ignoredDefaultFlg, ...restSansDefault } = rest;
 
@@ -134,7 +134,7 @@ export class CostVersionService {
     }
   }
 
-  async update(costVersionId: string, updateCostVersionDto: UpdateCostVersionDto): Promise<CostVersion> {
+  async update(costVersionId: string, updateCostVersionDto: UpdateCostVersionDto): Promise<CostPriceVersion> {
     const { defaultFlg } = updateCostVersionDto;
 
     try {
@@ -218,7 +218,7 @@ export class CostVersionService {
     }
   }
 
-  async duplicate(duplicateCostVersionDto: DuplicateCostVersionDto): Promise<CostVersion> {
+  async duplicate(duplicateCostVersionDto: DuplicateCostVersionDto): Promise<CostPriceVersion> {
     const { sourceCostVersionId, newCostVersionId, newCostVersionName, ktnCd } = duplicateCostVersionDto;
     const isUuid = (v?: string) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v);
 
@@ -273,7 +273,7 @@ export class CostVersionService {
     }
   }
 
-  async updateDefaultFlag(costVersionId: string, defaultFlg: boolean): Promise<CostVersion> {
+  async updateDefaultFlag(costVersionId: string, defaultFlg: boolean): Promise<CostPriceVersion> {
     try {
       return await this.prisma.$transaction(async (prisma) => {
         // 存在チェック

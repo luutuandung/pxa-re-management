@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, HttpStatus, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { BusinessUnit } from '@prisma/client';
 import {
@@ -9,13 +9,18 @@ import {
   SelectOption,
 } from '@pxa-re-management/shared';
 import { ApiErrorResponseDto } from '../common/dto/api-response.dto';
+import { AzureBlobService } from '../azure-blob/azure-blob.service';
 import { CostScenarioService } from './cost-scenario.service';
 import { ConcatTargetsResponseDto } from './dto/concat-targets-response.dto';
 import { CostScenarioOptionsResponseDto, RateTypeOptionDto } from './dto/cost-scenario-options-response.dto';
+import { UploadScenarioResponseDto } from './dto/upload-scenario-response.dto';
 
 @Controller('cost-scenario')
 export class CostScenarioController {
-  constructor(private readonly costScenarioService: CostScenarioService) {}
+  constructor(
+    private readonly costScenarioService: CostScenarioService,
+    private readonly azureBlobService: AzureBlobService
+  ) {}
 
   @Get('options')
   @ApiOperation({
@@ -33,11 +38,12 @@ export class CostScenarioController {
     type: ApiErrorResponseDto,
   })
   async getOptions(): Promise<GetCostScenarioOptionsResponse> {
-    const [businessUnits, costVersions, rateExchanges, scenarioDetails] = await Promise.all([
+    const [businessUnits, costVersions, rateExchanges, scenarioDetails, scenarioTypes] = await Promise.all([
       this.costScenarioService.getBusinessUnits(),
       this.costScenarioService.getCostVersions(),
       this.costScenarioService.getRateExchanges(),
       this.costScenarioService.getScenarioDetails(),
+      this.costScenarioService.getScenarioTypes(),
     ]);
 
     const axisOptions = businessUnits.map((bu) => ({
@@ -61,9 +67,14 @@ export class CostScenarioController {
       name: name,
     }));
 
+    const scenarioTypeOptions = scenarioTypes.map((st) => ({
+      id: st.scenarioTypeId,
+      name: st.scenarioTypeName,
+    }));
+
     return {
       axisOptions,
-      scenarioTypes: [],
+      scenarioTypes: scenarioTypeOptions,
       scenarioBusinesses: [],
       costVersions: costVersionOptions,
       rateTypes,
@@ -187,6 +198,33 @@ export class CostScenarioController {
       .filter(Boolean)
       .sort();
     return distinct.map((cur) => ({ value: cur, label: cur }));
+  }
+
+  @Post('upload')
+  async uploadScenario(
+    @Body('payload') payload: unknown,
+    @Body('filename') filename?: string
+  ): Promise<UploadScenarioResponseDto> {
+    if (!payload) {
+      throw new BadRequestException('payload is required');
+    }
+
+    const jsonData = JSON.stringify(payload, null, 2);
+
+    try {
+      const result = await this.azureBlobService.uploadCostAggregationScenario(jsonData, filename);
+
+      // Extract filename from URL if not provided
+      const finalFilename = filename || result.url.split('/').pop() || 'cost-aggregation-scenario.json';
+
+      return {
+        success: result.success,
+        url: result.url,
+        filename: finalFilename,
+      };
+    } catch (error) {
+      throw new BadRequestException(`Failed to upload to Azure Blob Storage: ${error.message}`);
+    }
   }
 
   parseConcatTarget(obj: { childBu: BusinessUnit; parentBu: BusinessUnit; aggConcatId: string }): ConcatTarget {

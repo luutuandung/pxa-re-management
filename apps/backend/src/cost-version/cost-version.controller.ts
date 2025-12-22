@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CostVersion } from '@pxa-re-management/shared';
+import { CostPriceVersion } from '@pxa-re-management/shared';
 import { ApiErrorResponseDto } from '../common/dto/api-response.dto';
 import { CostVersionResponseDto } from './dto/cost-version-response.dto';
 import { CreateCostVersionDto } from './dto/create-cost-version.dto';
@@ -35,7 +35,7 @@ export class CostVersionController {
     type: ApiErrorResponseDto,
   })
   async findAll(@Query('ktnCd') ktnCd?: string) {
-    let costVersions: CostVersion[];
+    let costVersions: CostPriceVersion[];
     if (ktnCd) {
       costVersions = await this.costVersionService.findAllByKtn(ktnCd);
     } else {
@@ -185,7 +185,7 @@ export class CostVersionController {
     description: '原価バージョンID',
     example: 'CV_2024_001',
   })
-  @ApiBody({ 
+  @ApiBody({
     schema: {
       type: 'object',
       properties: {
@@ -209,7 +209,7 @@ export class CostVersionController {
     return this.parseToDto(costVersion);
   }
 
-  parseToDto(costVersion: CostVersion): CostVersionResponseDto {
+  parseToDto(costVersion: CostPriceVersion): CostVersionResponseDto {
     return {
       costVersionId: costVersion.costVersionId,
       costVersionName: costVersion.costVersionName,

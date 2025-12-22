@@ -1,4 +1,4 @@
-import type { BusinessUnitItem } from './business-unit.type';
+import type { BusinessUnit } from './business-unit.type';
 
 export const AggClass = {
   ACTUAL: 1, // 実績
@@ -30,8 +30,8 @@ export type GetCostScenarioOptionsResponse = {
 };
 
 export type ConcatTarget = {
-  childBu: BusinessUnitItem;
-  parentBu: BusinessUnitItem;
+  childBu: BusinessUnit;
+  parentBu: BusinessUnit;
   aggConcatId: string;
 };
 
@@ -64,4 +64,21 @@ export type TableRowData = {
 export type SelectOption = {
   value: string;
   label: string;
+};
+
+export type ScenarioDetail = {
+  aggSequence: string;
+  buCd: string;
+  buName: string;
+  shKb: string;
+  hbiVer: string;
+  costVer: string;
+  rateType: string;
+};
+
+export type Scenario = {
+  aggCycle: string;
+  targetBuCd: string;
+  scenarioBusinessId: string;
+  scenarioDetails: ScenarioDetail[];
 };

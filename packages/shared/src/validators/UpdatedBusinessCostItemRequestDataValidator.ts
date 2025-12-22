@@ -1,4 +1,4 @@
-import { UpdatedBusinessCostItemRequestData } from "../types/business-cost-item.types";
+import type { UpdatedBusinessCostItemRequestData } from "../types/business-cost-item.types";
 import { CodesOfAvailableCurrencies } from "../constants/CodesOfAvailableCurrencies";
 
 

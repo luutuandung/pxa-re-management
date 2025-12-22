@@ -57,10 +57,6 @@ export type CostPatternCategoryOptionsResponse = {
   }>;
 };
 
-export type CostPatternBulkAssignResponse = {
-  updated: number;
-};
-
 export type CreateCostPatternDetailResponse = {
   costPatternDetailId: string;
 };

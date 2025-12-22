@@ -1,8 +1,4 @@
-export interface GetBusinessUnitListResponse {
-  businessUnits: BusinessUnitItem[];
-}
-
-export interface BusinessUnitItem {
+export interface BusinessUnit {
   businessunitId: string;
   buCd: string;
   name: string;
@@ -13,8 +9,8 @@ export interface BusinessUnitItem {
   productNameEn: string;
   businessunitNameZh: string;
   productNameZh: string;
-  createdBy: string;
+  createdBy: string | null;
   createdOn: string;
-  modifiedBy: string;
+  modifiedBy: string | null;
   modifiedOn: string;
 }

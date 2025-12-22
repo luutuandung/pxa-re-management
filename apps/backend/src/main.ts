@@ -1,18 +1,19 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { join } from 'path';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
 
   // Expressの機能を利用してpublic配下を静的ファイル公開フォルダに指定
   app.use(express.static(join(process.cwd(), '../public')));
-  
+
   // バリデーションパイプの設定
   app.useGlobalPipes(
     new ValidationPipe({
@@ -22,6 +23,8 @@ async function bootstrap() {
     })
   );
 
+  app.useBodyParser("json", { limit: "100MB" });
+
   // Swagger設定
   const config = new DocumentBuilder()
     .setTitle('PXA RE Management API')
@@ -30,6 +33,7 @@ async function bootstrap() {
     .addTag('general-cost', '統一原価項目関連API')
     .addTag('language', '言語マスター関連API')
     .build();
+
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);

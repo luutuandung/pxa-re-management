@@ -100,6 +100,3 @@ export type BuCostCodeCreateInput = {
 export type BuCostCodeUpdateInput = Partial<BuCostCodeCreateInput> & {
   buCostCodeId: string;
 };
-
-// レスポンス用の型
-export type BuCostCodeResponse = BuCostCode;

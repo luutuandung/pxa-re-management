@@ -10,8 +10,6 @@ export interface PatternDetailDto {
   costPatternDetailName: string;
 }
 
-export type GetPatternDetailsResponse = PatternDetailDto[];
-
 // List response item
 export interface CostRegisterListItemDto {
   costRegisterId: string;
@@ -56,7 +54,3 @@ export interface PostExcelUploadErrorResponse {
   message: string;
   details?: UploadErrorDetail[];
 }
-
-export type PostExcelUploadResponse =
-  | PostExcelUploadSuccessResponse
-  | PostExcelUploadErrorResponse;

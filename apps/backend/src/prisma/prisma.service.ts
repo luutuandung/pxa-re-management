@@ -1,51 +1,69 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import * as NestJS from "@nestjs/common";
+import { type Prisma, PrismaClient } from '@prisma/client';
 
-@Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
-  private readonly logger = new Logger(PrismaService.name);
 
-  constructor() {
-    super({
-      // log: ['query', 'error', 'info', 'warn'],
-      log: ['error', 'warn'],
-    });
+@NestJS.Injectable()
+export class PrismaService extends PrismaClient implements NestJS.OnModuleInit, NestJS.OnModuleDestroy {
+
+  private static readonly SLOW_QUERY_THRESHOLD__MILLISECONDS: number = 100;
+  private static readonly VERY_SLOW_QUERY_THRESHOLD__MILLISECONDS: number = 1000;
+
+  private readonly logger: NestJS.Logger = new NestJS.Logger(PrismaService.name);
+
+  public constructor() {
+    super({ log: ["error", "warn"] });
   }
 
-  async onModuleInit() {
+  public async onModuleInit(): Promise<void> {
+
     await this.$connect();
 
-    // ミドルウェアでクエリ実行時間を監視
-    this.$use(async (params, next) => {
-      const start = Date.now();
-      const result = await next(params);
-      const end = Date.now();
-      const duration = end - start;
+    this.$use(
+      async (
+        middlewareParams: Prisma.MiddlewareParams,
+        next: (middlewareParams: Prisma.MiddlewareParams) => Promise<unknown>
+      ): Promise<unknown> => {
 
-      const slowQueryThreshold = 100; // 100ms
+      const timeMomentDirectoryBeforeRequest__millisecondsSiceEpoch = Date.now();
+      const queryResult: unknown = await next(middlewareParams);
+      const timeMomentDirectoryAfterRequest__millisecondsSiceEpoch = Date.now();
+      const duration__milliseconds: number =
+          timeMomentDirectoryAfterRequest__millisecondsSiceEpoch - timeMomentDirectoryBeforeRequest__millisecondsSiceEpoch;
 
-      if (duration > slowQueryThreshold) {
-        this.logger.warn(`SLOW QUERY DETECTED`, {
-          model: params.model,
-          action: params.action,
-          duration: `${duration}ms`,
-          args: JSON.stringify(params.args, null, 2),
-          timestamp: new Date().toISOString(),
-        });
+      if (duration__milliseconds > PrismaService.SLOW_QUERY_THRESHOLD__MILLISECONDS) {
+        this.logger.warn(
+          "SLOW QUERY DETECTED",
+          {
+            model: middlewareParams.model,
+            action: middlewareParams.action,
+            duration: `${ duration__milliseconds } ms`,
+            args: JSON.stringify(middlewareParams.args, null, 2),
+            timestamp: new Date().toISOString()
+          }
+        );
       }
 
-      // 非常に遅いクエリの場合は詳細なスタックトレースも出力
-      if (duration > 1000) {
-        this.logger.error(`VERY SLOW QUERY (${duration}ms)`, {
-          model: params.model,
-          action: params.action,
-          duration: `${duration}ms`,
-          args: params.args,
-          stack: new Error().stack,
-        });
+      if (duration__milliseconds > PrismaService.VERY_SLOW_QUERY_THRESHOLD__MILLISECONDS) {
+        this.logger.error(
+          "VERY SLOW QUERY DETECTED",
+          {
+            model: middlewareParams.model,
+            action: middlewareParams.action,
+            duration: `${ duration__milliseconds } ms`,
+            args: middlewareParams.args,
+            stack: new Error().stack
+          }
+        );
       }
 
-      return result;
+      return queryResult;
+
     });
+
   }
+
+  public async onModuleDestroy(): Promise<void> {
+    await this.$disconnect();
+  }
+
 }

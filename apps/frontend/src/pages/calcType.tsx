@@ -224,11 +224,16 @@ const CalcTypePage: FC = () => {
     );
   };
 
-  // 全アイテムのバリデーション関数
-  const validateAllItems = (items: UnifiedCalcType[], newItems: UnifiedCalcType[]): ValidationErrorForItem[] => {
+  /**
+   * 全アイテムのバリデーション関数
+   * @param allItemsToValidate - バリデーション対象の全アイテム（新規項目と変更された既存項目を含む）
+   * @param newItemsOnly - 新規項目のみの配列（新規項目のエラーメッセージでインデックスを計算するために使用）
+   * @returns バリデーションエラーの配列
+   */
+  const validateAllItems = (allItemsToValidate: UnifiedCalcType[], newItemsOnly: UnifiedCalcType[]): ValidationErrorForItem[] => {
     const validationErrors: ValidationErrorForItem[] = [];
 
-    for (const [itemIndex, item] of items.entries()) {
+    for (const [itemIndex, item] of allItemsToValidate.entries()) {
       const messages: string[] = [];
 
       // 日本語名のバリデーション
@@ -247,11 +252,11 @@ const CalcTypePage: FC = () => {
         let itemName: string;
         if (item.isNew) {
           // 新規項目の場合：新規項目配列内でのインデックスを使用
-          const newItemIndex = newItems.findIndex((newItem) => newItem.calcTypeId === item.calcTypeId);
+          const newItemIndex = newItemsOnly.findIndex((newItem) => newItem.calcTypeId === item.calcTypeId);
           itemName = t('validation.newItemLabel', { number: newItemIndex + 1 });
         } else {
-          // 既存項目の場合：元の日本語名を使用
-          itemName = item.calcTypeNameJa || `Item ${itemIndex + 1}`;
+          // 既存項目の場合：元の日本語名を使用（空文字の場合はフォールバック）
+          itemName = item.calcTypeNameJa.trim() || `Item ${itemIndex + 1}`;
         }
         validationErrors.push({
           itemIndex,

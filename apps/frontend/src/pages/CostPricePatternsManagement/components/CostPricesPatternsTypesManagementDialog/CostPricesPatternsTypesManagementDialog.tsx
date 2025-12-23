@@ -11,7 +11,10 @@ import {
   TagsOfSupportedLanguages,
 
   /* ┅┅┅ Validations ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
-  CostPricePatternTypeValidator
+  CostPricePatternTypeValidator,
+
+  /* ┅┅┅ Constants ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+  PRODUCT_NUMBER_CATEGORY_TYPE_ID
 
 } from "@pxa-re-management/shared";
 
@@ -412,9 +415,9 @@ class CostPricesPatternsTypesManagementDialog extends React.Component<
       costPricePatternJapaneseNameTextBoxValue: "",
       costPricePatternEnglishNameTextBoxValue: "",
       costPricePatternChineseNameTextBoxValue: "",
-      modelCategoriesManagerPayload: [],
-      salesCategoriesManagerPayload: [],
-      retailCategoriesManagerPayload: []
+      modelCategoriesManagerPayload: this.modelCategoriesManager.setCategoriesAndGetPayload([]),
+      salesCategoriesManagerPayload: this.salesCategoriesManager.setCategoriesAndGetPayload([]),
+      retailCategoriesManagerPayload: this.retailCategoriesManager.setCategoriesAndGetPayload([])
     });
 
     this.props.onCostPricesPatternsTypesListRefreshingRequestedEventHandler();
@@ -570,7 +573,16 @@ class CostPricesPatternsTypesManagementDialog extends React.Component<
               isCategoriesDropDownListDataNotReadyYet={
                 this.state.isModelCategoriesTypesDropDownListItemsRetrievingInProgressOrNotStartedYet
               }
-              categoriesDropDownListItemsData={ this.state.modelCategoriesTypesDropDownListItems }
+              categoriesDropDownListItemsData={
+                [
+                  ...this.state.modelCategoriesTypesDropDownListItems,
+                  {
+                    key: PRODUCT_NUMBER_CATEGORY_TYPE_ID,
+                    value: PRODUCT_NUMBER_CATEGORY_TYPE_ID,
+                    displayingNode: this.getLocalizedString("labels.productNumber")
+                  }
+                ]
+              }
               readonly={ this.state.selectedCostPricesPatternsTypesListItem !== null }
               disabled={ mustDisableControls }
               onUpdatingEventHandler={
@@ -657,9 +669,7 @@ class CostPricesPatternsTypesManagementDialog extends React.Component<
 
        </DialogContent>
 
-        <StickyMessageAtomClassComponentAdapter
-          adapterReference={ this.reactReferences.stickyMessageAtom }
-        />
+        <StickyMessageAtomClassComponentAdapter adapterReference={ this.reactReferences.stickyMessageAtom } />
 
       </Dialog>
 

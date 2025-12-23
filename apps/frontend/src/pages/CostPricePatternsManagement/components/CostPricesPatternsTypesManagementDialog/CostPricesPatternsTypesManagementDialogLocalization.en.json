@@ -55,5 +55,8 @@
       "confirmation": { "label": "Discard" },
       "cancellation": { "label": "Continue the Input" }
     }
+  },
+  "labels": {
+    "productNumber": "Product Number"
   }
 }

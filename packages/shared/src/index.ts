@@ -16,6 +16,7 @@ export * from './BFF/Components/CostPricesVersionsDropDownListBFF';
 export * from './constants/CodesOfAvailableCurrencies';
 export * from './constants/CostPricesPatternsCategoriesDataTypes';
 export * from './constants/error-codes';
+export * from './constants/PRODUCT_NUMBER_CATEGORY_TYPE_ID';
 export * from './constants/TagsOfSupportedLanguages';
 
 /* ━━━ Gateways ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -59,6 +60,7 @@ export * from './types/user.type';
 export * from './validators/common_naming/CommonChineseNamingValidator';
 export * from './validators/common_naming/CommonEnglishNamingValidator';
 export * from './validators/common_naming/CommonJapaneseNamingValidator';
+export * from './validators/common_naming/CharacterValidationUtils';
 
 /* ┅┅┅ Other ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 export * from './validators/CostPricePatternTypeValidator';

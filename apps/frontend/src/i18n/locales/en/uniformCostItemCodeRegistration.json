@@ -34,7 +34,13 @@
     "generalCostCd": "Please enter a code",
     "japaneseName": "Please enter a Japanese name",
     "chineseName": "Please enter a Chinese name",
-    "englishName": "Please enter an English name"
+    "englishName": "Please enter an English name",
+    "codeHalfWidthOnly": "Code must contain only half-width characters",
+    "englishNameHalfWidthOnly": "English name must contain only half-width characters",
+    "noEnvironmentDependentChars": "Environment-dependent characters are not allowed",
+    "commonEnglishNamingInvalidCharacters": "English name contains invalid characters: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonJapaneseNamingInvalidCharacters": "Japanese name contains environment-dependent characters: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingInvalidCharacters": "Chinese name contains environment-dependent characters: {{commaSeparatedFoundInvalidCharacters}}"
   },
   "modals": {
     "save": {

@@ -55,5 +55,8 @@
       "confirmation": { "label": "廃棄する" },
       "cancellation": { "label": "入力を続ける" }
     }
+  },
+  "labels": {
+    "productNumber": "品目"
   }
 }

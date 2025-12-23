@@ -20,6 +20,7 @@ const CostVersionRegistration: FC = () => {
   const [selectedCostVersion, setSelectedCostVersion] = useState<string | null>(null);
   const [reportType, setReportType] = useState('製造原価');
   const [costCopy, setCostCopy] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
 
   // Form states for create/edit modal
   const [formData, setFormData] = useState({
@@ -145,19 +146,33 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmDuplicate = async () => {
-    if (!selectedCostVersion) return;
+    if (!selectedCostVersion || isDuplicating) return;
+    
+    setIsDuplicating(true);
     try {
-      await duplicateCostVersion({
+      const payload: {
+        sourceCostVersionId: string;
+        newCostVersionId?: string;
+        newCostVersionName: string;
+        ktnCd: string;
+      } = {
         sourceCostVersionId: selectedCostVersion,
-        newCostVersionId: duplicateData.newCostVersionId,
         newCostVersionName: duplicateData.newCostVersionName,
         ktnCd: duplicateData.ktnCd,
-      });
+      };
+      
+      if (duplicateData.newCostVersionId?.trim()) {
+        payload.newCostVersionId = duplicateData.newCostVersionId.trim();
+      }
+      
+      await duplicateCostVersion(payload);
       addSuccessMessage(t('messages.duplicateSuccess'));
       setShowDuplicateModal(false);
     } catch (error) {
       console.error('Failed to duplicate cost version:', error);
       addErrorMessage(t('messages.fetchError'));
+    } finally {
+      setIsDuplicating(false);
     }
   };
 
@@ -530,13 +545,18 @@ const CostVersionRegistration: FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={duplicateData.newCostVersionId}
-                onChange={(e) => setDuplicateData({ ...duplicateData, newCostVersionId: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('placeholders.costVersionId')}
-              />
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={duplicateData.newCostVersionId}
+                  onChange={(e) => setDuplicateData({ ...duplicateData, newCostVersionId: e.target.value })}
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={t('placeholders.duplicateId', { defaultValue: 'UUID形式、または空白で自動生成' })}
+                />
+                <div className="text-xs text-gray-500 mt-1">
+                  {t('modals.duplicate.idHint')}
+                </div>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.name')}</label>
@@ -553,9 +573,10 @@ const CostVersionRegistration: FC = () => {
             <button
               type="button"
               onClick={confirmDuplicate}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isDuplicating}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t('controls.duplicate')}
+              {isDuplicating ? t('controls.saving') : t('controls.duplicate')}
             </button>
             <button
               type="button"

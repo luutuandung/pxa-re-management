@@ -23,8 +23,11 @@
   "modals": {
     "create": { "title": "原価バージョン作成" },
     "edit": { "title": "原価バージョン編集" },
-    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？" },
-    "duplicate": { "title": "原価バージョン複製" }
+    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？", "ok": "OK", "cancel": "キャンセル" },
+    "duplicate": { 
+      "title": "原価バージョン複製",
+      "idHint": "UUID形式で入力可能。空白の場合は自動生成されます"
+    }
   },
   "messages": {
     "fetchError": "取得に失敗しました",
@@ -56,16 +59,11 @@
     "startDate": "202404",
     "endDate": "202503",
     "description": "原価バージョンの説明を入力してください",
-    "duplicateName": "2024年度原価(複製)"
+    "duplicateName": "2024年度原価(複製)",
+    "duplicateId": "UUID形式、または空白で自動生成"
   },
   "buttons": {
     "ok": "OK",
     "deleteAlt": "削除"
-  },
-  "modals": {
-    "create": { "title": "原価バージョン作成" },
-    "edit": { "title": "原価バージョン編集" },
-    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？", "ok": "OK" },
-    "duplicate": { "title": "原価バージョン複製" }
   }
 }

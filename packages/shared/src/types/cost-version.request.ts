@@ -19,7 +19,7 @@ export type UpdateCostVersionType = Partial<{
 
 export type DuplicateCostVersionType = {
   sourceCostVersionId: string;
-  newCostVersionId: string;
+  newCostVersionId?: string;
   newCostVersionName: string;
   ktnCd: string;
 };

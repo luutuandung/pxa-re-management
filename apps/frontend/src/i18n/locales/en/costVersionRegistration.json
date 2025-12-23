@@ -23,8 +23,11 @@
   "modals": {
     "create": { "title": "Create Cost Version" },
     "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?" },
-    "duplicate": { "title": "Duplicate Cost Version" }
+    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK", "cancel": "Cancel" },
+    "duplicate": { 
+      "title": "Duplicate Cost Version",
+      "idHint": "Enter UUID format, or leave blank for auto-generation"
+    }
   },
   "messages": {
     "fetchError": "Failed to fetch",
@@ -56,16 +59,11 @@
     "startDate": "202404",
     "endDate": "202503",
     "description": "Enter cost version description",
-    "duplicateName": "2024 Cost Version (Duplicate)"
+    "duplicateName": "2024 Cost Version (Duplicate)",
+    "duplicateId": "UUID format, or leave blank for auto-generation"
   },
   "buttons": {
     "ok": "OK",
     "deleteAlt": "Delete"
-  },
-  "modals": {
-    "create": { "title": "Create Cost Version" },
-    "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK" },
-    "duplicate": { "title": "Duplicate Cost Version" }
   }
 }

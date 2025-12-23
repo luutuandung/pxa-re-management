@@ -89,6 +89,7 @@ model CostVersion {
   startDate       String   @map("START_DATE") @db.VarChar(6)
   endDate         String   @map("END_DATE") @db.VarChar(6)
   description     String   @map("DESCRIPTION") @db.NVarChar(100)
+  deleteFlg       Boolean  @default(false) @map("DELETE_FLG")
   createdBy       String   @map("CREATED_BY") @db.UniqueIdentifier
   createdOn       DateTime @default(now()) @map("CREATED_ON") @db.DateTime
   modifiedBy      String   @map("MODIFIED_BY") @db.UniqueIdentifier

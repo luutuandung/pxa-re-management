@@ -52,6 +52,7 @@
     "nameZhRequired": "計算種類名（中国語）を入力してください",
     "nameJaInvalidCharacters": "計算種類名（日本語）に使用できない文字が含まれています: {{characters}}",
     "nameEnInvalidCharacters": "計算種類名（英語）に使用できない文字が含まれています: {{characters}}",
-    "nameZhInvalidCharacters": "計算種類名（中国語）に使用できない文字が含まれています: {{characters}}"
+    "nameZhInvalidCharacters": "計算種類名（中国語）に使用できない文字が含まれています: {{characters}}",
+    "newItemLabel": "新規追加{{number}}"
   }
 }

@@ -225,7 +225,7 @@ const CalcTypePage: FC = () => {
   };
 
   // 全アイテムのバリデーション関数
-  const validateAllItems = (items: UnifiedCalcType[]): ValidationErrorForItem[] => {
+  const validateAllItems = (items: UnifiedCalcType[], newItems: UnifiedCalcType[]): ValidationErrorForItem[] => {
     const validationErrors: ValidationErrorForItem[] = [];
 
     for (const [itemIndex, item] of items.entries()) {
@@ -244,9 +244,18 @@ const CalcTypePage: FC = () => {
       if (zhError) messages.push(zhError);
 
       if (messages.length > 0) {
+        let itemName: string;
+        if (item.isNew) {
+          // 新規項目の場合：新規項目配列内でのインデックスを使用
+          const newItemIndex = newItems.findIndex((newItem) => newItem.calcTypeId === item.calcTypeId);
+          itemName = t('validation.newItemLabel', { number: newItemIndex + 1 });
+        } else {
+          // 既存項目の場合：元の日本語名を使用
+          itemName = item.calcTypeNameJa || `Item ${itemIndex + 1}`;
+        }
         validationErrors.push({
           itemIndex,
-          itemName: item.calcTypeNameJa || `Item ${itemIndex + 1}`,
+          itemName,
           messages,
         });
       }
@@ -264,7 +273,7 @@ const CalcTypePage: FC = () => {
       const allItemsToValidate = [...newItems, ...updatedItems];
 
       // バリデーション: 全アイテムを一度に検証
-      const validationErrors = validateAllItems(allItemsToValidate);
+      const validationErrors = validateAllItems(allItemsToValidate, newItems);
 
       if (validationErrors.length > 0) {
         // すべてのエラーメッセージを表示
@@ -274,6 +283,7 @@ const CalcTypePage: FC = () => {
           });
         });
         setIsSaving(false);
+        setShowSaveModal(false);
         return;
       }
 

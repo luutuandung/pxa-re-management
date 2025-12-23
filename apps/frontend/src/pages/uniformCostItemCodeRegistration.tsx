@@ -17,12 +17,6 @@ import Backdrop from '@/components/molecules/Backdrop.tsx';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useGeneralCostCodeActions, useGeneralCostCodeSelectors } from '../store/generalCostCode';
 import { useStickyMessageActions } from '../store/stickyMessage';
-import {
-  CommonEnglishNamingValidator,
-  CommonJapaneseNamingValidator,
-  CommonChineseNamingValidator,
-  isHalfWidthOnly,
-} from '@pxa-re-management/shared';
 
 // 統合データ型（既存・新規共通）
 interface UnifiedCostItem {
@@ -64,29 +58,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   } = useGeneralCostCodeActions();
   const { generalCostCode } = useGeneralCostCodeSelectors();
   const { addErrorMessage } = useStickyMessageActions();
-
-  // コードのバリデーション（半角文字のみ）
-  const validateCodeField = (value: string): { isValid: true; error?: never } | { isValid: false; error: string } => {
-    if (!isHalfWidthOnly(value)) {
-      return {
-        isValid: false,
-        error: 'validation.codeHalfWidthOnly',
-      };
-    }
-    return { isValid: true };
-  };
-
-  // Error codeをcamelCaseのtranslation keyに変換（他のvalidation keysと統一するため）
-  const convertErrorCodeToTranslationKey = (errorCode: string): string => {
-    return errorCode
-      .split(/[-_]/)
-      .map((word, index) =>
-        index === 0
-          ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      )
-      .join('');
-  };
 
   // 統合データ変換ユーティリティ
   const convertToUnifiedItem = (item: GeneralCostCode): UnifiedCostItem => ({
@@ -248,43 +219,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   // 項目の更新
   const updateItem = React.useCallback(
     (id: string, field: keyof UnifiedCostItem, value: string | boolean): void => {
-      // 文字列値の場合、バリデーションを実行
-      if (typeof value === 'string') {
-        // フィールドごとにバリデーション
-        if (field === 'generalCostCd') {
-          const codeValidation = validateCodeField(value);
-          if (!codeValidation.isValid) {
-            addErrorMessage(t(codeValidation.error));
-            return;
-          }
-        } else if (field === 'generalCostNameEn') {
-          const englishValidation = CommonEnglishNamingValidator.validate(value);
-          if (englishValidation.isInvalid) {
-            // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
-            const { code, ...parameters } = englishValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        } else if (field === 'generalCostNameJa') {
-          const japaneseValidation = CommonJapaneseNamingValidator.validate(value);
-          if (japaneseValidation.isInvalid) {
-            const { code, ...parameters } = japaneseValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        } else if (field === 'generalCostNameZh') {
-          const chineseValidation = CommonChineseNamingValidator.validate(value);
-          if (chineseValidation.isInvalid) {
-            const { code, ...parameters } = chineseValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        }
-      }
-
       setUnifiedItems(
         (prev) =>
             prev.map((item) => {
@@ -314,7 +248,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
             })
       );
   },
-  [ originalItems, addErrorMessage, t ]
+  [ originalItems ]
 );
 
   // 保存処理
@@ -352,52 +286,14 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
     console.log('changedItems in handleSave:', changedItems);
 
-    // バリデーション: 必須フィールドチェック（generalCostCdのみ。他のフィールドはCommon***NamingValidatorでチェック済み）
-    const hasEmptyCode = changedItems.some(
-      (item) => !item.generalCostCd
+    // バリデーション
+    const hasEmptyFields = changedItems.some(
+      (item) => !item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh
     );
 
-    if (hasEmptyCode) {
+    if (hasEmptyFields) {
       addErrorMessage(t('validation.generalCostCd'));
       return;
-    }
-
-    // バリデーション: 文字種チェック
-    for (const item of changedItems) {
-      // コードのバリデーション
-      const codeValidation = validateCodeField(item.generalCostCd);
-      if (!codeValidation.isValid) {
-        addErrorMessage(t(codeValidation.error));
-        return;
-      }
-
-      // 英語名称のバリデーション
-      const englishValidation = CommonEnglishNamingValidator.validate(item.generalCostNameEn);
-      if (englishValidation.isInvalid) {
-        // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
-        const { code, ...parameters } = englishValidation.validationErrorData;
-        const translationKey = convertErrorCodeToTranslationKey(code);
-        addErrorMessage(t(`validation.${ translationKey }`, parameters));
-        return;
-      }
-
-      // 日本語名称のバリデーション
-      const japaneseValidation = CommonJapaneseNamingValidator.validate(item.generalCostNameJa);
-      if (japaneseValidation.isInvalid) {
-        const { code, ...parameters } = japaneseValidation.validationErrorData;
-        const translationKey = convertErrorCodeToTranslationKey(code);
-        addErrorMessage(t(`validation.${ translationKey }`, parameters));
-        return;
-      }
-
-      // 中国語名称のバリデーション
-      const chineseValidation = CommonChineseNamingValidator.validate(item.generalCostNameZh);
-      if (chineseValidation.isInvalid) {
-        const { code, ...parameters } = chineseValidation.validationErrorData;
-        const translationKey = convertErrorCodeToTranslationKey(code);
-        addErrorMessage(t(`validation.${ translationKey }`, parameters));
-        return;
-      }
     }
 
     // 重複チェック

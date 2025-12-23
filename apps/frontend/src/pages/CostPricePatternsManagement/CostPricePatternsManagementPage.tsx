@@ -21,9 +21,6 @@ import {
 /* ┅┅┅ Assets ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 import CSS_Classes from "./CostPricePatternsManagementPage.module.sass";
 
-/* ┅┅┅ Event Bus ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
-import { StickyMessageAtomClassComponentAdapter } from "@/store/stickyMessage.ts";
-
 /* ┅┅┅ GUI Components ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 import PageTopHeading from "@/components/atoms/PageTopHeading/PageTopHeading.tsx";
 import DropDownList from "@/components/molecules/DropDownList/DropDownList.tsx";
@@ -34,7 +31,6 @@ import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Table, TableCaption, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CostPricePatternsManagementDialog from
     "./components/CostPricesPatternsTypesManagementDialog/CostPricesPatternsTypesManagementDialog.tsx";
-import Backdrop from "@/components/molecules/Backdrop.tsx";
 
 /* ┅┅┅ Framework ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 import * as React from "react";
@@ -62,13 +58,6 @@ class CostPricePatternsManagementPage extends React.Component<
   private readonly BFF: CostPricePatternsManagementPageBFF = ClientDependenciesInjector.BFF.pages.costPricePatternsManagement;
   private readonly costPricesVersionsDropDownListBFF: CostPricesVersionsDropDownListBFF = ClientDependenciesInjector.BFF.
       components.costPricesVersionsDropDownList;
-
-  /* ┅┅┅ React References ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
-  private readonly reactReferences: Readonly<{
-    stickyMessageAtom: React.RefObject<StickyMessageAtomClassComponentAdapter.API | null>;
-  }> = {
-    stickyMessageAtom: React.createRef()
-  };
 
 
   /* ━━━ State ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -106,13 +95,6 @@ class CostPricePatternsManagementPage extends React.Component<
     isCostPricePatternsManagementDialogOpened: false
 
   };
-
-
-  /* ━━━ Event Bus ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-  private get stickyMessageAtom(): StickyMessageAtomClassComponentAdapter.API {
-    return this.reactReferences.stickyMessageAtom.current ??
-        ((): never => { throw new Error("期待に反し、「StickyMessageAtomClassComponentAdapter」が未初期化。"); })();
-  }
 
 
   /* ━━━ Lifecycle Hooks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -374,53 +356,24 @@ class CostPricePatternsManagementPage extends React.Component<
     }
 
 
-    Backdrop.display({
-      accessibilityGuidance: this.getLocalizedString("guidances.screenReaderOnly.costPricesPatternSetupInProgress")
-    });
-
-    try {
-
-      await this.BFF.registerCostPricesForAllPairwiseCategoriesCombinations({
-        businessUnitID: this.state.selectedBusinessUnitID,
-        costPriceVersionID: this.state.selectedCostPriceVersionID,
-        costPricePatternID: this.state.selectedCostPricePatternTypeID,
-        businessUnitsCostItems: Array.from(this.state.selectedTableRowsData.values()).map(
-          (
-            businessUnitCostItemData: CostPricePatternsManagementPage.State.SelectedTableRowsData.BusinessUnitCostItem
-          ): CostPricePatternsManagementPageBFF.RegisteringOfCostPricesForAllPairwiseCategoriesCombinations.
-              RequestData.BusinessUnitCostItem =>
-                  ({
-                    ID: businessUnitCostItemData.ID,
-                    costPriceType: businessUnitCostItemData.costPriceType
-                  })
-        )
-      });
-
-    } catch (error: unknown) {
-
-      this.stickyMessageAtom.addErrorMessage({
-        text: this.getLocalizedString("errors.costPricesPatternSetupFailed")
-      });
-
-       console.error(error);
-
-      return;
-
-    } finally {
-
-      Backdrop.dismiss();
-
-    }
-
-
-    this.stickyMessageAtom.addSuccessMessage({
-      text: this.getLocalizedString("guidances.costPricesPatternSetupSucceeded")
+    this.BFF.registerCostPricesForAllPairwiseCategoriesCombinations({
+      businessUnitID: this.state.selectedBusinessUnitID,
+      costPriceVersionID: this.state.selectedCostPriceVersionID,
+      costPricePatternID: this.state.selectedCostPricePatternTypeID,
+      businessUnitsCostItems: Array.from(this.state.selectedTableRowsData.values()).map(
+        (
+          businessUnitCostItemData: CostPricePatternsManagementPage.State.SelectedTableRowsData.BusinessUnitCostItem
+        ): CostPricePatternsManagementPageBFF.RegisteringOfCostPricesForAllPairwiseCategoriesCombinations.
+            RequestData.BusinessUnitCostItem =>
+                ({
+                  ID: businessUnitCostItemData.ID,
+                  costPriceType: businessUnitCostItemData.costPriceType
+                })
+      )
     });
 
   }
 
-
-  /* ┅┅┅ Table Viewing ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   private onToggleTableRowSelecting(
     rowKey: string,
     {
@@ -469,8 +422,6 @@ class CostPricePatternsManagementPage extends React.Component<
         </div>
 
         { this.costPricePatternsManagementDialog }
-
-        <StickyMessageAtomClassComponentAdapter adapterReference={ this.reactReferences.stickyMessageAtom } />
 
       </div>
     );

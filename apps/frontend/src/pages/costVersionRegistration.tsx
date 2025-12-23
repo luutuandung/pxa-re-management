@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useStickyMessageActions } from '@/store/stickyMessage';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useCostVersionActions, useCostVersionSelectors } from '../store/costVersion';
+import { normalizeToYearMonth, validateDateRange } from '../utils/dateUtils';
 
 const CostVersionRegistration: FC = () => {
   const { t } = useTranslation('costVersionRegistration');
@@ -98,14 +99,25 @@ const CostVersionRegistration: FC = () => {
     }
   };
 
-  const normalizeYm = (v: string) => (v || '').replaceAll('/', '').replaceAll('-', '').slice(0, 6);
 
   const confirmCreate = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate, t);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
+      const normalizedStartDate = normalizeToYearMonth(formData.startDate);
+      const normalizedEndDate = normalizeToYearMonth(formData.endDate);
+      if (!normalizedStartDate || !normalizedEndDate) {
+        addErrorMessage(t('messages.invalidDate'));
+        return;
+      }
       await createCostVersion({
         ...formData,
-        startDate: normalizeYm(formData.startDate),
-        endDate: normalizeYm(formData.endDate),
+        startDate: normalizedStartDate,
+        endDate: normalizedEndDate,
       });
       addSuccessMessage(t('messages.createSuccess'));
       setShowCreateModal(false);
@@ -116,12 +128,24 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmEdit = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate, t);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
       const { costVersionId, ...updateData } = formData;
+      const normalizedStartDate = normalizeToYearMonth(updateData.startDate);
+      const normalizedEndDate = normalizeToYearMonth(updateData.endDate);
+      if (!normalizedStartDate || !normalizedEndDate) {
+        addErrorMessage(t('messages.invalidDate'));
+        return;
+      }
       await updateCostVersion(costVersionId, {
         ...updateData,
-        startDate: normalizeYm(updateData.startDate),
-        endDate: normalizeYm(updateData.endDate),
+        startDate: normalizedStartDate,
+        endDate: normalizedEndDate,
       });
       addSuccessMessage(t('messages.updateSuccess'));
       setShowEditModal(false);

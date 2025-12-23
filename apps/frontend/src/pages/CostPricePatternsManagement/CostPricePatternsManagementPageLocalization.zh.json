@@ -4,10 +4,8 @@
     "tableDataDisplaying": "原価項目一覧の表示、原価パターン種類の管理を行うには、拠点を選んでから原価バージョンを指定して下さい。",
     "noBusinessUnits": "拠点データがないので、表示可能な関連原価登録データはありません。",
     "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
-    "costPricesPatternSetupSucceeded": "原価項目パターンの設定が完了しました。",
     "screenReaderOnly": {
-      "tableDataLoadingInProgress": "原価項目表データを取得中です。しばらくお待ちください。",
-      "costPricesPatternSetupInProgress": "原価項目パターンを設定中です。しばらくお待ちください。"
+      "tableDataLoadingInProgress": "原価項目表データを取得中です。しばらくお待ちください。"
     }
   },
   "controls": {
@@ -63,7 +61,6 @@
   "errors": {
     "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中不具合が発生しました。",
     "costPriceVersionsDropDownListItemsRetrievingFailed": "絞り込みに必要な原価バージョンデータの取得中不具合が発生しました。",
-    "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
-    "costPricesDataRegistrationFailed": "原価登録中不具合が発生しました。"
+    "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。"
   }
 }

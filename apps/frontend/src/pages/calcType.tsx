@@ -1,9 +1,4 @@
 import type { CalcType } from '@pxa-re-management/shared';
-import {
-  CommonChineseNamingValidator,
-  CommonEnglishNamingValidator,
-  CommonJapaneseNamingValidator,
-} from '@pxa-re-management/shared';
 import { type FC, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -41,45 +36,6 @@ interface UnifiedCalcType {
   isNew: boolean; // 新規項目フラグ
   isChanged: boolean; // 変更フラグ
 }
-
-type ValidationErrorForItem = {
-  itemIndex: number;
-  itemName: string;
-  messages: string[];
-};
-
-const convertErrorCodeToTranslationKey = (errorCode: string): string => {
-  return errorCode
-    .split(/[-_]/)
-    .map((word, index) =>
-      index === 0
-        ? word.toLowerCase()
-        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
-    .join('');
-};
-
-const validateField = (
-  value: unknown,
-  validator: typeof CommonJapaneseNamingValidator | typeof CommonEnglishNamingValidator | typeof CommonChineseNamingValidator,
-  fieldPrefix: 'nameJa' | 'nameEn' | 'nameZh',
-  t: (key: string, params?: Record<string, string>) => string
-): string | null => {
-  const validation = validator.validate(value);
-  if (validation.isInvalid) {
-    const { code, ...parameters } = validation.validationErrorData;
-    convertErrorCodeToTranslationKey(code);
-    const translationKey = code.includes('INVALID_CHARACTERS')
-      ? `${fieldPrefix}InvalidCharacters`
-      : `${fieldPrefix}Required`;
-    const params: Record<string, string> = {};
-    if ('commaSeparatedFoundInvalidCharacters' in parameters) {
-      params.characters = parameters.commaSeparatedFoundInvalidCharacters;
-    }
-    return t(`validation.${translationKey}`, params);
-  }
-  return null;
-};
 
 const CalcTypePage: FC = () => {
   const { t } = useTranslation('calcType');
@@ -190,26 +146,15 @@ const CalcTypePage: FC = () => {
   // 項目の更新
   const updateItem = (id: string, field: keyof UnifiedCalcType, value: any) => {
     setUnifiedItems((prev) =>
-      prev.map((item) => {
-        if (item.calcTypeId !== id) return item;
-
-        const updatedItem = { ...item, [field]: value };
-
-        // 変更フラグの設定
-        const originalItem = originalItems.find((orig) => orig.calcTypeId === id);
-        if (originalItem && !item.isNew) {
-          // 既存項目の場合：元の値と比較して変更があるかチェック
-          updatedItem.isChanged =
-            originalItem.calcTypeNameJa !== updatedItem.calcTypeNameJa ||
-            originalItem.calcTypeNameEn !== updatedItem.calcTypeNameEn ||
-            originalItem.calcTypeNameZh !== updatedItem.calcTypeNameZh ||
-            originalItem.defaultFlg !== updatedItem.defaultFlg;
-        } else if (item.isNew) {
-          updatedItem.isChanged = true;
-        }
-
-        return updatedItem;
-      })
+      prev.map((item) =>
+        item.calcTypeId === id
+          ? {
+              ...item,
+              [field]: value,
+              isChanged: true,
+            }
+          : item
+      )
     );
   };
 
@@ -224,66 +169,20 @@ const CalcTypePage: FC = () => {
     );
   };
 
-  // 全アイテムのバリデーション関数
-  const validateAllItems = (items: UnifiedCalcType[]): ValidationErrorForItem[] => {
-    const validationErrors: ValidationErrorForItem[] = [];
-
-    for (const [itemIndex, item] of items.entries()) {
-      const messages: string[] = [];
-
-      // 日本語名のバリデーション
-      const jaError = validateField(item.calcTypeNameJa, CommonJapaneseNamingValidator, 'nameJa', t);
-      if (jaError) messages.push(jaError);
-
-      // 英語名のバリデーション
-      const enError = validateField(item.calcTypeNameEn, CommonEnglishNamingValidator, 'nameEn', t);
-      if (enError) messages.push(enError);
-
-      // 中国語名のバリデーション
-      const zhError = validateField(item.calcTypeNameZh, CommonChineseNamingValidator, 'nameZh', t);
-      if (zhError) messages.push(zhError);
-
-      if (messages.length > 0) {
-        validationErrors.push({
-          itemIndex,
-          itemName: item.calcTypeNameJa || `Item ${itemIndex + 1}`,
-          messages,
-        });
-      }
-    }
-
-    return validationErrors;
-  };
-
   // 保存処理
   const handleSave = async () => {
     setIsSaving(true);
     try {
       const newItems = unifiedItems.filter((item) => item.isNew);
       const updatedItems = unifiedItems.filter((item) => !item.isNew && item.isChanged);
-      const allItemsToValidate = [...newItems, ...updatedItems];
-
-      // バリデーション: 全アイテムを一度に検証
-      const validationErrors = validateAllItems(allItemsToValidate);
-
-      if (validationErrors.length > 0) {
-        // すべてのエラーメッセージを表示
-        validationErrors.forEach(({ itemName, messages }) => {
-          messages.forEach((message) => {
-            addErrorMessage(`${itemName}: ${message}`);
-          });
-        });
-        setIsSaving(false);
-        return;
-      }
 
       // 新規項目の個別作成
       for (const item of newItems) {
         console.log('[page] createCalcType:', item);
         await createCalcType({
-          calcTypeNameJa: item.calcTypeNameJa,
-          calcTypeNameEn: item.calcTypeNameEn,
-          calcTypeNameZh: item.calcTypeNameZh,
+          calcTypeNameJa: item.calcTypeNameJa || ' ',
+          calcTypeNameEn: item.calcTypeNameEn || ' ',
+          calcTypeNameZh: item.calcTypeNameZh || ' ',
           defaultFlg: item.defaultFlg,
           businessunitId: item.businessunitId,
         });
@@ -349,7 +248,7 @@ const CalcTypePage: FC = () => {
       const bDate = b.modifiedOn ? new Date(b.modifiedOn) : new Date(0);
       return sortDirection === 'asc' ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime();
     });
-  }, [unifiedItems, sortDirection]); 
+  }, [unifiedItems, sortDirection]);
 
   const toggleSort = () => {
     if (sortDirection === null) setSortDirection('desc');
@@ -408,12 +307,6 @@ const CalcTypePage: FC = () => {
                       {t('table.headers.name')}
                     </TableHead>
                     <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">
-                      {t('table.headers.nameEn')}
-                    </TableHead>
-                    <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">
-                      {t('table.headers.nameZh')}
-                    </TableHead>
-                    <TableHead className="border-r border-gray-200 px-4 py-3 text-left text-sm font-medium">
                       <button type="button" onClick={toggleSort} className="flex items-center space-x-1 hover:text-gray-200">
                         <span>{t('table.headers.modifiedDate')}</span>
                         {sortDirection === 'asc' && <span>↑</span>}
@@ -447,28 +340,6 @@ const CalcTypePage: FC = () => {
                         <Input
                           value={item.calcTypeNameJa}
                           onChange={(e) => updateItem(item.calcTypeId, 'calcTypeNameJa', e.target.value)}
-                          placeholder={t('controls.placeholderName')}
-                          className="w-full"
-                          disabled={item.deleteFlg}
-                        />
-                      </TableCell>
-
-                      {/* 名称（英語） */}
-                      <TableCell className="border-r border-gray-200 px-4 py-3">
-                        <Input
-                          value={item.calcTypeNameEn}
-                          onChange={(e) => updateItem(item.calcTypeId, 'calcTypeNameEn', e.target.value)}
-                          placeholder={t('controls.placeholderName')}
-                          className="w-full"
-                          disabled={item.deleteFlg}
-                        />
-                      </TableCell>
-
-                      {/* 名称（中国語） */}
-                      <TableCell className="border-r border-gray-200 px-4 py-3">
-                        <Input
-                          value={item.calcTypeNameZh}
-                          onChange={(e) => updateItem(item.calcTypeId, 'calcTypeNameZh', e.target.value)}
                           placeholder={t('controls.placeholderName')}
                           className="w-full"
                           disabled={item.deleteFlg}

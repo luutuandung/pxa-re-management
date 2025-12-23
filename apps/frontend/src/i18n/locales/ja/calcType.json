@@ -13,8 +13,6 @@
     "headers": {
       "selection": "選択",
       "name": "計算種類",
-      "nameEn": "計算種類（英語）",
-      "nameZh": "計算種類（中国語）",
       "modifiedDate": "更新日時",
       "actions": "操作"
     }
@@ -46,12 +44,6 @@
     "validationNameRequired": "名称は必須です"
   },
   "validation": {
-    "selectBusinessUnit": "拠点を選択してください",
-    "nameJaRequired": "計算種類名（日本語）を入力してください",
-    "nameEnRequired": "計算種類名（英語）を入力してください",
-    "nameZhRequired": "計算種類名（中国語）を入力してください",
-    "nameJaInvalidCharacters": "計算種類名（日本語）に使用できない文字が含まれています: {{characters}}",
-    "nameEnInvalidCharacters": "計算種類名（英語）に使用できない文字が含まれています: {{characters}}",
-    "nameZhInvalidCharacters": "計算種類名（中国語）に使用できない文字が含まれています: {{characters}}"
+    "selectBusinessUnit": "拠点を選択してください"
   }
 }

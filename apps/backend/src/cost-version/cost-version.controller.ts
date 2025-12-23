@@ -220,6 +220,7 @@ export class CostVersionController {
       modifiedBy: costVersion.modifiedBy,
       modifiedOn: costVersion.modifiedOn.toISOString(),
       businessunitId: costVersion.businessunitId,
+      hasCostRegisters: costVersion.hasCostRegisters,
     };
   }
 }

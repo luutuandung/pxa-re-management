@@ -1,13 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { CreateCostVersionType } from '@pxa-re-management/shared';
 import { IsBoolean, IsNotEmpty, IsString, Matches } from 'class-validator';
 
-export class CreateCostVersionDto implements CreateCostVersionType {
-  @ApiProperty({ example: 'CV_2024_001', description: '原価バージョンID' })
-  @IsString()
-  @IsNotEmpty()
-  costVersionId: string;
-
+export class CreateCostVersionDto {
   @ApiProperty({ example: 'KTN001', description: '系統コード' })
   @IsString()
   @IsNotEmpty()

@@ -27,4 +27,7 @@ export class CostVersionResponseDto {
 
   @ApiProperty({ example: 'KTN001', description: '系統コード' })
   businessunitId: string;
+
+  @ApiProperty({ example: false, description: '原価登録レコードが存在するかどうか', required: false })
+  hasCostRegisters?: boolean;
 }

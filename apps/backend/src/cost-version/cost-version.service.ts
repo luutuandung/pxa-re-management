@@ -7,6 +7,31 @@ import { CreateCostVersionDto } from './dto/create-cost-version.dto';
 import { DuplicateCostVersionDto } from './dto/duplicate-cost-version.dto';
 import { UpdateCostVersionDto } from './dto/update-cost-version.dto';
 
+type CreateDataWithoutDefaults = Omit<CreateCostVersionDto, 'businessunitId' | 'defaultFlg'>;
+
+type CostVersionCreateData = {
+  costVersionName: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  businessunitId: string;
+  createdOn: Date;
+  createdBy: string;
+  modifiedOn: Date;
+  modifiedBy: string;
+};
+
+type UpdateDataWithoutIgnored = Omit<UpdateCostVersionDto, 'ktnCd' | 'defaultFlg'>;
+
+type CostVersionUpdateData = {
+  costVersionName?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  modifiedBy: string;
+  modifiedOn: Date;
+};
+
 @Injectable()
 export class CostVersionService {
   constructor(private readonly prisma: PrismaService) {}
@@ -99,8 +124,8 @@ export class CostVersionService {
   }
 
   async create(createCostVersionDto: CreateCostVersionDto): Promise<CostPriceVersion> {
-    const { businessunitId, ...rest } = createCostVersionDto as any;
-    const { defaultFlg: _ignoredDefaultFlg, ...restSansDefault } = rest;
+    const { businessunitId, defaultFlg: _ignoredDefaultFlg, ...restSansDefault } = createCostVersionDto;
+    const rest: CreateDataWithoutDefaults = restSansDefault;
 
     try {
       return await this.prisma.$transaction(async (prisma) => {
@@ -118,8 +143,8 @@ export class CostVersionService {
         // }
 
         // 新規作成 - costVersionIdはPrismaが自動生成
-        const data: any = {
-          ...restSansDefault,
+        const data: CostVersionCreateData = {
+          ...rest,
           businessunitId,
           createdOn: new Date(),
           createdBy: '00000000-0000-0000-0000-000000000000',
@@ -154,23 +179,25 @@ export class CostVersionService {
         const hasRegisters = await this.hasCostRegisters(costVersionId);
 
         // 更新 - Prisma用の有効なフィールドのみを含める
-        const { ktnCd, defaultFlg, ...rest } = updateCostVersionDto as any;
+        const { ktnCd, defaultFlg, ...rest } = updateCostVersionDto;
+        const updateFields: UpdateDataWithoutIgnored = rest;
         
         // 原価登録レコードが存在する場合、適用開始・終了は編集不可
-        if (hasRegisters && (rest.startDate !== undefined || rest.endDate !== undefined)) {
+        if (hasRegisters && (updateFields.startDate !== undefined || updateFields.endDate !== undefined)) {
           throw new ValidationException(
             '原価登録レコードが存在するため、適用開始・終了年月は編集できません'
           );
         }
         
-        const updateData: any = {};
-        if (rest.costVersionName !== undefined) updateData.costVersionName = rest.costVersionName;
-        if (rest.startDate !== undefined) updateData.startDate = rest.startDate;
-        if (rest.endDate !== undefined) updateData.endDate = rest.endDate;
-        if (rest.description !== undefined) updateData.description = rest.description;
-        
-        updateData.modifiedBy = '00000000-0000-0000-0000-000000000000';
-        updateData.modifiedOn = new Date();
+        // TODO: update - modifiedBy: 認証機能実装後にダミーIDを実際のユーザーIDに置き換える
+        const updateData: CostVersionUpdateData = {
+          modifiedBy: '00000000-0000-0000-0000-000000000000',
+          modifiedOn: new Date(),
+        };
+        if (updateFields.costVersionName !== undefined) updateData.costVersionName = updateFields.costVersionName;
+        if (updateFields.startDate !== undefined) updateData.startDate = updateFields.startDate;
+        if (updateFields.endDate !== undefined) updateData.endDate = updateFields.endDate;
+        if (updateFields.description !== undefined) updateData.description = updateFields.description;
 
         const updatedVersion = await prisma.costVersion.update({
           where: { costVersionId },

@@ -35,5 +35,8 @@
   },
   "locationSelect": {
     "placeholder": "Select Location"
+  },
+  "buttons": {
+    "save": "Save"
   }
 }

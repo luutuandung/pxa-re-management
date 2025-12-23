@@ -20,6 +20,7 @@ const CostVersionRegistration: FC = () => {
   const [selectedCostVersion, setSelectedCostVersion] = useState<string | null>(null);
   const [reportType, setReportType] = useState('製造原価');
   const [costCopy, setCostCopy] = useState(false);
+  const [hasCostRegisters, setHasCostRegisters] = useState(false);
 
   // Form states for create/edit modal
   const [formData, setFormData] = useState({
@@ -74,6 +75,8 @@ const CostVersionRegistration: FC = () => {
       description: costVersion.description,
       defaultFlg: false,
     });
+    setSelectedCostVersion(costVersion.costVersionId);
+    setHasCostRegisters(costVersion.hasCostRegisters ?? false);
     setShowEditModal(true);
   };
 
@@ -102,8 +105,9 @@ const CostVersionRegistration: FC = () => {
 
   const confirmCreate = async () => {
     try {
+      const { costVersionId, ...createData } = formData;
       await createCostVersion({
-        ...formData,
+        ...createData,
         startDate: normalizeYm(formData.startDate),
         endDate: normalizeYm(formData.endDate),
       });
@@ -116,9 +120,10 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmEdit = async () => {
+    if (!selectedCostVersion) return;
     try {
-      const { costVersionId, ...updateData } = formData;
-      await updateCostVersion(costVersionId, {
+      const { costVersionId, businessunitId, defaultFlg, ...updateData } = formData;
+      await updateCostVersion(selectedCostVersion, {
         ...updateData,
         startDate: normalizeYm(updateData.startDate),
         endDate: normalizeYm(updateData.endDate),
@@ -315,16 +320,6 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={formData.costVersionId}
-                onChange={(e) => setFormData({ ...formData, costVersionId: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('placeholders.costVersionId')}
-              />
-            </div>
-            <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
@@ -411,15 +406,6 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={formData.costVersionId}
-                disabled
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
-              />
-            </div>
-            <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
@@ -444,7 +430,10 @@ const CostVersionRegistration: FC = () => {
                 type="text"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={hasCostRegisters}
+                className={`flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  hasCostRegisters ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -453,7 +442,10 @@ const CostVersionRegistration: FC = () => {
                 type="text"
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={hasCostRegisters}
+                className={`flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  hasCostRegisters ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -482,7 +474,7 @@ const CostVersionRegistration: FC = () => {
               onClick={confirmEdit}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              {t('common:buttons.save', { defaultValue: '保存' })}
+              {t('common:buttons.save')}
             </button>
             <button
               type="button"

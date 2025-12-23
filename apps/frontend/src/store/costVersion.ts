@@ -26,7 +26,6 @@ export const useCostVersionActions = () => {
 
   const createCostVersion = useCallback(
     async (data: {
-      costVersionId: string;
       businessunitId: string;
       costVersionName: string;
       startDate: string;
@@ -70,7 +69,6 @@ export const useCostVersionActions = () => {
             json: data,
           })
           .json();
-        addSuccessMessage('原価バージョンを更新しました');
         await fetchCostVersions();
         return response;
       } catch (error) {

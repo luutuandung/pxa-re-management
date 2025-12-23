@@ -40,6 +40,7 @@
   "fields": {
     "id": "Cost Version ID",
     "systemCode": "System Code",
+    "businessUnit": "Business Unit",
     "name": "Cost Version Name",
     "start": "Start",
     "end": "End",

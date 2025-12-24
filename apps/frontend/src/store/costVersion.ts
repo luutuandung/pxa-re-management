@@ -101,7 +101,6 @@ export const useCostVersionActions = () => {
   const duplicateCostVersion = useCallback(
     async (data: {
       sourceCostVersionId: string;
-      newCostVersionId?: string;
       newCostVersionName: string;
       ktnCd: string;
     }) => {

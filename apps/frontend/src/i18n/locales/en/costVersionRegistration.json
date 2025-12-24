@@ -32,14 +32,21 @@
   "messages": {
     "fetchError": "Failed to fetch",
     "createSuccess": "Created successfully",
+    "createError": "Failed to create",
     "updateSuccess": "Updated successfully",
+    "updateError": "Failed to update",
     "deleteSuccess": "Deleted successfully",
+    "deleteError": "Failed to delete",
     "duplicateSuccess": "Duplicated successfully",
+    "duplicateError": "Failed to duplicate",
+    "updateDefaultSuccess": "Default flag updated successfully",
+    "updateDefaultError": "Failed to update default flag",
     "validationError": "Please check your input",
     "selectBeforeDuplicate": "Please select a cost version to duplicate"
   },
   "fields": {
     "id": "Cost Version ID",
+    "businessUnit": "Business Unit",
     "systemCode": "System Code",
     "name": "Cost Version Name",
     "start": "Start",
@@ -64,6 +71,7 @@
   },
   "buttons": {
     "ok": "OK",
+    "save": "Save",
     "deleteAlt": "Delete"
   }
 }

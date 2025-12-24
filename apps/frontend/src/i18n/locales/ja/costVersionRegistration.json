@@ -32,9 +32,15 @@
   "messages": {
     "fetchError": "取得に失敗しました",
     "createSuccess": "作成しました",
+    "createError": "作成に失敗しました",
     "updateSuccess": "更新しました",
+    "updateError": "更新に失敗しました",
     "deleteSuccess": "削除しました",
+    "deleteError": "削除に失敗しました",
     "duplicateSuccess": "複製しました",
+    "duplicateError": "複製に失敗しました",
+    "updateDefaultSuccess": "デフォルトフラグを更新しました",
+    "updateDefaultError": "デフォルトフラグの更新に失敗しました",
     "validationError": "入力内容を確認してください",
     "selectBeforeDuplicate": "複製する原価バージョンを選択してください"
   },
@@ -64,6 +70,7 @@
   },
   "buttons": {
     "ok": "OK",
+    "save": "保存",
     "deleteAlt": "削除"
   }
 }

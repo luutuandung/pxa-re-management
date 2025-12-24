@@ -3,6 +3,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '../utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
+import i18n from '../i18n';
 
 const costVersionsAtom = atom<CostPriceVersion[]>([]);
 
@@ -18,7 +19,7 @@ export const useCostVersionActions = () => {
         setCostVersions(response);
       } catch (error) {
         console.error('fetchCostVersions error:', error);
-        addErrorMessage('原価バージョンの取得に失敗しました');
+        addErrorMessage(i18n.t('messages.fetchError', { ns: 'costVersionRegistration' }));
       }
     },
     [setCostVersions, addErrorMessage]
@@ -40,12 +41,12 @@ export const useCostVersionActions = () => {
             json: data,
           })
           .json();
-        addSuccessMessage('原価バージョンを作成しました');
+        addSuccessMessage(i18n.t('messages.createSuccess', { ns: 'costVersionRegistration' }));
         await fetchCostVersions();
         return response;
       } catch (error) {
         console.error('createCostVersion error:', error);
-        addErrorMessage('原価バージョンの作成に失敗しました');
+        addErrorMessage(i18n.t('messages.createError', { ns: 'costVersionRegistration' }));
         throw error;
       }
     },
@@ -70,12 +71,12 @@ export const useCostVersionActions = () => {
             json: data,
           })
           .json();
-        addSuccessMessage('原価バージョンを更新しました');
+        addSuccessMessage(i18n.t('messages.updateSuccess', { ns: 'costVersionRegistration' }));
         await fetchCostVersions();
         return response;
       } catch (error) {
         console.error('updateCostVersion error:', error);
-        addErrorMessage('原価バージョンの更新に失敗しました');
+        addErrorMessage(i18n.t('messages.updateError', { ns: 'costVersionRegistration' }));
         throw error;
       }
     },
@@ -86,11 +87,11 @@ export const useCostVersionActions = () => {
     async (costVersionId: string) => {
       try {
         await api.delete(`costVersion/${costVersionId}`);
-        addSuccessMessage('原価バージョンを削除しました');
+        addSuccessMessage(i18n.t('messages.deleteSuccess', { ns: 'costVersionRegistration' }));
         await fetchCostVersions();
       } catch (error) {
         console.error('deleteCostVersion error:', error);
-        addErrorMessage('原価バージョンの削除に失敗しました');
+        addErrorMessage(i18n.t('messages.deleteError', { ns: 'costVersionRegistration' }));
         throw error;
       }
     },
@@ -110,12 +111,12 @@ export const useCostVersionActions = () => {
             json: data,
           })
           .json();
-        addSuccessMessage('原価バージョンを複製しました');
+        addSuccessMessage(i18n.t('messages.duplicateSuccess', { ns: 'costVersionRegistration' }));
         await fetchCostVersions();
         return response;
       } catch (error) {
         console.error('duplicateCostVersion error:', error);
-        addErrorMessage('原価バージョンの複製に失敗しました');
+        addErrorMessage(i18n.t('messages.duplicateError', { ns: 'costVersionRegistration' }));
         throw error;
       }
     },
@@ -130,12 +131,12 @@ export const useCostVersionActions = () => {
             json: { defaultFlg },
           })
           .json();
-        addSuccessMessage('デフォルトフラグを更新しました');
+        addSuccessMessage(i18n.t('messages.updateDefaultSuccess', { ns: 'costVersionRegistration' }));
         await fetchCostVersions();
         return response;
       } catch (error) {
         console.error('updateDefaultFlag error:', error);
-        addErrorMessage('デフォルトフラグの更新に失敗しました');
+        addErrorMessage(i18n.t('messages.updateDefaultError', { ns: 'costVersionRegistration' }));
         throw error;
       }
     },

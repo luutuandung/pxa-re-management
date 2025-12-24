@@ -793,14 +793,25 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
               </label>
             </div>
 
-            <button
-              type="button"
-              onClick={addNewItem}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-            >
-              {t('controls.add')}
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={addNewItem}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+              >
+                {t('controls.add')}
+              </button>
 
+              { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+              <button
+                type="button"
+                onClick={handleSave}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 text-sm"
+                disabled={isSaving}
+              >
+                {isSaving ? t('controls.saving') : t('controls.save')}
+              </button>
+            </div>
           </div>
 
           { /* ┉┉┉ データ表示テーブル ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
@@ -908,19 +919,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
           <div className="flex pb-8">
             <DataTablePagination table={ tableModel } />
           </div>
-
-          { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
-          <div className="flex justify-center space-x-3">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-              disabled={isSaving}
-            >
-              {isSaving ? t('controls.saving') : t('controls.save')}
-            </button>
-          </div>
-
         </div>
       </div>
 

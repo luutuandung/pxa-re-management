@@ -30,4 +30,7 @@ export type CostPriceVersion = {
   /** @description 【日本語名】 事業部ID　*/
   businessunitId: string;
 
+  /** @description 【日本語名】 原価登録レコードが存在するかどうか */
+  hasCostRegisters?: boolean;
+
 };

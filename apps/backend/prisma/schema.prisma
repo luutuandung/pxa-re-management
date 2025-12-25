@@ -327,7 +327,7 @@ model BusinessUnit {
   scenarioAxisunits       ScenarioAxisunit[]
   scenarioAxisunitDetails ScenarioAxisunitDetail[]
 
-  @@map("M_BUSINESS_UNIT_tmp")
+  @@map("M_BUSINESS_UNIT")
 }
 
 model AggPreset {
@@ -658,37 +658,37 @@ model CostPatternCategory {
 }
 
 model Language {
-  id                             String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
-  name                           String    @map("NAME") @db.NVarChar(50)
-  code                           String    @map("CODE") @db.NVarChar(5)
-  createdBy                      String?   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn                      DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy                     String?   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn                     DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
+  id         String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name       String    @map("NAME") @db.NVarChar(50)
+  code       String    @map("CODE") @db.NVarChar(5)
+  createdBy  String?   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn  DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy String?   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  users  User[]
+  users User[]
 
   @@map("M_LANGUAGE")
 }
 
 model User {
-  id                             String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
-  name                           String    @map("NAME") @db.NVarChar(50)
-  emailAddress                   String?   @map("EMAIL_ADDRESS") @db.NVarChar(254)
-  globalId                       String    @unique @map("GLOBAL_ID") @db.NVarChar(7)
-  languageId                     String?   @map("LANGUAGE_ID") @db.UniqueIdentifier
-  businessunitId                 String?   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
-  userTypeId                     String?   @map("USER_TYPE_ID") @db.UniqueIdentifier
-  pxaApplicationRoleId           String?   @map("PXA_APPLICATION_ROLE_ID") @db.UniqueIdentifier
-  permissionBusinessunitGroupId  String?   @map("PERMISSION_BUSINESSUNIT_GROUP_ID") @db.UniqueIdentifier
-  deleteFlg                      Boolean?  @map("DELETE_FLAG")
-  createdBy                      String?   @map("CREATED_BY") @db.UniqueIdentifier
-  createdOn                      DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
-  modifiedBy                     String?   @map("MODIFIED_BY") @db.UniqueIdentifier
-  modifiedOn                     DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
+  id                            String    @id @default(uuid()) @map("ID") @db.UniqueIdentifier
+  name                          String    @map("NAME") @db.NVarChar(50)
+  emailAddress                  String?   @map("EMAIL_ADDRESS") @db.NVarChar(254)
+  globalId                      String    @unique @map("GLOBAL_ID") @db.NVarChar(7)
+  languageId                    String?   @map("LANGUAGE_ID") @db.UniqueIdentifier
+  businessunitId                String?   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  userTypeId                    String?   @map("USER_TYPE_ID") @db.UniqueIdentifier
+  pxaApplicationRoleId          String?   @map("PXA_APPLICATION_ROLE_ID") @db.UniqueIdentifier
+  permissionBusinessunitGroupId String?   @map("PERMISSION_BUSINESSUNIT_GROUP_ID") @db.UniqueIdentifier
+  deleteFlg                     Boolean?  @map("DELETE_FLAG")
+  createdBy                     String?   @map("CREATED_BY") @db.UniqueIdentifier
+  createdOn                     DateTime? @default(now()) @map("CREATED_ON") @db.DateTime
+  modifiedBy                    String?   @map("MODIFIED_BY") @db.UniqueIdentifier
+  modifiedOn                    DateTime? @default(now()) @map("MODIFIED_ON") @db.DateTime
 
-  // Relations
-  language  Language? @relation(fields: [languageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // === Relations =====================================================================================================
+  language Language? @relation(fields: [languageId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("M_USER")
 }
@@ -729,4 +729,13 @@ model Model {
   name String @map("NAME") @db.NVarChar(50)
 
   @@map("MODEL")
+}
+
+model Quantity {
+  ID             String   @id @map("ID") @db.UniqueIdentifier
+  modelID        String   @map("MODEL_ID") @db.UniqueIdentifier
+  businessUnitID String   @map("BUSINESSUNIT_ID") @db.UniqueIdentifier
+  date           DateTime @map("DATE") @db.Date
+
+  @@map("QTY")
 }

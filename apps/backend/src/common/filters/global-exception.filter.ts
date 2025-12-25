@@ -15,8 +15,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // SPAフォールバック: 404エラーで/docsルートでない場合、静的ファイルまたはindex.htmlを返す
     if (exception instanceof NotFoundException && !request.path.startsWith('/docs')) {
+
       const publicPath = this.getPublicFolderPath();
+
       if (publicPath) {
+
         const filePath = GlobalExceptionFilter.resolveExistingFilePath(request.path, publicPath);
         return response.sendFile(filePath);
       }
@@ -98,41 +101,56 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   /**
    * publicフォルダのパスを取得する
    * 開発環境ではapps/frontend/dist、本番環境ではwebapps/publicを確認
-   * 
+   *
    * @returns publicフォルダの絶対パス、見つからない場合はnull
    */
   private getPublicFolderPath(): string | null {
-    let currentDir = normalize(resolve(__dirname));
-    const visitedDirs = new Set<string>();
-    
+
+    /* 【 本番環境実例 】 今のAzure環境を使い続けている限り、常に 「/home/site/wwwroot/server」 */
+    let currentDirectoryAbsolutePath: string = process.cwd();
+
+    const absolutePathsOfCheckedDirectories = new Set<string>();
+
     while (true) {
-      // 循環参照の防止
-      if (visitedDirs.has(currentDir)) {
+
+      /* 【 方法論 】 循環参照の防止 */
+      if (absolutePathsOfCheckedDirectories.has(currentDirectoryAbsolutePath)) {
         break;
       }
-      visitedDirs.add(currentDir);
-      
-      // 本番環境: webapps/public を優先的に確認
-      const productionPublicPath = resolve(currentDir, 'webapps', 'public');
+
+
+      absolutePathsOfCheckedDirectories.add(currentDirectoryAbsolutePath);
+
+      /*
+       * 【 方法論 】 本番環境の場合、「webapps/public」を優先的に確認
+       * 【 本番環境実例 】 今のAzure環境を使い続けている限り、常に
+       *   「/home/site/wwwroot/server/dist/apps/backend/src/common/filters/webapps/public」
+       * */
+      const productionPublicPath = resolve(currentDirectoryAbsolutePath, '..', 'public');
+
       if (existsSync(productionPublicPath)) {
         return productionPublicPath;
       }
-      
+
+
       // 開発環境: apps/frontend/dist を確認
-      const developmentPublicPath = resolve(currentDir, 'apps', 'frontend', 'dist');
+      const developmentPublicPath = resolve(currentDirectoryAbsolutePath, 'apps', 'frontend', 'dist');
+
       if (existsSync(developmentPublicPath)) {
         return developmentPublicPath;
       }
-      
+
       // 親ディレクトリに移動
-      const parentDir = dirname(currentDir);
-      if (parentDir === currentDir) {
+      const parentDirectoryAbsolutePath: string = dirname(currentDirectoryAbsolutePath);
+
+      if (parentDirectoryAbsolutePath === currentDirectoryAbsolutePath) {
         // ファイルシステムのルートに到達
         break;
       }
-      currentDir = parentDir;
+
+      currentDirectoryAbsolutePath = parentDirectoryAbsolutePath;
     }
-    
+
     // Public folderが見つからない場合のみログ出力（デバッグ用）
     this.logger.warn(`Public folder not found. Searched from: ${__dirname}`);
     return null;
@@ -147,12 +165,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
    */
   private static resolveExistingFilePath(requestPath: string, publicPath: string): string {
     const indexPath = join(publicPath, 'index.html');
-    
+
     // パスが明示的に「index.html」になっている場合
     if (requestPath.toLowerCase().endsWith('/index.html') || requestPath.toLowerCase() === 'index.html') {
       return indexPath;
     }
-    
+
+
     // ファイル名拡張子が明示的に指定されている場合
     const fileExtension = extname(requestPath);
     if (fileExtension) {
@@ -160,12 +179,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // リクエストパスから先頭のスラッシュを除去
       const relativePath = requestPath.startsWith('/') ? requestPath.slice(1) : requestPath;
       const targetFilePath = join(publicPath, relativePath);
-      
+
       if (existsSync(targetFilePath)) {
         return targetFilePath;
       }
     }
-    
+
     // 上記の条件がどちらも満たされていない場合、index.htmlファイルを返す
     return indexPath;
   }

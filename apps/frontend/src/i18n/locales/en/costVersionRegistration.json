@@ -5,7 +5,8 @@
     "duplicate": "Duplicate",
     "reportType": "Report Type",
     "costCopy": "Cost Copy",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "allBusinessUnits": "All"
   },
   "table": {
     "headers": {
@@ -23,20 +24,33 @@
   "modals": {
     "create": { "title": "Create Cost Version" },
     "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?" },
-    "duplicate": { "title": "Duplicate Cost Version" }
+    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK", "cancel": "Cancel" },
+    "duplicate": { 
+      "title": "Duplicate Cost Version",
+      "idHint": "Enter UUID format, or leave blank for auto-generation"
+    }
   },
   "messages": {
     "fetchError": "Failed to fetch",
     "createSuccess": "Created successfully",
+    "createError": "Failed to create",
     "updateSuccess": "Updated successfully",
+    "updateError": "Failed to update",
     "deleteSuccess": "Deleted successfully",
+    "deleteError": "Failed to delete",
     "duplicateSuccess": "Duplicated successfully",
+    "duplicateError": "Failed to duplicate",
+    "updateDefaultSuccess": "Default flag updated successfully",
+    "updateDefaultError": "Failed to update default flag",
     "validationError": "Please check your input",
-    "selectBeforeDuplicate": "Please select a cost version to duplicate"
+    "selectBeforeDuplicate": "Please select a cost version to duplicate",
+    "startDateAfterEndDate": "Start date must be before end date",
+    "periodExceeds36Months": "Period must be within 36 months",
+    "invalidDate": "Date format is invalid"
   },
   "fields": {
     "id": "Cost Version ID",
+    "businessUnit": "Business Unit",
     "systemCode": "System Code",
     "name": "Cost Version Name",
     "start": "Start",
@@ -56,16 +70,12 @@
     "startDate": "202404",
     "endDate": "202503",
     "description": "Enter cost version description",
-    "duplicateName": "2024 Cost Version (Duplicate)"
+    "duplicateName": "2024 Cost Version (Duplicate)",
+    "duplicateId": "UUID format, or leave blank for auto-generation"
   },
   "buttons": {
     "ok": "OK",
+    "save": "Save",
     "deleteAlt": "Delete"
-  },
-  "modals": {
-    "create": { "title": "Create Cost Version" },
-    "edit": { "title": "Edit Cost Version" },
-    "delete": { "title": "Delete Confirmation", "message": "Are you sure to delete?", "ok": "OK" },
-    "duplicate": { "title": "Duplicate Cost Version" }
   }
 }

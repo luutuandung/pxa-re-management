@@ -7,18 +7,62 @@ import { CreateCostVersionDto } from './dto/create-cost-version.dto';
 import { DuplicateCostVersionDto } from './dto/duplicate-cost-version.dto';
 import { UpdateCostVersionDto } from './dto/update-cost-version.dto';
 
+type CreateDataWithoutDefaults = Omit<CreateCostVersionDto, 'businessunitId' | 'defaultFlg'>;
+
+type CostVersionCreateData = {
+  costVersionName: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  businessunitId: string;
+  createdOn: Date;
+  createdBy: string;
+  modifiedOn: Date;
+  modifiedBy: string;
+};
+
+type UpdateDataWithoutIgnored = Omit<UpdateCostVersionDto, 'ktnCd' | 'defaultFlg'>;
+
+type CostVersionUpdateData = {
+  costVersionName?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  modifiedBy: string;
+  modifiedOn: Date;
+};
+
 @Injectable()
 export class CostVersionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
+  // 原価登録レコードの存在チェック
+  private async hasCostRegisters(costVersionId: string): Promise<boolean> {
+    const count = await this.prisma.costRegister.count({
+      where: { costVersionId },
+    });
+    return count > 0;
+  }
+
+  // CostPriceVersionにhasCostRegistersを追加
+  private async enrichWithCostRegisters(costVersion: CostPriceVersion): Promise<CostPriceVersion> {
+    const hasRegisters = await this.hasCostRegisters(costVersion.costVersionId);
+    return {
+      ...costVersion,
+      hasCostRegisters: hasRegisters,
+    };
+  }
 
   async findAll(): Promise<CostPriceVersion[]> {
     try {
-      return await this.prisma.costVersion.findMany({
+      const costVersions = await this.prisma.costVersion.findMany({
         orderBy: [
           { businessUnit: { buCd: 'asc' } },
           { costVersionId: 'asc' },
         ],
       });
+      // 各原価バージョンにhasCostRegistersを追加
+      return Promise.all(costVersions.map((cv) => this.enrichWithCostRegisters(cv)));
     } catch (error) {
       throw new BusinessException('Failed to fetch cost versions', ERROR_CODES.COST_VERSION.FETCH_ERROR, error);
     }
@@ -30,7 +74,7 @@ export class CostVersionService {
     }
 
     try {
-      return await this.prisma.costVersion.findMany({
+      const costVersions = await this.prisma.costVersion.findMany({
         where: {
           businessUnit: {
             buCd: ktnCd,
@@ -40,6 +84,8 @@ export class CostVersionService {
           costVersionId: 'asc',
         },
       });
+      // 各原価バージョンにhasCostRegistersを追加
+      return Promise.all(costVersions.map((cv) => this.enrichWithCostRegisters(cv)));
     } catch (error) {
       throw new BusinessException(
         `Failed to fetch cost versions for KTN ${ktnCd}`,
@@ -63,7 +109,8 @@ export class CostVersionService {
         throw new NotFoundException('CostVersion', costVersionId);
       }
 
-      return costVersion;
+      // hasCostRegistersを追加
+      return this.enrichWithCostRegisters(costVersion);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -77,25 +124,8 @@ export class CostVersionService {
   }
 
   async create(createCostVersionDto: CreateCostVersionDto): Promise<CostPriceVersion> {
-    const { costVersionId, businessunitId, ...rest } = createCostVersionDto as any;
-    const { defaultFlg: _ignoredDefaultFlg, ...restSansDefault } = rest;
-
-    const isUuid = (v?: string) => typeof v === 'string' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v);
-
-    // 重複チェック
-    if (isUuid(costVersionId)) {
-      const existing = await this.prisma.costVersion.findUnique({
-        where: { costVersionId },
-      });
-
-      if (existing) {
-        throw new BusinessException(
-          `Cost version with ID ${costVersionId} already exists`,
-          ERROR_CODES.COST_VERSION.DUPLICATE_ID,
-          { costVersionId }
-        );
-      }
-    }
+    const { businessunitId, defaultFlg: _ignoredDefaultFlg, ...restSansDefault } = createCostVersionDto;
+    const rest: CreateDataWithoutDefaults = restSansDefault;
 
     try {
       return await this.prisma.$transaction(async (prisma) => {
@@ -112,16 +142,15 @@ export class CostVersionService {
         //   });
         // }
 
-        // 新規作成
-        const data: any = {
-          ...restSansDefault,
+        // 新規作成 - costVersionIdはPrismaが自動生成
+        const data: CostVersionCreateData = {
+          ...rest,
           businessunitId,
           createdOn: new Date(),
           createdBy: '00000000-0000-0000-0000-000000000000',
           modifiedOn: new Date(),
           modifiedBy: '00000000-0000-0000-0000-000000000000',
         };
-        if (isUuid(costVersionId)) data.costVersionId = costVersionId;
 
         const costVersion = await prisma.costVersion.create({
           data,
@@ -135,8 +164,6 @@ export class CostVersionService {
   }
 
   async update(costVersionId: string, updateCostVersionDto: UpdateCostVersionDto): Promise<CostPriceVersion> {
-    const { defaultFlg } = updateCostVersionDto;
-
     try {
       return await this.prisma.$transaction(async (prisma) => {
         // 存在チェック
@@ -148,36 +175,41 @@ export class CostVersionService {
           throw new NotFoundException('CostVersion', costVersionId);
         }
 
-        // デフォルトフラグの処理
-        if (defaultFlg === true) {
-          await prisma.costVersion.updateMany({
-            where: {
-              businessunitId: existingVersion.businessunitId,
-              NOT: {
-                costVersionId,
-              },
-            },
-            data: {
-              modifiedBy: '00000000-0000-0000-0000-000000000000',
-              modifiedOn: new Date(),
-            },
-          });
+        // 原価登録レコードの存在チェック
+        const hasRegisters = await this.hasCostRegisters(costVersionId);
+
+        // 更新 - Prisma用の有効なフィールドのみを含める
+        const { ktnCd, defaultFlg, ...rest } = updateCostVersionDto;
+        const updateFields: UpdateDataWithoutIgnored = rest;
+
+        // 原価登録レコードが存在する場合、適用開始・終了は編集不可
+        if (hasRegisters && (updateFields.startDate !== undefined || updateFields.endDate !== undefined)) {
+          throw new ValidationException(
+            '原価登録レコードが存在するため、適用開始・終了年月は編集できません'
+          );
         }
 
-        // 更新
+        // TODO: update - modifiedBy: 認証機能実装後にダミーIDを実際のユーザーIDに置き換える
+        // Work Item: https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/76/
+        const updateData: CostVersionUpdateData = {
+          modifiedBy: '00000000-0000-0000-0000-000000000000',
+          modifiedOn: new Date(),
+        };
+        if (updateFields.costVersionName !== undefined) updateData.costVersionName = updateFields.costVersionName;
+        if (updateFields.startDate !== undefined) updateData.startDate = updateFields.startDate;
+        if (updateFields.endDate !== undefined) updateData.endDate = updateFields.endDate;
+        if (updateFields.description !== undefined) updateData.description = updateFields.description;
+
         const updatedVersion = await prisma.costVersion.update({
           where: { costVersionId },
-          data: {
-            ...updateCostVersionDto,
-            modifiedBy: '00000000-0000-0000-0000-000000000000',
-            modifiedOn: new Date(),
-          },
+          data: updateData,
         });
 
-        return updatedVersion;
+        // hasCostRegistersを追加
+        return this.enrichWithCostRegisters(updatedVersion);
       });
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof NotFoundException || error instanceof ValidationException) {
         throw error;
       }
       throw new BusinessException(

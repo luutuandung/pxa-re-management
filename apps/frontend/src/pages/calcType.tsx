@@ -8,6 +8,7 @@ import { type FC, useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import ButtonAtom from '@/components/atoms/Button';
 import {
   Dialog,
   DialogContent,
@@ -86,6 +87,7 @@ const CalcTypePage: FC = () => {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeletingSelectedItem, setIsDeletingSelectedItem] = useState(false);
   const [selectedDeleteItem, setSelectedDeleteItem] = useState<UnifiedCalcType | null>(null);
   const [selectedBusinessUnitId, _setSelectedBusinessUnitId] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
@@ -224,11 +226,16 @@ const CalcTypePage: FC = () => {
     );
   };
 
-  // 全アイテムのバリデーション関数
-  const validateAllItems = (items: UnifiedCalcType[]): ValidationErrorForItem[] => {
+  /**
+   * 全アイテムのバリデーション関数
+   * @param allItemsToValidate - バリデーション対象の全アイテム（新規項目と変更された既存項目を含む）
+   * @param newItemsOnly - 新規項目のみの配列（新規項目のエラーメッセージでインデックスを計算するために使用）
+   * @returns バリデーションエラーの配列
+   */
+  const validateAllItems = (allItemsToValidate: UnifiedCalcType[], newItemsOnly: UnifiedCalcType[]): ValidationErrorForItem[] => {
     const validationErrors: ValidationErrorForItem[] = [];
 
-    for (const [itemIndex, item] of items.entries()) {
+    for (const [itemIndex, item] of allItemsToValidate.entries()) {
       const messages: string[] = [];
 
       // 日本語名のバリデーション
@@ -244,9 +251,18 @@ const CalcTypePage: FC = () => {
       if (zhError) messages.push(zhError);
 
       if (messages.length > 0) {
+        let itemName: string;
+        if (item.isNew) {
+          // 新規項目の場合：新規項目配列内でのインデックスを使用
+          const newItemIndex = newItemsOnly.findIndex((newItem) => newItem.calcTypeId === item.calcTypeId);
+          itemName = t('validation.newItemLabel', { number: newItemIndex + 1 });
+        } else {
+          // 既存項目の場合：元の日本語名を使用（空文字の場合はフォールバック）
+          itemName = item.calcTypeNameJa.trim() || `Item ${itemIndex + 1}`;
+        }
         validationErrors.push({
           itemIndex,
-          itemName: item.calcTypeNameJa || `Item ${itemIndex + 1}`,
+          itemName,
           messages,
         });
       }
@@ -264,7 +280,7 @@ const CalcTypePage: FC = () => {
       const allItemsToValidate = [...newItems, ...updatedItems];
 
       // バリデーション: 全アイテムを一度に検証
-      const validationErrors = validateAllItems(allItemsToValidate);
+      const validationErrors = validateAllItems(allItemsToValidate, newItems);
 
       if (validationErrors.length > 0) {
         // すべてのエラーメッセージを表示
@@ -274,6 +290,7 @@ const CalcTypePage: FC = () => {
           });
         });
         setIsSaving(false);
+        setShowSaveModal(false);
         return;
       }
 
@@ -320,14 +337,17 @@ const CalcTypePage: FC = () => {
 
   // 削除処理
   const handleDelete = async () => {
-    if (!selectedDeleteItem) return;
+    if (!selectedDeleteItem || isDeletingSelectedItem) return;
 
+    setIsDeletingSelectedItem(true);
     try {
       await deleteCalcType(selectedDeleteItem.calcTypeId, selectedDeleteItem.businessunitId);
       setShowDeleteModal(false);
       setSelectedDeleteItem(null);
     } catch (error) {
       console.error('Delete error:', error);
+    } finally {
+      setIsDeletingSelectedItem(false);
     }
   };
 
@@ -567,19 +587,38 @@ const CalcTypePage: FC = () => {
         </Dialog>
 
         {/* 削除確認モーダル */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-          <DialogContent className="bg-white">
+        <Dialog
+          open={showDeleteModal}
+          onOpenChange={(open) => {
+            setShowDeleteModal(open);
+            if (!open) setSelectedDeleteItem(null);
+          }}
+        >
+          <DialogContent showCloseButton={false} className="bg-white">
             <DialogHeader>
               <DialogTitle>{t('modals.delete.title')}</DialogTitle>
               <DialogDescription>{t('modals.delete.message')}</DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button onClick={handleDelete} variant="destructive">
-                {t('modals.delete.confirm')}
-              </Button>
-              <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              <ButtonAtom
+                type="button"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setSelectedDeleteItem(null);
+                }}
+                variant="secondary"
+                disabled={isDeletingSelectedItem}
+              >
                 {t('modals.delete.cancel')}
-              </Button>
+              </ButtonAtom>
+              <ButtonAtom
+                type="button"
+                onClick={handleDelete}
+                variant="danger"
+                disabled={isDeletingSelectedItem}
+              >
+                {isDeletingSelectedItem ? t('controls.saving') : t('modals.delete.confirm')}
+              </ButtonAtom>
             </DialogFooter>
           </DialogContent>
         </Dialog>

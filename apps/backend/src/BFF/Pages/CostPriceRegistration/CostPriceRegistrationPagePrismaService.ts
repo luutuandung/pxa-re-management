@@ -117,7 +117,7 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
      * 【 理論 】 【 整備性 】
      * Prismaはuniquieidentifier型の文字列を小文字で返しているが、mssqlは大文字で返している。何ケースのIDを使っているか、明確にする事。
      * */
-    let actualModelsCategoriesUppercasedIDs: ReadonlySet<string> = new Set(
+    let actualModelsCategoriesIDs: ReadonlySet<string> = new Set(
       primaryDataSelection.flatMap(
         (
           primaryDataSelectionItem: CostPriceRegistrationPagePrismaService.TableDataRetrieving.PrimaryDataSelection.Item
@@ -127,15 +127,15 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
                 modelCategory: CostPriceRegistrationPagePrismaService.TableDataRetrieving.PrimaryDataSelection.Item.
                     CostPricePatternModelCategory
               ): string =>
-                  modelCategory.modelCategoryId.toUpperCase()
+                  modelCategory.modelCategoryId
             )
       )
     );
 
-    const actualModelsCategoriesNamesByUppercasedIDs: Map<string, string> = new Map(
+    const actualModelsCategoriesNamesByIDs: Map<string, string> = new Map(
       (await this.prismaService.modelCategory.findMany({
         where: {
-          ID: { in: Array.from(actualModelsCategoriesUppercasedIDs) }
+          ID: { in: Array.from(actualModelsCategoriesIDs) }
         },
         select: {
           ID: true,
@@ -145,22 +145,23 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
           map(({ ID, name }: Readonly<Pick<Prisma.ModelCategory, "ID" | "name">>): [ string, string ] => [ ID, name ])
     );
 
-    actualModelsCategoriesUppercasedIDs = actualModelsCategoriesUppercasedIDs.
-        difference(new Set(actualModelsCategoriesNamesByUppercasedIDs.keys()));
+    actualModelsCategoriesIDs = actualModelsCategoriesIDs.
+        difference(new Set(actualModelsCategoriesNamesByIDs.keys()));
 
     for (
       const { ID, name } of
           (await this.prismaService.model.findMany({
               where: {
-                ID: { in: Array.from(actualModelsCategoriesUppercasedIDs) }
+                ID: { in: Array.from(actualModelsCategoriesIDs) }
               },
               select: {
                 ID: true,
                 name: true
               }
-            }))
+            })
+          )
     ) {
-      actualModelsCategoriesNamesByUppercasedIDs.set(ID, name)
+      actualModelsCategoriesNamesByIDs.set(ID, name)
     }
 
     const presentPriceTypes: Set<CostPriceRegistration.CostPriceTypes> = new Set();
@@ -171,7 +172,7 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
       ): CostPriceRegistrationPageBFF.TableData.Row => {
 
         const tableRowData: CostPriceRegistrationPageBFF.TableData.Row = CostPriceRegistrationPagePrismaService.
-            buildTableRowData({ primaryDataSelectionItem, languageTag, actualModelsCategoriesNamesByUppercasedIDs })
+            buildTableRowData({ primaryDataSelectionItem, languageTag, actualModelsCategoriesNamesByIDs })
 
         presentPriceTypes.add(tableRowData.costPriceType);
 
@@ -287,11 +288,11 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
     {
       languageTag,
       primaryDataSelectionItem,
-      actualModelsCategoriesNamesByUppercasedIDs
+      actualModelsCategoriesNamesByIDs
     }: Readonly<{
       languageTag: TagsOfSupportedLanguages;
       primaryDataSelectionItem: CostPriceRegistrationPagePrismaService.TableDataRetrieving.PrimaryDataSelection.Item;
-      actualModelsCategoriesNamesByUppercasedIDs: ReadonlyMap<string, string>;
+      actualModelsCategoriesNamesByIDs: ReadonlyMap<string, string>;
     }>
   ): CostPriceRegistrationPageBFF.TableData.Row {
 
@@ -369,7 +370,7 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
 
               /* 【 仕様書 】 現在のデータだと、機種のデータがない事があり得る。 */
               const targetModelCategoryName: string | undefined =
-                  actualModelsCategoriesNamesByUppercasedIDs.get(costPatternModelCategory.modelCategoryId.toUpperCase());
+                  actualModelsCategoriesNamesByIDs.get(costPatternModelCategory.modelCategoryId);
 
               return typeof targetModelCategoryName === "string" ? [ targetModelCategoryName ] : [];
 

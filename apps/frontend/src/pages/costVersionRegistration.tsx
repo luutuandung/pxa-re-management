@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useStickyMessageActions } from '@/store/stickyMessage';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useCostVersionActions, useCostVersionSelectors } from '../store/costVersion';
+import { normalizeToYearMonth, validateDateRange } from '../utils/dateUtils';
 
 const CostVersionRegistration: FC = () => {
   const { t } = useTranslation('costVersionRegistration');
@@ -18,8 +19,10 @@ const CostVersionRegistration: FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [selectedCostVersion, setSelectedCostVersion] = useState<string | null>(null);
-  const [reportType, setReportType] = useState('製造原価');
+  const [selectedBusinessUnitCd, setSelectedBusinessUnitCd] = useState<string>('all');
   const [costCopy, setCostCopy] = useState(false);
+  const [isDuplicating, setIsDuplicating] = useState(false);
+  const [hasCostRegisters, setHasCostRegisters] = useState(false);
 
   // Form states for create/edit modal
   const [formData, setFormData] = useState({
@@ -34,7 +37,6 @@ const CostVersionRegistration: FC = () => {
 
   // Duplicate modal state
   const [duplicateData, setDuplicateData] = useState({
-    newCostVersionId: '',
     newCostVersionName: '',
     ktnCd: '',
   });
@@ -47,14 +49,25 @@ const CostVersionRegistration: FC = () => {
   const { businessUnits } = useBusinessUnitSelectors();
 
   useEffect(() => {
-    fetchCostVersions();
     fetchBusinessUnit();
-  }, [fetchCostVersions, fetchBusinessUnit]);
+  }, [fetchBusinessUnit]);
+
+  useEffect(() => {
+    if (selectedBusinessUnitCd === 'all') {
+      fetchCostVersions();
+    } else if (selectedBusinessUnitCd) {
+      fetchCostVersions(selectedBusinessUnitCd);
+    }
+  }, [selectedBusinessUnitCd, fetchCostVersions]);
 
   const handleCreate = () => {
+    const selectedBu =
+      selectedBusinessUnitCd === 'all'
+        ? businessUnits[0]
+        : businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
     setFormData({
       costVersionId: '',
-      businessunitId: businessUnits[0]?.businessunitId ?? '',
+      businessunitId: selectedBu?.businessunitId ?? businessUnits[0]?.businessunitId ?? '',
       costVersionName: '',
       startDate: '',
       endDate: '',
@@ -74,6 +87,8 @@ const CostVersionRegistration: FC = () => {
       description: costVersion.description,
       defaultFlg: false,
     });
+    setSelectedCostVersion(costVersion.costVersionId);
+    setHasCostRegisters(costVersion.hasCostRegisters ?? false);
     setShowEditModal(true);
   };
 
@@ -89,26 +104,42 @@ const CostVersionRegistration: FC = () => {
     }
     const selected = costVersions.find((cv) => cv.costVersionId === selectedCostVersion);
     if (selected) {
+      const selectedBu = businessUnits.find((bu) => bu.businessunitId === selected.businessunitId);
       setDuplicateData({
-        newCostVersionId: '',
         newCostVersionName: '',
-        ktnCd: selected.businessunitId,
+        ktnCd: selectedBu?.buCd || selectedBusinessUnitCd,
       });
       setShowDuplicateModal(true);
     }
   };
 
-  const normalizeYm = (v: string) => (v || '').replaceAll('/', '').replaceAll('-', '').slice(0, 6);
 
   const confirmCreate = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate, t);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
+      const normalizedStartDate = normalizeToYearMonth(formData.startDate);
+      const normalizedEndDate = normalizeToYearMonth(formData.endDate);
+      if (!normalizedStartDate || !normalizedEndDate) {
+        addErrorMessage(t('messages.invalidDate'));
+        return;
+      }
       await createCostVersion({
         ...formData,
-        startDate: normalizeYm(formData.startDate),
-        endDate: normalizeYm(formData.endDate),
+        startDate: normalizedStartDate,
+        endDate: normalizedEndDate,
       });
       addSuccessMessage(t('messages.createSuccess'));
       setShowCreateModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to create cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -116,15 +147,32 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmEdit = async () => {
+    const dateError = validateDateRange(formData.startDate, formData.endDate, t);
+    if (dateError) {
+      addErrorMessage(dateError);
+      return;
+    }
+
     try {
       const { costVersionId, ...updateData } = formData;
+      const normalizedStartDate = normalizeToYearMonth(updateData.startDate);
+      const normalizedEndDate = normalizeToYearMonth(updateData.endDate);
+      if (!normalizedStartDate || !normalizedEndDate) {
+        addErrorMessage(t('messages.invalidDate'));
+        return;
+      }
       await updateCostVersion(costVersionId, {
         ...updateData,
-        startDate: normalizeYm(updateData.startDate),
-        endDate: normalizeYm(updateData.endDate),
+        startDate: normalizedStartDate,
+        endDate: normalizedEndDate,
       });
       addSuccessMessage(t('messages.updateSuccess'));
       setShowEditModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to update cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -138,6 +186,11 @@ const CostVersionRegistration: FC = () => {
       addSuccessMessage(t('messages.deleteSuccess'));
       setShowDeleteModal(false);
       setSelectedCostVersion(null);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to delete cost version:', error);
       addErrorMessage(t('messages.fetchError'));
@@ -145,19 +198,32 @@ const CostVersionRegistration: FC = () => {
   };
 
   const confirmDuplicate = async () => {
-    if (!selectedCostVersion) return;
+    if (!selectedCostVersion || isDuplicating) return;
+    
+    setIsDuplicating(true);
     try {
-      await duplicateCostVersion({
+      const payload: Readonly<{
+        sourceCostVersionId: string;
+        newCostVersionName: string;
+        ktnCd: string;
+      }> = {
         sourceCostVersionId: selectedCostVersion,
-        newCostVersionId: duplicateData.newCostVersionId,
         newCostVersionName: duplicateData.newCostVersionName,
         ktnCd: duplicateData.ktnCd,
-      });
-      addSuccessMessage(t('messages.duplicateSuccess'));
+      };
+      
+      await duplicateCostVersion(payload);
       setShowDuplicateModal(false);
+      if (selectedBusinessUnitCd === 'all') {
+        await fetchCostVersions();
+      } else if (selectedBusinessUnitCd) {
+        await fetchCostVersions(selectedBusinessUnitCd);
+      }
     } catch (error) {
       console.error('Failed to duplicate cost version:', error);
       addErrorMessage(t('messages.fetchError'));
+    } finally {
+      setIsDuplicating(false);
     }
   };
 
@@ -202,15 +268,21 @@ const CostVersionRegistration: FC = () => {
             </button>
 
             <div className="flex items-center gap-2 ml-6">
-              <label className="text-sm text-gray-700">{t('controls.reportType')}</label>
+              <label className="text-sm text-gray-700">{t('fields.businessUnit')}</label>
               <select
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedBusinessUnitCd}
+                onChange={(e) => {
+                  setSelectedBusinessUnitCd(e.target.value);
+                  setSelectedCostVersion(null);
+                }}
+                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
               >
-                <option value="製造原価">{t('reportType.manufacturing')}</option>
-                <option value="個別原価">{t('reportType.individual')}</option>
-                <option value="製版連結収支">{t('reportType.consolidated')}</option>
+                <option value="all">{t('controls.allBusinessUnits', { defaultValue: 'すべて' })}</option>
+                {businessUnits.map((bu) => (
+                  <option key={bu.businessunitId} value={bu.buCd}>
+                    {bu.businessunitNameJa}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -315,16 +387,6 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={formData.costVersionId}
-                onChange={(e) => setFormData({ ...formData, costVersionId: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('placeholders.costVersionId')}
-              />
-            </div>
-            <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
@@ -411,15 +473,6 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={formData.costVersionId}
-                disabled
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
-              />
-            </div>
-            <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
@@ -444,7 +497,10 @@ const CostVersionRegistration: FC = () => {
                 type="text"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={hasCostRegisters}
+                className={`flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  hasCostRegisters ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -453,7 +509,10 @@ const CostVersionRegistration: FC = () => {
                 type="text"
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={hasCostRegisters}
+                className={`flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  hasCostRegisters ? 'bg-gray-100 cursor-not-allowed' : ''
+                }`}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -482,7 +541,7 @@ const CostVersionRegistration: FC = () => {
               onClick={confirmEdit}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              {t('common:buttons.save', { defaultValue: '保存' })}
+              {t('buttons.save')}
             </button>
             <button
               type="button"
@@ -529,16 +588,6 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.id')}</label>
-              <input
-                type="text"
-                value={duplicateData.newCostVersionId}
-                onChange={(e) => setDuplicateData({ ...duplicateData, newCostVersionId: e.target.value })}
-                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder={t('placeholders.costVersionId')}
-              />
-            </div>
-            <div className="flex items-center gap-4">
               <label className="w-32 text-sm font-medium">{t('fields.name')}</label>
               <input
                 type="text"
@@ -553,9 +602,10 @@ const CostVersionRegistration: FC = () => {
             <button
               type="button"
               onClick={confirmDuplicate}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              disabled={isDuplicating || !duplicateData.newCostVersionName.trim() || !duplicateData.ktnCd}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t('controls.duplicate')}
+              {isDuplicating ? t('controls.saving') : t('controls.duplicate')}
             </button>
             <button
               type="button"

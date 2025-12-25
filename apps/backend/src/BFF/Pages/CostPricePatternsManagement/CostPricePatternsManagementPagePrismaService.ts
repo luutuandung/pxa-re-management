@@ -11,7 +11,10 @@ import {
   computeCostPricePatternCode,
 
   /* ┅┅┅ BFF ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
-  CostPricePatternsManagementPageBFF
+  CostPricePatternsManagementPageBFF,
+
+  /* ┅┅┅ Constants ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+  PRODUCT_NUMBER_CATEGORY_TYPE_ID
 
 } from "@pxa-re-management/shared";
 
@@ -388,29 +391,26 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
     }: CostPricePatternsManagementPageBFF.RegisteringOfCostPricesForAllPairwiseCategoriesCombinations.RequestData
   ): Promise<void> {
 
+    type CostPatternCategorySelection = Readonly<
+      Pick<
+        Prisma.CostPatternCategory,
+          "costPatternCategoryId" |
+          "categoryTypeId" |
+          "categoryDataType" |
+          "seq"
+      >
+    >;
+
     const [
-      costPricePatternEssentials,
+      costPatternCategories,
       {
         startDate: costVersionStartingYearMonth__YYYYMM,
         endDate: costVersionEndingYearMonth__YYYYMM
       }
     ]: Readonly<[
-      ReadonlyArray<
-        Readonly<{
 
-          costPatternCategories: ReadonlyArray<
-            Readonly<
-              Pick<
-                Prisma.CostPatternCategory,
-                  "costPatternCategoryId" |
-                  "categoryTypeId" |
-                  "categoryDataType" |
-                  "seq"
-              >
-            >
-          >;
-        }>
-      >,
+      ReadonlyArray<CostPatternCategorySelection>,
+
       Readonly<
         Pick<
           Prisma.CostVersion,
@@ -418,9 +418,11 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
             "endDate"
           >
       >
+
     ]> = await Promise.all([
-      this.prismaService.costPattern.findMany({
-        where: { businessUnitID },
+
+      this.prismaService.costPattern.findUniqueOrThrow({
+        where: { costPatternId: costPricePatternID },
         select: {
           costPatternCategories: {
             select: {
@@ -431,7 +433,14 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
             }
           }
         }
-      }),
+      }).
+          then(
+            (
+              { costPatternCategories }: Readonly<{ costPatternCategories: ReadonlyArray<CostPatternCategorySelection>; }>
+            ): ReadonlyArray<CostPatternCategorySelection> =>
+                costPatternCategories
+          ),
+
       this.prismaService.costVersion.findUniqueOrThrow({
         where: { costVersionId: costPriceVersionID },
         select: {
@@ -439,33 +448,32 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
           endDate: true
         }
       })
+
     ]);
 
     const modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence: Map<string, number> = new Map();
     const wholesaleCategoriesIDsAndSequencesCorrespondence: Map<string, number> = new Map();
     const retailCategoriesIDsAndSequencesCorrespondence: Map<string, number> = new Map();
 
-    for (const { costPatternCategories } of costPricePatternEssentials) {
-      for (const costPatternCategory of costPatternCategories) {
-        if (isAvailableCostPricePatternCategoryDataType(costPatternCategory.categoryDataType)) {
+    for (const costPatternCategory of costPatternCategories) {
+      if (isAvailableCostPricePatternCategoryDataType(costPatternCategory.categoryDataType)) {
 
-          (
-            {
-              [CostPricesPatternsCategoriesDataTypes.model]: modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence,
-              [CostPricesPatternsCategoriesDataTypes.sales]: wholesaleCategoriesIDsAndSequencesCorrespondence,
-              [CostPricesPatternsCategoriesDataTypes.retail]: retailCategoriesIDsAndSequencesCorrespondence
-            }[costPatternCategory.categoryDataType]
-          ).set(costPatternCategory.categoryTypeId, costPatternCategory.seq)
+        (
+          {
+            [CostPricesPatternsCategoriesDataTypes.model]: modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence,
+            [CostPricesPatternsCategoriesDataTypes.sales]: wholesaleCategoriesIDsAndSequencesCorrespondence,
+            [CostPricesPatternsCategoriesDataTypes.retail]: retailCategoriesIDsAndSequencesCorrespondence
+          }[costPatternCategory.categoryDataType]
+        ).set(costPatternCategory.categoryTypeId, costPatternCategory.seq)
 
-        } else {
+      } else {
 
-          throw new NestJS.InternalServerErrorException(
-            "データベースからのデータ取得の際不正なデータが発見された。" +
-            `ID「${ costPatternCategory.costPatternCategoryId }」原価パターンカテゴリーのデータ種類` +
-              `「${ costPatternCategory.categoryDataType }」は可能な値に所属していない。`
-          );
+        throw new NestJS.InternalServerErrorException(
+          "データベースからのデータ取得の際不正なデータが発見された。" +
+          `ID「${ costPatternCategory.costPatternCategoryId }」原価パターンカテゴリーのデータ種類` +
+            `「${ costPatternCategory.categoryDataType }」は可能な値に所属していない。`
+        );
 
-        }
       }
     }
 
@@ -473,20 +481,50 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
     const wholesalesIDsAndSequenceNumbersCorrespondence: Map<string, number> = new Map();
     const retailIDsAndSequenceNumbersCorrespondence: Map<string, number> = new Map();
 
+    /* 【 仕様書 】 https://dev.azure.com/lscm-pxa-re/pxa-re/_workitems/edit/72 */
+    const hasProductNumberCategoryType: boolean = modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence.
+        has(PRODUCT_NUMBER_CATEGORY_TYPE_ID);
+
     const modelsCategoriesTypesIDsAndModelsCategoriesIDsCorrespondence: Map<string, Set<string>> = new Map();
     const wholesalesCategoriesIDsAndWholesalesIDsCorrespondence: Map<string, Set<string>> = new Map();
     const retailCategoriesIDsAndRetailIDsCorrespondence: Map<string, Set<string>> = new Map();
 
+    const startingYear: number = Number(costVersionStartingYearMonth__YYYYMM.slice(0, 4));
+    const startingMonth__numerationFrom1: number = Number(costVersionStartingYearMonth__YYYYMM.slice(4, 6))
+    const endingYear: number = Number(costVersionEndingYearMonth__YYYYMM.slice(0, 4));
+    const endingMonth__numerationFrom1: number = Number(costVersionEndingYearMonth__YYYYMM.slice(4, 6));
+    const startingMoment: Date = new Date(startingYear, startingMonth__numerationFrom1 - 1);
+    const endingMoment: Date = new Date(endingYear, endingMonth__numerationFrom1 - 1);
+
+    if (endingMoment.getTime() < startingMoment.getTime()) {
+      throw new NestJS.InternalServerErrorException(
+        `原価バージョンの終了年月「${ costVersionEndingYearMonth__YYYYMM }」は開始年月「${ costVersionStartingYearMonth__YYYYMM }」` +
+          "より早なっている。"
+      );
+    }
+
+
     const [
-      modelsCategoriesIDsAndSequenceNumbersCorrespondence
-    ]: Readonly<[ Map<string, number>, void ]> = await Promise.all([
+      modelsCategoriesIDsAndSequenceNumbersCorrespondence,
+      modelsCategoriesIDsForProductNumber = []
+    ]: Readonly<[ Map<string, number>, ReadonlyArray<string> | undefined, void ]> = await Promise.all([
 
       new Map(
+
         (
           await this.prismaService.modelCategoryType.findMany({
             where: {
               ID: {
-                in: Array.from(modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence.keys())
+                in: ((): Array<string> => {
+
+                  const targetModelsCategoriesTypesIDs: Set<string> =
+                      new Set(modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence.keys());
+
+                  targetModelsCategoriesTypesIDs.delete(PRODUCT_NUMBER_CATEGORY_TYPE_ID)
+
+                  return Array.from(targetModelsCategoriesTypesIDs);
+
+                })()
               }
             },
             select: {
@@ -534,12 +572,30 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
             )
         ),
 
+        hasProductNumberCategoryType ?
+            (
+              await this.prismaService.quantity.findMany({
+                where: {
+                  businessUnitID,
+                  date: {
+                    gte: startingMoment,
+                    lte: endingMoment
+                  }
+                },
+                select: {
+                  modelID: true
+                }
+              })
+            ).map(({ modelID }: Readonly<Pick<Prisma.Quantity, "modelID">>): string => modelID) :
+            void 0,
+
         (
           await this.prismaService.salesCategory.findMany({
             where: {
               salesCategoryId: {
                 in: Array.from(wholesaleCategoriesIDsAndSequencesCorrespondence.keys()).
-                    concat(Array.from(retailCategoriesIDsAndSequencesCorrespondence.keys())) }
+                    concat(Array.from(retailCategoriesIDsAndSequencesCorrespondence.keys()))
+              }
             },
             select: {
               salesCategoryId: true,
@@ -633,22 +689,6 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
     const targetYearsAndMonthsForCostPriceRegistrationValues:
         Array<Readonly<{ year: number; month__2digits__numerationFrom1: string; }>> = [];
 
-    const startingYear: number = Number(costVersionStartingYearMonth__YYYYMM.slice(0, 4));
-    const startingMonth__numerationFrom1: number = Number(costVersionStartingYearMonth__YYYYMM.slice(4, 6))
-    const endingYear: number = Number(costVersionEndingYearMonth__YYYYMM.slice(0, 4));
-    const endingMonth__numerationFrom1: number = Number(costVersionEndingYearMonth__YYYYMM.slice(4, 6));
-
-    if (
-      new Date(endingYear, endingMonth__numerationFrom1 - 1).getTime() <
-          new Date(startingYear, startingMonth__numerationFrom1 - 1).getTime()
-    ) {
-      throw new NestJS.InternalServerErrorException(
-        `原価バージョンの終了年月「${ costVersionEndingYearMonth__YYYYMM }」は開始年月「${ costVersionStartingYearMonth__YYYYMM }」` +
-          "より早なっている。"
-      );
-    }
-
-
     let currentlyIteratedMonthNumber__numerationFrom1: number = startingMonth__numerationFrom1;
 
     for (let currentlyIteratedYear: number = startingYear; currentlyIteratedYear <= endingYear; currentlyIteratedYear++) {
@@ -677,7 +717,7 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
     }
 
     /* 【 理論 】 組み合わせ数学、数え上げの積の法則 */
-    let totalCostPatternDetailsCount: number =
+    const totalCostPatternDetailsCount: number =
         modelsCategoriesByTypesCombinationsNumberWithoutRepetitions *
         wholesalesCategoriesBySalesCombinationsNumberWithoutRepetitions *
         retailCategoriesBySalesCombinationsNumberWithoutRepetitions;
@@ -720,15 +760,36 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
                               costPatternName: "",
                               costPatternModelCategories: {
                                 createMany: {
-                                  data: modelsCategoriesIDsAndSequenceNumbersCorrespondence.entries().toArray().map(
-                                    (
-                                      [ modelCategoryID, sequenceNumber ]: Readonly<[ string, number ]>
-                                    ): Prisma.Prisma.CostPatternModelCategoryCreateManyCostPatternDetailInput =>
-                                        ({
-                                          modelCategoryId: modelCategoryID,
-                                          seq: sequenceNumber
-                                        })
-                                  )
+                                  data:
+                                      modelsCategoriesIDsAndSequenceNumbersCorrespondence.entries().toArray().
+                                          map(
+                                            (
+                                              [ modelCategoryID, sequenceNumber ]: Readonly<[ string, number ]>
+                                            ): Prisma.Prisma.CostPatternModelCategoryCreateManyCostPatternDetailInput =>
+                                                ({
+                                                  modelCategoryId: modelCategoryID,
+                                                  seq: sequenceNumber
+                                                })
+                                          ).
+                                          concat(
+                                            modelsCategoriesIDsForProductNumber.map(
+                                              (
+                                                modelCategoryID: string
+                                              ): Prisma.Prisma.CostPatternModelCategoryCreateManyCostPatternDetailInput =>
+                                                ({
+                                                  modelCategoryId: modelCategoryID,
+                                                  seq:
+                                                      modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence.
+                                                          get(PRODUCT_NUMBER_CATEGORY_TYPE_ID) ??
+                                                      ((): never => {
+                                                        throw new NestJS.InternalServerErrorException(
+                                                          `意図に反し、「modelsCategoriesTypesIDsAndSequenceNumbersCorrespondence」` +
+                                                            "から品番の順番データがない。"
+                                                        );
+                                                      })()
+                                                })
+                                            )
+                                          )
                                 }
                               },
                               costPatternDestCategories: {

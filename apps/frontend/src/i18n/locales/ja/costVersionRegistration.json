@@ -5,7 +5,8 @@
     "duplicate": "複製",
     "reportType": "帳票種類",
     "costCopy": "原価複製",
-    "saving": "保存中..."
+    "saving": "保存中...",
+    "allBusinessUnits": "すべて"
   },
   "table": {
     "headers": {
@@ -23,21 +24,34 @@
   "modals": {
     "create": { "title": "原価バージョン作成" },
     "edit": { "title": "原価バージョン編集" },
-    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？" },
-    "duplicate": { "title": "原価バージョン複製" }
+    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？", "ok": "OK", "cancel": "キャンセル" },
+    "duplicate": { 
+      "title": "原価バージョン複製",
+      "idHint": "UUID形式で入力可能。空白の場合は自動生成されます"
+    }
   },
   "messages": {
     "fetchError": "取得に失敗しました",
     "createSuccess": "作成しました",
+    "createError": "作成に失敗しました",
     "updateSuccess": "更新しました",
+    "updateError": "更新に失敗しました",
     "deleteSuccess": "削除しました",
+    "deleteError": "削除に失敗しました",
     "duplicateSuccess": "複製しました",
+    "duplicateError": "複製に失敗しました",
+    "updateDefaultSuccess": "デフォルトフラグを更新しました",
+    "updateDefaultError": "デフォルトフラグの更新に失敗しました",
     "validationError": "入力内容を確認してください",
-    "selectBeforeDuplicate": "複製する原価バージョンを選択してください"
+    "selectBeforeDuplicate": "複製する原価バージョンを選択してください",
+    "startDateAfterEndDate": "適用開始は適用終了より前である必要があります",
+    "periodExceeds36Months": "期間は36か月以内である必要があります",
+    "invalidDate": "日付の形式が正しくありません"
   },
   "fields": {
     "id": "原価バージョンID",
     "businessUnit": "事業部",
+    "systemCode": "系統コード",
     "name": "原価バージョン名",
     "start": "適用開始",
     "end": "適用終了",
@@ -56,16 +70,12 @@
     "startDate": "202404",
     "endDate": "202503",
     "description": "原価バージョンの説明を入力してください",
-    "duplicateName": "2024年度原価(複製)"
+    "duplicateName": "2024年度原価(複製)",
+    "duplicateId": "UUID形式、または空白で自動生成"
   },
   "buttons": {
     "ok": "OK",
+    "save": "保存",
     "deleteAlt": "削除"
-  },
-  "modals": {
-    "create": { "title": "原価バージョン作成" },
-    "edit": { "title": "原価バージョン編集" },
-    "delete": { "title": "削除確認", "message": "削除します。よろしいですか？", "ok": "OK" },
-    "duplicate": { "title": "原価バージョン複製" }
   }
 }

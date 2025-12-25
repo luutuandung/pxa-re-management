@@ -35,5 +35,8 @@
   },
   "locationSelect": {
     "placeholder": "拠点を選択"
+  },
+  "buttons": {
+    "save": "保存"
   }
 }

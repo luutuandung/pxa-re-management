@@ -1,5 +1,4 @@
 export type CreateCostVersionType = {
-  costVersionId: string;
   businessunitId: string;
   costVersionName: string;
   startDate: string; // YYYYMM形式 (例: 202404)
@@ -19,7 +18,7 @@ export type UpdateCostVersionType = Partial<{
 
 export type DuplicateCostVersionType = {
   sourceCostVersionId: string;
-  newCostVersionId: string;
+  newCostVersionId?: string;
   newCostVersionName: string;
   ktnCd: string;
 };

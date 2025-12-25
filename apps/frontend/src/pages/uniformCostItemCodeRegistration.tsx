@@ -248,43 +248,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   // 項目の更新
   const updateItem = React.useCallback(
     (id: string, field: keyof UnifiedCostItem, value: string | boolean): void => {
-      // 文字列値の場合、バリデーションを実行
-      if (typeof value === 'string') {
-        // フィールドごとにバリデーション
-        if (field === 'generalCostCd') {
-          const codeValidation = validateCodeField(value);
-          if (!codeValidation.isValid) {
-            addErrorMessage(t(codeValidation.error));
-            return;
-          }
-        } else if (field === 'generalCostNameEn') {
-          const englishValidation = CommonEnglishNamingValidator.validate(value);
-          if (englishValidation.isInvalid) {
-            // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
-            const { code, ...parameters } = englishValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        } else if (field === 'generalCostNameJa') {
-          const japaneseValidation = CommonJapaneseNamingValidator.validate(value);
-          if (japaneseValidation.isInvalid) {
-            const { code, ...parameters } = japaneseValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        } else if (field === 'generalCostNameZh') {
-          const chineseValidation = CommonChineseNamingValidator.validate(value);
-          if (chineseValidation.isInvalid) {
-            const { code, ...parameters } = chineseValidation.validationErrorData;
-            const translationKey = convertErrorCodeToTranslationKey(code);
-            addErrorMessage(t(`validation.${ translationKey }`, parameters));
-            return;
-          }
-        }
-      }
-
       setUnifiedItems(
         (prev) =>
             prev.map((item) => {
@@ -314,7 +277,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
             })
       );
   },
-  [ originalItems, addErrorMessage, t ]
+  [ originalItems ]
 );
 
   // 保存処理
@@ -474,11 +437,11 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         }
       }
 
-      setShowSaveModal(false);
       await fetchGeneralCostCode(); // データ再取得
     } catch (error) {
       console.error('保存に失敗しました:', error);
     } finally {
+      setShowSaveModal(false);
       setIsSaving(false);
       Backdrop.dismiss();
     }
@@ -508,11 +471,11 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         // 既存項目の場合は論理削除
         await deleteGeneralCostCode(selectedDeleteItem.id);
       }
-      setShowDeleteModal(false);
-      setSelectedDeleteItem(null);
     } catch (error) {
       console.error('削除に失敗しました:', error);
     } finally {
+      setShowDeleteModal(false);
+      setSelectedDeleteItem(null);
       setIsDeletingSelectedItem(false);
       Backdrop.dismiss();
     }
@@ -793,13 +756,25 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
               </label>
             </div>
 
-            <button
-              type="button"
-              onClick={addNewItem}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-            >
-              {t('controls.add')}
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={addNewItem}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+              >
+                {t('controls.add')}
+              </button>
+              
+              { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+              <button
+                type="button"
+                onClick={handleSave}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 text-sm"
+                disabled={isSaving}
+              >
+                {isSaving ? t('controls.saving') : t('controls.save')}
+              </button>
+            </div>
 
           </div>
 
@@ -908,19 +883,6 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
           <div className="flex pb-8">
             <DataTablePagination table={ tableModel } />
           </div>
-
-          { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
-          <div className="flex justify-center space-x-3">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
-              disabled={isSaving}
-            >
-              {isSaving ? t('controls.saving') : t('controls.save')}
-            </button>
-          </div>
-
         </div>
       </div>
 

@@ -1,7 +1,7 @@
-import type { CostPriceVersion } from '@pxa-re-management/shared';
+import type { CostPriceVersion, BusinessUnit } from '@pxa-re-management/shared';
 import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/businessUnit';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,6 +9,7 @@ import { useStickyMessageActions } from '@/store/stickyMessage';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useCostVersionActions, useCostVersionSelectors } from '../store/costVersion';
 import { normalizeToYearMonth, validateDateRange } from '../utils/dateUtils';
+import BusinessUnitsDropDownList from '@/components/molecules/DropDownList/Specials/BusinessUnits/BusinessUnitsDropDownList.tsx';
 
 const CostVersionRegistration: FC = () => {
   const { t } = useTranslation('costVersionRegistration');
@@ -24,7 +25,7 @@ const CostVersionRegistration: FC = () => {
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [hasCostRegisters, setHasCostRegisters] = useState(false);
 
-  // Form states for create/edit modal
+  // 作成/編集モーダル用のフォーム状態
   const [formData, setFormData] = useState({
     costVersionId: '',
     businessunitId: '',
@@ -35,7 +36,7 @@ const CostVersionRegistration: FC = () => {
     defaultFlg: false,
   });
 
-  // Duplicate modal state
+  // 複製モーダル用の状態
   const [duplicateData, setDuplicateData] = useState({
     newCostVersionName: '',
     ktnCd: '',
@@ -59,6 +60,34 @@ const CostVersionRegistration: FC = () => {
       fetchCostVersions(selectedBusinessUnitCd);
     }
   }, [selectedBusinessUnitCd, fetchCostVersions]);
+
+  // ドロップダウン用に「すべて」オプションを含む事業単位配列を作成
+  const businessUnitsWithAll = useMemo(() => {
+    const allOption: BusinessUnit = {
+      businessunitId: 'all',
+      buCd: 'all',
+      name: t('controls.allBusinessUnits', { defaultValue: 'すべて' }),
+      baseCurrencyName: '',
+      businessunitNameJa: t('controls.allBusinessUnits', { defaultValue: 'すべて' }),
+      productNameJa: '',
+      businessunitNameEn: t('controls.allBusinessUnits', { defaultValue: 'All' }),
+      productNameEn: '',
+      businessunitNameZh: '',
+      productNameZh: '',
+      createdBy: null,
+      createdOn: new Date().toISOString(),
+      modifiedBy: null,
+      modifiedOn: new Date().toISOString(),
+    };
+    return [allOption, ...businessUnits];
+  }, [businessUnits, t]);
+
+  // ドロップダウン用に選択された事業単位コードを事業単位IDに変換
+  const selectedBusinessUnitID = useMemo(() => {
+    if (selectedBusinessUnitCd === 'all') return 'all';
+    const selectedBu = businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
+    return selectedBu?.businessunitId ?? null;
+  }, [selectedBusinessUnitCd, businessUnits]);
 
   const handleCreate = () => {
     const selectedBu =
@@ -268,22 +297,31 @@ const CostVersionRegistration: FC = () => {
             </button>
 
             <div className="flex items-center gap-2 ml-6">
-              <label className="text-sm text-gray-700">{t('fields.businessUnit')}</label>
-              <select
-                value={selectedBusinessUnitCd}
-                onChange={(e) => {
-                  setSelectedBusinessUnitCd(e.target.value);
-                  setSelectedCostVersion(null);
-                }}
-                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
-              >
-                <option value="all">{t('controls.allBusinessUnits', { defaultValue: 'すべて' })}</option>
-                {businessUnits.map((bu) => (
-                  <option key={bu.businessunitId} value={bu.buCd}>
-                    {bu.businessunitNameJa}
-                  </option>
-                ))}
-              </select>
+              <div className="w-72">
+                <BusinessUnitsDropDownList
+                  label={t('fields.businessUnit')}
+                  placeholder={
+                    businessUnits.length > 0
+                      ? t('fields.businessUnit')
+                      : t('fields.businessUnit')
+                  }
+                  businessUnits={businessUnitsWithAll}
+                  selectedBusinessUnitID={selectedBusinessUnitID}
+                  onBusinessUnitSelected={(value) => {
+                    if (value === 'all') {
+                      setSelectedBusinessUnitCd('all');
+                    } else {
+                      const selectedBu = businessUnits.find((bu) => bu.businessunitId === value);
+                      if (selectedBu) {
+                        setSelectedBusinessUnitCd(selectedBu.buCd);
+                      }
+                    }
+                    setSelectedCostVersion(null);
+                  }}
+                  loading={false}
+                  isVerticalOrientation={false}
+                />
+              </div>
             </div>
 
             <label className="flex items-center gap-2 ml-4">

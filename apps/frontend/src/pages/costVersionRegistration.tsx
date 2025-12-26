@@ -13,7 +13,7 @@ import BusinessUnitsDropDownList from '@/components/molecules/DropDownList/Speci
 
 const CostVersionRegistration: FC = () => {
   const { t } = useTranslation('costVersionRegistration');
-  const { addSuccessMessage, addErrorMessage } = useStickyMessageActions();
+  const { addErrorMessage } = useStickyMessageActions();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -157,21 +157,19 @@ const CostVersionRegistration: FC = () => {
         addErrorMessage(t('messages.invalidDate'));
         return;
       }
+      // 作成時はcostVersionIdを送信しない
+      const { costVersionId, ...createData } = formData;
       await createCostVersion({
-        ...formData,
+        ...createData,
         startDate: normalizedStartDate,
         endDate: normalizedEndDate,
       });
-      addSuccessMessage(t('messages.createSuccess'));
       setShowCreateModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd !== 'all') {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to create cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -183,7 +181,8 @@ const CostVersionRegistration: FC = () => {
     }
 
     try {
-      const { costVersionId, ...updateData } = formData;
+      // 編集時はcostVersionId、businessunitId、defaultFlgを送信しない
+      const { costVersionId, businessunitId, defaultFlg, ...updateData } = formData;
       const normalizedStartDate = normalizeToYearMonth(updateData.startDate);
       const normalizedEndDate = normalizeToYearMonth(updateData.endDate);
       if (!normalizedStartDate || !normalizedEndDate) {
@@ -195,16 +194,12 @@ const CostVersionRegistration: FC = () => {
         startDate: normalizedStartDate,
         endDate: normalizedEndDate,
       });
-      addSuccessMessage(t('messages.updateSuccess'));
       setShowEditModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd !== 'all') {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to update cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -212,17 +207,13 @@ const CostVersionRegistration: FC = () => {
     if (!selectedCostVersion) return;
     try {
       await deleteCostVersion(selectedCostVersion);
-      addSuccessMessage(t('messages.deleteSuccess'));
       setShowDeleteModal(false);
       setSelectedCostVersion(null);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd !== 'all') {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to delete cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -243,14 +234,11 @@ const CostVersionRegistration: FC = () => {
       
       await duplicateCostVersion(payload);
       setShowDuplicateModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd !== 'all') {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to duplicate cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     } finally {
       setIsDuplicating(false);
     }

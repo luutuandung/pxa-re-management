@@ -12,7 +12,7 @@ const StickyMessageContainer: React.FC = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-3 max-w-md w-full">
+    <div className="fixed top-4 right-4 z-[100] space-y-3 max-w-md w-full">
       {stickyMessages.map((message) => {
         if (message.type === 'error') {
           return <ErrorMessage key={message.id} id={message.id} message={message.message} onClose={removeMessage} />;

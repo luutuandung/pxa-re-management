@@ -133,15 +133,13 @@ const CostVersionRegistration: FC = () => {
     }
     const selected = costVersions.find((cv) => cv.costVersionId === selectedCostVersion);
     if (selected) {
-      const selectedBu = businessUnits.find((bu) => bu.businessunitId === selected.businessunitId);
       setDuplicateData({
         newCostVersionName: '',
-        ktnCd: selectedBu?.buCd || selectedBusinessUnitCd,
+        ktnCd: selected.businessunitId,
       });
       setShowDuplicateModal(true);
     }
   };
-
 
   const confirmCreate = async () => {
     const dateError = validateDateRange(formData.startDate, formData.endDate, t);

@@ -6,6 +6,7 @@
     "start": "nest start",
     "dev": "pnpm install || nest start --watch",
     "start:dev": "nest start --watch",
+    "start:dev:no-ssl": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/backend/src/main",
     "test": "vitest",

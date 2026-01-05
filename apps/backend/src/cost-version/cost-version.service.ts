@@ -55,7 +55,7 @@ export class CostVersionService {
 
   async findAll(): Promise<CostPriceVersion[]> {
     try {
-      return await this.prisma.costVersion.findMany({
+      const costVersions = await this.prisma.costVersion.findMany({
         where: {
           deleteFlg: false,
         },

@@ -1,6 +1,5 @@
 import type { CostPriceRegistration } from "../../types/cost-price-registration.type";
 import type { TagsOfSupportedLanguages } from "../../constants/TagsOfSupportedLanguages";
-import type { CodesOfAvailableCurrencies } from "../../constants/CodesOfAvailableCurrencies";
 
 
 export interface CostPriceRegistrationPageBFF {
@@ -47,7 +46,7 @@ export namespace CostPriceRegistrationPageBFF {
       businessUnitCostPriceCode: string;
       businessUnitCostPriceLocalizedName: string;
       costPriceType: CostPriceRegistration.CostPriceTypes;
-      currencyCode: CodesOfAvailableCurrencies;
+      currencyCode: string;
       costPricePatternLocalizedName?: string;
       formattedModelCategoriesNames: string;
       formattedSalesDestinations: string;

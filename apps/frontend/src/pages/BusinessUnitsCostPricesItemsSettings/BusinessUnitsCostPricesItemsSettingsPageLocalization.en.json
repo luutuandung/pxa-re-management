@@ -1,0 +1,129 @@
+{
+  "topHeading": "Business Cost Item Settings",
+  "guidances": {
+    "tableDataDisplaying": "To display business units cost prices data table, please select the location. Also, it is possible additionally to search by business unit cost price item name.",
+    "noBusinessUnits": "No data cost price registration data to display because no business units available.",
+    "noDataToDisplay": "No data satisfying to current filtering.",
+    "dataSavingSucceeded": "The business cost prices items table data saving complete.",
+    "screenReaderOnly": {
+      "tableDataLoadingInProgress": "The business cost prices items table data is loading now. Please wait.",
+      "dataSavingInProgress": "The business cost prices items table data is being saving now. Please, wailt...",
+      "excelFileExportingInProgress": "The excel file exporting in progress. Please wait for a while",
+      "importedFromExcelDataSubmittingSucceeded": "File upload completed successfully"
+    }
+  },
+  "controls": {
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "Location",
+        "placeholders": {
+          "normal": "Select the location",
+          "noData": "No locations"
+        }
+      },
+      "yearOfActualityStarting": { "accessibilityGuidance": "Year of starting of actuality" },
+      "monthOfActualityStarting": { "accessibilityGuidance": "Month number of starting of actuality" },
+      "yearOfActualityEnding": { "accessibilityGuidance": "Year of ending of actuality" },
+      "monthOfActualityEnding": { "accessibilityGuidance": "Month number of ending of actuality" },
+      "yearOfBusinessUnitsCostPricesItemActualityEnding": {
+        "emptyOptionLabel": "None"
+      },
+      "monthOfBusinessUnitsCostPricesItemActualityEnding": {
+        "emptyOptionLabel": "None"
+      }
+    },
+    "searchingBoxes": {
+      "businessCostPriceItemName": {
+        "label": "Cost Item Name Search",
+        "placeholder": "Enter cost item name..."
+      }
+    },
+    "buttons": {
+      "dataSaving": { "label": "Save" },
+      "businessUnitsDataRetrievingRetrying": { "label": "Retry" },
+      "codesOfAvailableCurrenciesRetrievingRetrying": { "label": "Retry" },
+      "tableDataRetrievingRetrying": { "label": "Retry" },
+      "excelFileUploading": { "label": "Upload File" },
+      "excelFileDownloading": { "label": "Download File" },
+      "rowDuplicating": { "label": "Duplicate" }
+    }
+  },
+  "table": {
+    "headers": {
+      "businessUnitCostPriceCode": "Code",
+      "businessUnitCostPriceItemLocalizedName": "Cost Item Name",
+      "yearAndMonthOfActualityStarting": "Effective Start Date",
+      "yearAndMonthOfActualityEnding": "Effective End Date",
+      "currencyCode": "Currency",
+      "isAmountValid": "Amount",
+      "isRateValid": "Rate",
+      "isCalculationValid": "Calculation",
+      "isDataLinkageAvailable": "Auto Create",
+      "actions": "Actions"
+    },
+    "labels": {
+      "new": "New",
+      "hasDuplicate": "Duplicate",
+      "year": "",
+      "month": ""
+    }
+  },
+  "errors": {
+    "businessUnitsDataRetrievingFailed": "The malfunction has occurred during the retrieving of business units data which requires for filtering.",
+    "codesOfAvailableCurrenciesRetrievingFailed": "The malfunction has occurred during the retrieving of codes of available currencies. If you are going to upload the data from excel please try to retrieve this data again.",
+    "tableDataRetrievingFailed": "The malfunction has occurred during the table data retrieving.",
+    "excelDataParsingFailed": "The malfunction has occurred during the reading of Excel file.",
+    "importedFromExcelDataSubmittingError": "The malfunction has occurred during uploading of data import from the Excel file.",
+    "invalidDataInputtingPrevention": {
+      "yearAndMonthOfActualityStartingIsLaterThanYearAndMonthOfActualityEnding": "Unable to update actuality staring year or month because specified value is later than year and month of actuality ending.",
+      "yearAndMonthOfActualityEndingIsEarlierThanYearAndMonthOfActualityStarting": "Unable to update actuality ending year or month because specified value is earlier than year and month of actuality starting."
+    },
+    "excelFileValidation": {
+      "intro": "The following violations has been detected in exported Excel file:",
+      "lineNumberTitle": "Line No. {{ lineNumber }}",
+      "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "The business cost item ID is required while not specified.",
+      "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "The business cost item ID has been specified but has {{ actualType }} type while must be a string.",
+      "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "The business cost item ID has been specified with string, but this string is empty.",
+      "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "It the subsequent occurrence in this file of item with same ID.",
+      "STARTING_YEAR_MONTH-NOT_EXISTS": "The business cost item starting year/month is required while not specified.",
+      "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "The business cost item starting year/month has been specified but has {{ actualType }} type while must be a string.",
+      "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "Specified starting year/month including the non-digits characters, while must be the digits sequence like \"202509\" representing the 4-digits year and 2-digits month.",
+      "STARTING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "Although specified starting year/month consists from digits, this digits sequence does not represent the valid year and month combination.",
+      "STARTING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE":  "Specified starting year is earlier than {{ earliestYear }}, the earliest allowed year.",
+      "STARTING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE":  "Specified starting year is later than {{ latestYear }}, the latest allowed year.",
+      "STARTING_YEAR_MONTH-INVALID_MONTH_NUMBER":  "Invalid number of starting month. Please specify the 2-digits sequence from 01 to 12.",
+      "ENDING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "The business cost item ending year/month has been specified but has {{ actualType }} type while must be a string",
+      "ENDING_YEAR_MONTH-DISALLOWED_CHARACTERS": "Specified ending year/month including the non-digits characters, while must be the digits sequence like \"202509\" representing the 4-digits year and 2-digits month.",
+      "ENDING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "Although specified ending year/month consists from digits, this digits sequence does not represent the valid year and month combination.",
+      "ENDING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE": "Specified ending year is earlier than {{ earliestYear }}, the earliest allowed year.",
+      "ENDING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE": "Specified ending year is later than {{ latestYear }}, the latest allowed year.",
+      "ENDING_YEAR_MONTH-INVALID_MONTH_NUMBER": "Invalid number of ending month. Please specify the 2-digits sequence from 01 to 12.",
+      "ENDING_YEAR_MONTH-EARLIER_THAN_STARTING_ONE": "The specified ending year and month combination is earlier that starting year and month.",
+      "CURRENCY_ID-NOT_EXISTS": "Currency code is required while not specified.",
+      "CURRENCY_ID-EXISTS_BUT_NOT_STRING": "Currency code has been specified but has {{ actualType }} type while must be a string.",
+      "CURRENCY_ID-DISALLOWED_VARIANT": "Specified currency code is not allowed. Please specify one of the following currency codes: {{ commaSeparatedAllowedVariants }}.",
+      "AMOUNT_VALID_FLAG-NOT_EXISTS": "Amount validity flag　is required while not specified.",
+      "AMOUNT_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Amount validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+      "RATE_VALID_FLAG-NOT_EXISTS": "Rate validity flag　is required while not specified.",
+      "RATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Rate validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+      "CALC_VALID_FLAG-NOT_EXISTS": "Calculation validity flag　is required while not specified.",
+      "CALC_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Calculation validity flag has been specified but has {{ actualType }} type while must be a boolean.",
+      "AUTO_CREATE_VALID_FLAG-NOT_EXISTS": "Auto creating validity flag　is required while not specified.",
+      "AUTO_CREATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "Auto creating validity flag has been specified but has {{ actualType }} type while must be a boolean."
+    },
+    "checkingForDuplications": {
+      "intro": "There are the items with even cost price code and currency code combination. To save the data, these duplications must be resolved.",
+      "row": "Cost Price Item Code：{{ businessUnitCostPriceItemLocalizedName }}, Corrency Codee：{{ currencyCode }}"
+    },
+    "dataSavingFailed": "The malfunction has occurred during the saving of cost prices items.",
+    "exportingToExcelFileFailed": "The malfunction has occurred during outputting of Excel file."
+  },
+  "confirmationSubdialog": {
+    "title": "Inputted Data Discarding Confirmation",
+    "question": "The inputted data will be discarded. Proceed?",
+    "buttons": {
+      "confirmation": { "label": "Discard" },
+      "cancellation": { "label": "Continue the Input" }
+    }
+  }
+}

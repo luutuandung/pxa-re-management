@@ -1,0 +1,16 @@
+{
+  "controls": {
+    "dropDownLists": {
+      "itemsPerPageCount": { "label": "表示件数" }
+    },
+    "buttons": {
+      "switchingToFirstPage": { "accessibilityGuidance": "最初のページへ" },
+      "switchingToPreviousPage": { "accessibilityGuidance": "前のページへ" },
+      "switchingToNextPage": { "accessibilityGuidance": "次のページへ" },
+      "switchingToLastPage": { "accessibilityGuidance": "最後のページへ" }
+    }
+  },
+  "labels": {
+    "currentPage": "ページ{{ selectedPageNumber__numerationFrom1 }} / {{ totalPagesCount }}"
+  }
+}

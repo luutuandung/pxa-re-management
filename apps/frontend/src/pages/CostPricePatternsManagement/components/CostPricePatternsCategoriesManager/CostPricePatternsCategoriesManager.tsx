@@ -69,7 +69,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
 
   /* ━━━ Lifecycle Hooks ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   protected static getDerivedStateFromProps(
-    newProps: Readonly<CostPricePatternsCategoriesManager.Props>
+    newProps: CostPricePatternsCategoriesManager.Props
   ): Partial<CostPricePatternsCategoriesManager.State> {
     return {
       noCategoriesTypesAvailable:
@@ -160,10 +160,10 @@ class CostPricePatternsCategoriesManager extends React.Component<
 
         <thead>
           <tr>
-            <th>{ this.translate("table.columnTitles.number") }</th>
-            <th>{ this.translate("table.columnTitles.ordering") }</th>
-            <th>{ this.translate("table.columnTitles.category") }</th>
-            <th>{ this.translate("table.columnTitles.otherActions") }</th>
+            <th>{ this.getLocalizedString("table.columnTitles.number") }</th>
+            <th>{ this.getLocalizedString("table.columnTitles.ordering") }</th>
+            <th>{ this.getLocalizedString("table.columnTitles.category") }</th>
+            <th>{ this.getLocalizedString("table.columnTitles.otherActions") }</th>
           </tr>
         </thead>
 
@@ -183,7 +183,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
                 disabled={ this.props.disabled || this.props.readonly }
                 onClick={ this.onAddingOfNewCostPriceCategoryButtonClicked.bind(this) }
               >
-                { this.translate("controls.buttons.categoryAdding.label") }
+                { this.getLocalizedString("controls.buttons.categoryAdding.label") }
               </Button>
             </td>
           </tr>
@@ -209,7 +209,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
             variant="secondary"
             onClick={ (): void => { this.onSwapingWithPreviousCategoryButtonClicked(rowIndex) } }
             disabled={ rowIndex === 0 || this.props.disabled || this.props.readonly }
-            accessibilityGuidance={ this.translate("controls.buttons.swapWithPreviousCategory.accessibilityGuidance") }
+            accessibilityGuidance={ this.getLocalizedString("controls.buttons.swapWithPreviousCategory.accessibilityGuidance") }
           >
             ▲
           </Button>
@@ -223,7 +223,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
                   this.props.disabled ||
                   this.props.readonly
             }
-            accessibilityGuidance={ this.translate("controls.buttons.swapWithNextCategory.accessibilityGuidance") }
+            accessibilityGuidance={ this.getLocalizedString("controls.buttons.swapWithNextCategory.accessibilityGuidance") }
           >
             ▼
           </Button>
@@ -233,7 +233,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
         <td>
           <DropDownList
             placeholder={
-              this.translate(
+              this.getLocalizedString(
                 `controls.dropDownLists.category.placeholders.${ this.state.noCategoriesTypesAvailable ? "noData" : "normal" }`
               )
             }
@@ -257,7 +257,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
             onClick={ (): void => { this.onRemovingCostPriceCategoryButtonClicked(rowIndex) } }
             disabled={ this.props.disabled || this.props.readonly }
           >
-            { this.translate("controls.buttons.categoryDeleting.label") }
+            { this.getLocalizedString("controls.buttons.categoryDeleting.label") }
           </Button>
         </td>
 
@@ -267,7 +267,7 @@ class CostPricePatternsCategoriesManager extends React.Component<
 
 
   /* ━━━ Routines ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-  private translate(path: string): string {
+  private getLocalizedString(path: string): string {
     return I18n.t(`costPricePatternsCategoriesManager:${ path }`);
   }
 

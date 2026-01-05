@@ -11,7 +11,8 @@ const TextBox: React.ForwardRefExoticComponent<TextBox.Props> = React.forwardRef
       disabled,
       readonly,
       nativeInputElementAttributes = {},
-      onChangeEventHandler
+      onChangeEventHandler,
+      onBlurEventHandler
     }: TextBox.Props,
     forwardedReactReference: React.ForwardedRef<TextBox.PublicMethods>
   ): React.ReactNode {
@@ -59,6 +60,11 @@ const TextBox: React.ForwardRefExoticComponent<TextBox.Props> = React.forwardRef
               onChangeEventHandler(event.target.value, event);
             }
           }
+          onBlur={
+            (event: React.FocusEvent<HTMLInputElement>): void => {
+              onBlurEventHandler?.(event.target.value, event);
+            }
+          }
           { ...nativeInputElementAttributes }
           ref={ inputElementReactReference }
         />
@@ -80,6 +86,7 @@ namespace TextBox {
     ref?: React.RefObject<TextBox.PublicMethods | null>;
     nativeInputElementAttributes?: Omit<React.ComponentProps<"input">, "id" | "type" | "disabled" | "readOnly">;
     onChangeEventHandler: (value: string, event: React.ChangeEvent<HTMLInputElement>) => unknown;
+    onBlurEventHandler?: (newestValue: string, event: React.FocusEvent<HTMLInputElement>) => unknown;
   }>;
 
   export interface PublicMethods {

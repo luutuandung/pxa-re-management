@@ -3,8 +3,6 @@ import {
 
   /* ┅┅┅ Business Rules ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   TagsOfSupportedLanguages,
-  CodesOfAvailableCurrencies,
-  isAvailableCurrencyCode,
   CostPriceRegistration,
   CostPricesPatternsCategoriesDataTypes,
   isAvailableCostPricePatternCategoryDataType,
@@ -91,90 +89,77 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
 
           (
             dataSelection: CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item
-          ): Array<CostPricePatternsManagementPageBFF.TableData.Row> => {
+          ): Array<CostPricePatternsManagementPageBFF.TableData.Row> =>
 
-            const currencyCode: CodesOfAvailableCurrencies =
-                isAvailableCurrencyCode(dataSelection.curCd) ?
-                    dataSelection.curCd :
-                    ((): never => {
-                      throw new NestJS.InternalServerErrorException(
-                        "データベースからのデータ取得の際不正なデータが発見された。" +
-                        `ID「${ dataSelection.buCostItemId }」の事業部に該当してる通貨コード「${ dataSelection.curCd }」は` +
-                          "可能な値に所属していない。"
-                      );
-                    })();
+              Object.values(CostPriceRegistration.CostPriceTypes).flatMap(
+                (
+                  costPriceType: CostPriceRegistration.CostPriceTypes
+                ): Array<CostPricePatternsManagementPageBFF.TableData.Row> => {
 
-            return Object.values(CostPriceRegistration.CostPriceTypes).flatMap(
-              (
-                costPriceType: CostPriceRegistration.CostPriceTypes
-              ): Array<CostPricePatternsManagementPageBFF.TableData.Row> => {
+                  switch (costPriceType) {
 
-                switch (costPriceType) {
+                    case CostPriceRegistration.CostPriceTypes.amount: {
 
-                  case CostPriceRegistration.CostPriceTypes.amount: {
+                      if (!dataSelection.amountValidFlg) {
+                        return [];
+                      }
 
-                    if (!dataSelection.amountValidFlg) {
-                      return [];
+
+                      break;
+
                     }
 
-
-                    break;
+                    case CostPriceRegistration.CostPriceTypes.rate: {
+                      if (!dataSelection.rateValidFlg) {
+                        return [];
+                      }
+                    }
 
                   }
 
-                  case CostPriceRegistration.CostPriceTypes.rate: {
-                    if (!dataSelection.rateValidFlg) {
-                      return [];
+                  /* 【 仕様書 】
+                   * 実際のデータ上、一件の拠点と関連している原価種類で一致している原価登録が一件しかあり得ないが、テスト専用のデータだと、複数存在する事がある。
+                   * その時、一件目だけ良い。 */
+                  const costPricePattern:
+                      CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item.CostPricePattern |
+                      undefined |
+                      null =
+                          dataSelection.costRegisters.find(
+                            (
+                              costPriceRegistration:
+                                  CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item.
+                                      CostPriceRegistration
+                            ): boolean =>
+                                costPriceRegistration.costType === costPriceType
+                          )?.
+                          type?.
+                          costPricePattern;
+
+                  return [
+                    {
+                      businessUnitCostItemID: dataSelection.buCostItemId,
+                      businessUnitCode: dataSelection.buCostCode.buCostCd,
+                      businessUnitLocalizedName: {
+                        [TagsOfSupportedLanguages.japanese]: dataSelection.buCostCode.buCostNameJa,
+                        [TagsOfSupportedLanguages.english]: dataSelection.buCostCode.buCostNameEn,
+                        [TagsOfSupportedLanguages.chinese]: dataSelection.buCostCode.buCostNameZh
+                      }[languageTag],
+                      costPriceType,
+                      currencyCode: dataSelection.curCd,
+                      ...typeof costPricePattern === "undefined" || costPricePattern === null ?
+                          null :
+                          {
+                            costPricePatternLocalizedName: {
+                              [TagsOfSupportedLanguages.japanese]: costPricePattern.costPatternNameJa,
+                              [TagsOfSupportedLanguages.english]: costPricePattern.costPatternNameEn,
+                              [TagsOfSupportedLanguages.chinese]: costPricePattern.costPatternNameZh
+                            }
+                          }[languageTag]
                     }
-                  }
+                  ];
 
                 }
-
-                /* 【 仕様書 】
-                 * 実際のデータ上、一件の拠点と関連している原価種類で一致している原価登録が一件しかあり得ないが、テスト専用のデータだと、複数存在する事がある。
-                 * その時、一件目だけ良い。 */
-                const costPricePattern:
-                    CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item.CostPricePattern |
-                    undefined |
-                    null =
-                        dataSelection.costRegisters.find(
-                          (
-                            costPriceRegistration:
-                                CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item.
-                                    CostPriceRegistration
-                          ): boolean =>
-                              costPriceRegistration.costType === costPriceType
-                        )?.
-                        type?.
-                        costPricePattern;
-
-                return [
-                  {
-                    businessUnitCostItemID: dataSelection.buCostItemId,
-                    businessUnitCode: dataSelection.buCostCode.buCostCd,
-                    businessUnitLocalizedName: {
-                      [TagsOfSupportedLanguages.japanese]: dataSelection.buCostCode.buCostNameJa,
-                      [TagsOfSupportedLanguages.english]: dataSelection.buCostCode.buCostNameEn,
-                      [TagsOfSupportedLanguages.chinese]: dataSelection.buCostCode.buCostNameZh
-                    }[languageTag],
-                    costPriceType,
-                    currencyCode,
-                    ...typeof costPricePattern === "undefined" || costPricePattern === null ?
-                        null :
-                        {
-                          costPricePatternLocalizedName: {
-                            [TagsOfSupportedLanguages.japanese]: costPricePattern.costPatternNameJa,
-                            [TagsOfSupportedLanguages.english]: costPricePattern.costPatternNameEn,
-                            [TagsOfSupportedLanguages.chinese]: costPricePattern.costPatternNameZh
-                          }
-                        }[languageTag]
-                  }
-                ];
-
-              }
-            );
-
-          }
+              )
 
         );
 
@@ -441,8 +426,8 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
                 costPatternCategories
           ),
 
-      this.prismaService.costVersion.findUniqueOrThrow({
-        where: { costVersionId: costPriceVersionID },
+      this.prismaService.costVersion.findFirstOrThrow({
+        where: { costVersionId: costPriceVersionID, deleteFlg: false },
         select: {
           startDate: true,
           endDate: true

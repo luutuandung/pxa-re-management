@@ -94,9 +94,8 @@ class AzureBlobStorage {
    * @param {*} json          ファイルデータ
    */
   async uploadCalcJson(json) {
-    const fullBlobName = `${
-      AzureBlobStorage.UPLOAD_CALC_FILE_PATH
-    }/CalcDevBom_${getCurrentTimestamp()}.json`; // ディレクトリパスを含めたBlob名
+    const fullBlobName = `${AzureBlobStorage.UPLOAD_CALC_FILE_PATH
+      }/CalcDevBom_${getCurrentTimestamp()}.json`; // ディレクトリパスを含めたBlob名
     try {
       const containerClient = this.blobServiceClient.getContainerClient(
         this.containerNameCalc,

@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 const DropDownList: React.FC<DropDownList.Props> = (
   {
     label,
+    accessibilityGuidance,
     placeholder,
     loadingInProgressAccessibilityGuidance,
     itemsData,
@@ -76,7 +77,10 @@ const DropDownList: React.FC<DropDownList.Props> = (
               disabled={ disabled }
             >
 
-              <SelectTrigger aria-labelledby={ labelHTML_ID }>
+              <SelectTrigger
+                aria-labelledby={ labelHTML_ID }
+                aria-label={ accessibilityGuidance }
+              >
                 <SelectValue placeholder={ placeholder ?? translate("defaultPlaceholder") } />
               </SelectTrigger>
 
@@ -107,6 +111,7 @@ namespace DropDownList {
 
   export type Props = Readonly<{
     label?: string;
+    accessibilityGuidance?: string;
     placeholder?: string;
     loadingInProgressAccessibilityGuidance?: string;
     itemsData: ReadonlyArray<ItemData>;

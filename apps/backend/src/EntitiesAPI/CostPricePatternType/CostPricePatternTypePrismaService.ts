@@ -1,4 +1,4 @@
-import { CostPricePatternTypeGateway } from "@pxa-re-management/shared";
+import type { CostPricePatternTypeGateway } from "@pxa-re-management/shared";
 import { PrismaService } from "../../prisma/prisma.service";
 import * as  NestJS from "@nestjs/common";
 import * as Prisma from "@prisma/client";

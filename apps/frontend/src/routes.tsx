@@ -1,13 +1,14 @@
 import { createBrowserRouter } from 'react-router';
 import MainLayout from './components/templates/MainLayout';
 import BusinessCostItemCodeRegistration from './pages/businessCostItemCodeRegistration';
-import BusinessCostItemSettings from './pages/businessCostItemSettings';
 import CostAggregationScenario from './pages/costAggregationScenario';
 import CalcRegister from './pages/calcRegister';
 import CalcTypePage from './pages/calcType';
 import CostVersionRegistration from './pages/costVersionRegistration';
 import Home from './pages/Home';
 import UniformCostItemCodeRegistration from './pages/uniformCostItemCodeRegistration';
+import BusinessUnitsCostPricesItemsSettingsPage from
+    '@/pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsPage.tsx';
 import CostPriceRegistrationPage from "@/pages/CostPriceRegistration/CostPriceRegistrationPage.tsx";
 import CostPricePatternsManagementPage from "@/pages/CostPricePatternsManagement/CostPricePatternsManagementPage.tsx";
 
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'businessCostItemSettings',
-        element: <BusinessCostItemSettings />,
+        element: <BusinessUnitsCostPricesItemsSettingsPage />,
         errorElement: <PageLoadFailed />,
       },
       {

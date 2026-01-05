@@ -55,7 +55,10 @@ export class CostVersionService {
 
   async findAll(): Promise<CostPriceVersion[]> {
     try {
-      const costVersions = await this.prisma.costVersion.findMany({
+      return await this.prisma.costVersion.findMany({
+        where: {
+          deleteFlg: false,
+        },
         orderBy: [
           { businessUnit: { buCd: 'asc' } },
           { costVersionId: 'asc' },
@@ -76,6 +79,7 @@ export class CostVersionService {
     try {
       const costVersions = await this.prisma.costVersion.findMany({
         where: {
+          deleteFlg: false,
           businessUnit: {
             buCd: ktnCd,
           }
@@ -105,7 +109,7 @@ export class CostVersionService {
         where: { costVersionId },
       });
 
-      if (!costVersion) {
+      if (!costVersion || costVersion.deleteFlg) {
         throw new NotFoundException('CostVersion', costVersionId);
       }
 
@@ -223,19 +227,21 @@ export class CostVersionService {
   async remove(costVersionId: string): Promise<void> {
     try {
       await this.prisma.$transaction(async (prisma) => {
-        // 存在チェック
         const existingVersion = await prisma.costVersion.findUnique({
           where: { costVersionId },
         });
 
-        if (!existingVersion) {
+        if (!existingVersion || existingVersion.deleteFlg) {
           throw new NotFoundException('CostVersion', costVersionId);
         }
 
-        // 論理削除
         await prisma.costVersion.update({
           where: { costVersionId },
-          data: { modifiedBy: '00000000-0000-0000-0000-000000000000', modifiedOn: new Date() },
+          data: {
+            deleteFlg: true,
+            modifiedBy: '00000000-0000-0000-0000-000000000000',
+            modifiedOn: new Date(),
+          },
         });
       });
     } catch (error) {

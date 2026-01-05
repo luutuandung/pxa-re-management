@@ -11,7 +11,7 @@ export class CostScenarioService {
   }
 
   async getCostVersions(): Promise<CostVersion[]> {
-    return this.prisma.costVersion.findMany();
+    return this.prisma.costVersion.findMany({ where: { deleteFlg: false } });
   }
 
   async getRateExchanges(): Promise<{ rateType: number }[]> {
@@ -50,7 +50,7 @@ export class CostScenarioService {
   }
 
   async getCostVersionsByBusinessUnitId(businessunitId: string): Promise<CostVersion[]> {
-    return this.prisma.costVersion.findMany({ where: { businessunitId } });
+    return this.prisma.costVersion.findMany({ where: { businessunitId, deleteFlg: false } });
   }
 
   async getRateTypes(): Promise<RateExchange[]> {

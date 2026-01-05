@@ -30,9 +30,6 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     const uniformCostModule = await import(`./locales/${language}/uniformCostItemCodeRegistration.json`);
     resources.uniformCostItemCodeRegistration = uniformCostModule.default;
 
-    const businessCostItemSettingsModule = await import(`./locales/${language}/businessCostItemSettings.json`);
-    resources.businessCostItemSettings = businessCostItemSettingsModule.default;
-
     const costAggregationScenarioModule = await import(`./locales/${language}/costAggregationScenario.json`);
     resources.costAggregationScenario = costAggregationScenarioModule.default;
 
@@ -46,6 +43,11 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     resources.costVersionRegistration = costVersionRegistrationModule.default;
 
     await Promise.all([
+      import(`./../pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.businessCostPricesItemsSettingsSetupPage = translations;
+        }
+      ),
       import(`./../pages/CostPriceRegistration/CostPriceRegistrationPageLocalization.${ language }.json`).then(
         (translations: { [key: string]: string | object }): void => {
           resources.costPriceRegistrationPage = translations;
@@ -75,7 +77,12 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
         (translations: { [key: string]: string | object }): void => {
           resources.businessUnitsDropDownList = translations;
         }
-      )
+      ),
+      import (`./../components/molecules/Pagination/PaginationLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.pagination = translations;
+        }
+      ),
     ]);
 
     return resources;
@@ -130,18 +137,19 @@ i18n.use(initReactI18next).init({
     'home',
     'businessCostItemCodeRegistration',
     'uniformCostItemCodeRegistration',
-    'businessCostItemSettings',
     'costAggregationScenario',
     'calcType',
     'calcRegister',
     'costVersionRegistration',
     'costRegister',
+    'businessCostPricesItemsSettingsSetupPage',
     'costPriceRegistrationPage',
     'costPricePatternsManagementPage',
     'costPricesPatternsTypesManagementDialog',
     'costPricePatternsCategoriesManager',
     'dropDownList',
-    'businessUnitsDropDownList'
+    'businessUnitsDropDownList',
+    'pagination'
   ],
   defaultNS: 'common',
 

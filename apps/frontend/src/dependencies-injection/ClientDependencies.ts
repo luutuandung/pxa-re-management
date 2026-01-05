@@ -1,6 +1,9 @@
 import {
   BusinessUnitGateway,
+  BusinessUnitCostPriceItemGateway,
   CostPricePatternTypeGateway,
+  CurrencyGateway,
+  BusinessUnitsCostPricesItemsSettingsPageBFF,
   CostPricePatternsManagementPageBFF,
   CostPriceRegistrationPageBFF,
   CostPricesVersionsDropDownListBFF
@@ -17,7 +20,9 @@ namespace ClientDependencies {
 
   export type Gateways = Readonly<{
     businessUnit: BusinessUnitGateway;
+    businessUnitCostPriceItem: BusinessUnitCostPriceItemGateway;
     costPricePatternType: CostPricePatternTypeGateway;
+    currency: CurrencyGateway;
   }>;
 
   export type BFF = Readonly<{
@@ -28,6 +33,7 @@ namespace ClientDependencies {
   export namespace BFF {
 
     export type Pages = Readonly<{
+      businessUnitsCostPricesItemsSettings: BusinessUnitsCostPricesItemsSettingsPageBFF;
       costPricePatternsManagement: CostPricePatternsManagementPageBFF;
       costPriceRegistration: CostPriceRegistrationPageBFF;
     }>;

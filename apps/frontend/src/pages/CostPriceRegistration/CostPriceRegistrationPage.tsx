@@ -1075,7 +1075,6 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
         </TableRow>
       </TableHeader>
     );
-
   }
 
 

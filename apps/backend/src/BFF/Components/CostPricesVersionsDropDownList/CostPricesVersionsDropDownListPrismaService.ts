@@ -24,7 +24,7 @@ export default class CostPricesVersionsDropDownListPrismaService implements Cost
   ): Promise<CostPricesVersionsDropDownListBFF.ItemsRetrieving.ResponseData> {
     return (
       await this.prismaService.costVersion.findMany({
-        where: { businessunitId: businessUnitID },
+        where: { businessunitId: businessUnitID, deleteFlg: false },
         select: {
           costVersionId: true,
           costVersionName: true

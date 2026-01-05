@@ -1,0 +1,16 @@
+{
+  "controls": {
+    "dropDownLists": {
+      "itemsPerPageCount": { "label": "Items per Page" }
+    },
+    "buttons": {
+      "switchingToFirstPage": { "accessibilityGuidance": "To first page" },
+      "switchingToPreviousPage": { "accessibilityGuidance": "To previous page" },
+      "switchingToNextPage": { "accessibilityGuidance": "To next page" },
+      "switchingToLastPage": { "accessibilityGuidance": "To last page" }
+    }
+  },
+  "labels": {
+    "currentPage": "Page {{ selectedPageNumber__numerationFrom1 }} / {{ totalPagesCount }}"
+  }
+}

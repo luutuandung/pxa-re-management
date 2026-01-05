@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
-import { BuCostItemModule } from './bu-cost-item/bu-cost-item.module';
 import { BusinessCostModule } from './business-cost/business-cost.module';
 import { CalcDisplayModule } from './calc-display/calc-display.module';
 import { CalcTypeModule } from './calc-type/calc-type.module';
@@ -14,16 +13,20 @@ import { CostScenarioModule } from './cost-scenario/cost-scenario.module';
 import { UserModule } from './user/user.module';
 
 /* ━━━ Entities API ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+import BusinessUnitCostPriceItemModule from './EntitiesAPI/BusinessUnitCostPriceItem/BusinessUnitCostPriceItemModule';
 import BusinessUnitModule from './EntitiesAPI/BusinessUnit/BusinessUnitModule';
+import CurrencyModule from "./EntitiesAPI/Currency/CurrencyModule";
 import CostPricePatternTypeModule from "./EntitiesAPI/CostPricePatternType/CostPricePatternTypeModule";
 
 /* ━━━ BFF ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-/* ┅┅┅ Pages ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+/* ┅┅┅ Pages ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+import BusinessUnitsCostPricesItemsSettingsModule from
+    './BFF/Pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsModule';
 import CostPricePatternsManagementPageModule from
-    "./BFF/Pages/CostPricePatternsManagement/CostPricePatternsManagementPageModule";
-import CostPriceRegistrationPageModule from "./BFF/Pages/CostPriceRegistration/CostPriceRegistrationPageModule";
+    './BFF/Pages/CostPricePatternsManagement/CostPricePatternsManagementPageModule';
+import CostPriceRegistrationPageModule from './BFF/Pages/CostPriceRegistration/CostPriceRegistrationPageModule';
 
-/* ┅┅┅ Components ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+/* ┅┅┅ Components ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
 import CostPricesVersionsDropDownListModule from
     "./BFF/Components/CostPricesVersionsDropDownList/CostPricesVersionsDropDownListModule";
 
@@ -33,12 +36,14 @@ import CostPricesVersionsDropDownListModule from
     GeneralCostModule,
     BusinessCostModule,
     BusinessUnitModule,
-    BuCostItemModule,
+    CurrencyModule,
     CostScenarioModule,
     CalcTypeModule,
+    BusinessUnitCostPriceItemModule,
     CostPricePatternTypeModule,
     CalcDisplayModule,
     CostVersionModule,
+    BusinessUnitsCostPricesItemsSettingsModule,
     CostPricePatternsManagementPageModule,
     CostPriceRegistrationPageModule,
     CostPricesVersionsDropDownListModule,

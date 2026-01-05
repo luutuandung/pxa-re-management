@@ -3,8 +3,6 @@ import {
 
   /* ┅┅┅ Business Rules ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   TagsOfSupportedLanguages,
-  CodesOfAvailableCurrencies,
-  isAvailableCurrencyCode,
   CostPriceRegistration,
 
   /* ┅┅┅ BFF ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
@@ -308,16 +306,6 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
               );
             })();
 
-    const currencyCode: CodesOfAvailableCurrencies =
-        isAvailableCurrencyCode(primaryDataSelectionItem.buCostItem.curCd) ?
-            primaryDataSelectionItem.buCostItem.curCd :
-            ((): never => {
-              throw new BusinessException(
-                `データベースからデータを取得中、ID「${ costPriceRegisterID }」原価登録結ぶついている原価種類` +
-                    `「${ primaryDataSelectionItem.buCostItem.curCd }」は可能な値に所属していないと発見。`
-              );
-            })();
-
     const salesDestinationsCategories: Array<
       CostPriceRegistrationPagePrismaService.TableDataRetrieving.PrimaryDataSelection.Item.CostPatternDestinationCategory
     > = [];
@@ -349,7 +337,7 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
 
       costPriceType,
 
-      currencyCode,
+      currencyCode: primaryDataSelectionItem.buCostItem.curCd,
 
       ...primaryDataSelectionItem.type === null || primaryDataSelectionItem.type.costPricePattern === null ?
           null :

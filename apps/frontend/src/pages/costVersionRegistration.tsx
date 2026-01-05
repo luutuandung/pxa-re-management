@@ -1,7 +1,7 @@
 import type { CostPriceVersion } from '@pxa-re-management/shared';
 import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/businessUnit';
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,22 +9,23 @@ import { useStickyMessageActions } from '@/store/stickyMessage';
 import deleteIcon from '../assets/btn_delete.svg';
 import { useCostVersionActions, useCostVersionSelectors } from '../store/costVersion';
 import { normalizeToYearMonth, validateDateRange } from '../utils/dateUtils';
+import BusinessUnitsDropDownList from '@/components/molecules/DropDownList/Specials/BusinessUnits/BusinessUnitsDropDownList.tsx';
 
 const CostVersionRegistration: FC = () => {
   const { t } = useTranslation('costVersionRegistration');
-  const { addSuccessMessage, addErrorMessage } = useStickyMessageActions();
+  const { addErrorMessage } = useStickyMessageActions();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [selectedCostVersion, setSelectedCostVersion] = useState<string | null>(null);
-  const [selectedBusinessUnitCd, setSelectedBusinessUnitCd] = useState<string>('all');
+  const [selectedBusinessUnitCd, setSelectedBusinessUnitCd] = useState<string>('');
   const [costCopy, setCostCopy] = useState(false);
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [hasCostRegisters, setHasCostRegisters] = useState(false);
 
-  // Form states for create/edit modal
+  // 作成/編集モーダル用のフォーム状態
   const [formData, setFormData] = useState({
     costVersionId: '',
     businessunitId: '',
@@ -35,7 +36,7 @@ const CostVersionRegistration: FC = () => {
     defaultFlg: false,
   });
 
-  // Duplicate modal state
+  // 複製モーダル用の状態
   const [duplicateData, setDuplicateData] = useState({
     newCostVersionName: '',
     ktnCd: '',
@@ -48,23 +49,33 @@ const CostVersionRegistration: FC = () => {
   const { fetchBusinessUnit } = useBusinessUnitActions();
   const { businessUnits } = useBusinessUnitSelectors();
 
+  // 事業部が選択されていない場合は空の配列を表示
+  const displayedCostVersions = useMemo(() => {
+    if (!selectedBusinessUnitCd) {
+      return [];
+    }
+    return costVersions;
+  }, [costVersions, selectedBusinessUnitCd]);
+
   useEffect(() => {
     fetchBusinessUnit();
   }, [fetchBusinessUnit]);
 
   useEffect(() => {
-    if (selectedBusinessUnitCd === 'all') {
-      fetchCostVersions();
-    } else if (selectedBusinessUnitCd) {
+    if (selectedBusinessUnitCd) {
       fetchCostVersions(selectedBusinessUnitCd);
     }
   }, [selectedBusinessUnitCd, fetchCostVersions]);
 
+  // ドロップダウン用に選択された事業単位コードを事業単位IDに変換
+  const selectedBusinessUnitID = useMemo(() => {
+    if (!selectedBusinessUnitCd) return null;
+    const selectedBu = businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
+    return selectedBu?.businessunitId ?? null;
+  }, [selectedBusinessUnitCd, businessUnits]);
+
   const handleCreate = () => {
-    const selectedBu =
-      selectedBusinessUnitCd === 'all'
-        ? businessUnits[0]
-        : businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
+    const selectedBu = businessUnits.find((bu) => bu.buCd === selectedBusinessUnitCd);
     setFormData({
       costVersionId: '',
       businessunitId: selectedBu?.businessunitId ?? businessUnits[0]?.businessunitId ?? '',
@@ -104,15 +115,13 @@ const CostVersionRegistration: FC = () => {
     }
     const selected = costVersions.find((cv) => cv.costVersionId === selectedCostVersion);
     if (selected) {
-      const selectedBu = businessUnits.find((bu) => bu.businessunitId === selected.businessunitId);
       setDuplicateData({
         newCostVersionName: '',
-        ktnCd: selectedBu?.buCd || selectedBusinessUnitCd,
+        ktnCd: selected.businessunitId,
       });
       setShowDuplicateModal(true);
     }
   };
-
 
   const confirmCreate = async () => {
     const dateError = validateDateRange(formData.startDate, formData.endDate, t);
@@ -128,21 +137,19 @@ const CostVersionRegistration: FC = () => {
         addErrorMessage(t('messages.invalidDate'));
         return;
       }
+      // 作成時はcostVersionIdを送信しない
+      const { costVersionId, ...createData } = formData;
       await createCostVersion({
-        ...formData,
+        ...createData,
         startDate: normalizedStartDate,
         endDate: normalizedEndDate,
       });
-      addSuccessMessage(t('messages.createSuccess'));
       setShowCreateModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd) {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to create cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -154,7 +161,8 @@ const CostVersionRegistration: FC = () => {
     }
 
     try {
-      const { costVersionId, ...updateData } = formData;
+      // 編集時はcostVersionId、businessunitId、defaultFlgを送信しない
+      const { costVersionId, businessunitId, defaultFlg, ...updateData } = formData;
       const normalizedStartDate = normalizeToYearMonth(updateData.startDate);
       const normalizedEndDate = normalizeToYearMonth(updateData.endDate);
       if (!normalizedStartDate || !normalizedEndDate) {
@@ -166,16 +174,12 @@ const CostVersionRegistration: FC = () => {
         startDate: normalizedStartDate,
         endDate: normalizedEndDate,
       });
-      addSuccessMessage(t('messages.updateSuccess'));
       setShowEditModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd) {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to update cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -183,17 +187,13 @@ const CostVersionRegistration: FC = () => {
     if (!selectedCostVersion) return;
     try {
       await deleteCostVersion(selectedCostVersion);
-      addSuccessMessage(t('messages.deleteSuccess'));
       setShowDeleteModal(false);
       setSelectedCostVersion(null);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd) {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to delete cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     }
   };
 
@@ -214,14 +214,11 @@ const CostVersionRegistration: FC = () => {
       
       await duplicateCostVersion(payload);
       setShowDuplicateModal(false);
-      if (selectedBusinessUnitCd === 'all') {
-        await fetchCostVersions();
-      } else if (selectedBusinessUnitCd) {
+      if (selectedBusinessUnitCd) {
         await fetchCostVersions(selectedBusinessUnitCd);
       }
     } catch (error) {
       console.error('Failed to duplicate cost version:', error);
-      addErrorMessage(t('messages.fetchError'));
     } finally {
       setIsDuplicating(false);
     }
@@ -268,22 +265,25 @@ const CostVersionRegistration: FC = () => {
             </button>
 
             <div className="flex items-center gap-2 ml-6">
-              <label className="text-sm text-gray-700">{t('fields.businessUnit')}</label>
-              <select
-                value={selectedBusinessUnitCd}
-                onChange={(e) => {
-                  setSelectedBusinessUnitCd(e.target.value);
-                  setSelectedCostVersion(null);
-                }}
-                className="bg-white border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
-              >
-                <option value="all">{t('controls.allBusinessUnits', { defaultValue: 'すべて' })}</option>
-                {businessUnits.map((bu) => (
-                  <option key={bu.businessunitId} value={bu.buCd}>
-                    {bu.businessunitNameJa}
-                  </option>
-                ))}
-              </select>
+              <div className="w-72">
+                <BusinessUnitsDropDownList
+                  label={t('fields.businessUnit')}
+                  placeholder={t('fields.businessUnit')}
+                  businessUnits={businessUnits}
+                  selectedBusinessUnitID={selectedBusinessUnitID}
+                  onBusinessUnitSelected={(value) => {
+                    const selectedBu = businessUnits.find((bu) => bu.businessunitId === value);
+                    if (selectedBu) {
+                      setSelectedBusinessUnitCd(selectedBu.buCd);
+                    } else {
+                      setSelectedBusinessUnitCd('');
+                    }
+                    setSelectedCostVersion(null);
+                  }}
+                  loading={false}
+                  isVerticalOrientation={false}
+                />
+              </div>
             </div>
 
             <label className="flex items-center gap-2 ml-4">
@@ -328,7 +328,7 @@ const CostVersionRegistration: FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {costVersions.map((costVersion) => (
+                {displayedCostVersions.map((costVersion) => (
                   <TableRow key={costVersion.costVersionId} className="border-b border-gray-200">
                     <TableCell className="border-r border-gray-200 px-4 py-3 text-center">
                       <input

@@ -1,0 +1,268 @@
+.actionBar
+
+  display: flex
+  align-items: flex-end
+  column-gap: calc(var(--spacing) * 2)
+
+  margin-top: calc(var(--spacing) * 3)
+
+
+  &-dropDownList
+
+    min-width: calc(var(--spacing) * 48)
+
+
+  &-button
+
+    &:first-of-type
+
+      margin-left: auto
+
+
+.alert
+
+  @at-root .actionBar + &
+
+    margin-top: calc(var(--spacing) * 2)
+
+
+    & + .alert
+
+      margin-top: calc(var(--spacing) * 1)
+
+
+.validationErrorsMessage
+
+  &-intro
+
+    font-weight: var(--font-weight-medium)
+
+
+  &-plainList
+
+    list-style-type: disc
+    list-style-position: inside
+
+
+  &-twoDimensionalList
+
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr)
+    column-gap: 16px
+    row-gap: 8px
+
+    margin-top: 8px
+
+
+.table
+
+  @mixin CellCommonStyles
+
+    padding-block: calc(var(--spacing) * 3)
+    line-height: var(--tw-leading, var(--text-sm--line-height))
+    font-size: var(--text-sm)
+
+
+    &:not(:last-child)
+
+      border-right-width: 1px
+
+      border-right-style: var(--tw-border-style)
+      border-color: var(--color-gray-200)
+
+
+  &-decorativeWrapper
+
+    border-width: 1px
+    border-radius: var(--radius-lg)
+    overflow-x: auto
+
+    border-style: var(--tw-border-style)
+    border-color: var(--color-gray-200)
+    background-color: white
+
+
+    @at-root .actionBar + &
+
+      margin-top: calc(var(--spacing) * 2)
+
+
+    @at-root .alert + &
+
+      margin-top: calc(var(--spacing) * 4)
+
+
+    .alert
+
+      margin: calc(var(--spacing) * 2)
+
+
+  &-headerCell
+
+    @include CellCommonStyles
+
+    text-align: left
+
+
+  &-bodyCell
+
+    @include CellCommonStyles
+    color: var(--color-gray-800)
+
+
+    &:first-child
+
+      text-align: center
+      padding-inline: calc(var(--spacing) * 2)
+      word-break: break-all
+      white-space: normal
+
+
+    &:nth-child(2)
+
+      word-break: break-all
+      white-space: normal
+
+
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5),
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8),
+    &:nth-child(9)
+
+      text-align: center
+
+
+
+    &-badge
+
+      font-size: 12px
+      padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2)
+      border-radius: 400px
+
+      color: white
+
+      margin-left: calc(var(--spacing) * 2)
+
+
+      &__normal
+
+        background-color: var(--color-blue-600)
+
+
+      &__danger
+
+        background-color: var(--color-red-600)
+
+
+    &-dropDownList
+
+      display: inline-block
+
+
+      &__year
+
+        width: calc(var(--spacing) * 18)
+
+
+      &__month
+
+        width: calc(var(--spacing) * 15)
+
+
+    &-label
+
+      @at-root .table-bodyCell-dropDownList + .table-bodyCell-label
+
+        margin-left: calc(var(--spacing) * 1)
+
+
+      + .table-bodyCell-dropDownList
+
+        margin-left: calc(var(--spacing) * 2)
+
+
+  &-row
+
+    border-bottom-width: 1px
+
+    border-bottom-style: var(--tw-border-style)
+    border-color: var(--color-gray-200)
+
+
+    &__duplicate
+
+      background-color: var(--color-red-50)
+
+
+
+  &-pagination
+
+    margin-top: calc(var(--spacing) * 6)
+    margin-inline: calc(var(--spacing) * 2)
+    margin-bottom: calc(var(--spacing) * 2)
+
+
+  &-loadingPlaceholder
+
+    display: inline-block
+
+    height: var(--text-lg)
+    border-radius: var(--radius-sm)
+
+    @include loadingPlaceholder
+
+
+    @at-root .table-bodyCell
+
+      &:first-child .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 12)
+
+
+      &:nth-child(2) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 32)
+
+
+      &:nth-child(3) .table-loadingPlaceholder,
+      &:nth-child(4) .table-loadingPlaceholder
+
+        &:first-child,
+        &:nth-child(3)
+
+          width: calc(var(--spacing) * 16)
+          height: calc(var(--spacing) * 8)
+
+
+        &:nth-child(2),
+        &:nth-child(4)
+
+          width: calc(var(--spacing) * 10)
+
+
+        &:not(:first-child)
+
+          margin-left: calc(var(--spacing) * 2)
+
+
+      &:nth-child(5) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 16)
+        height: calc(var(--spacing) * 8)
+
+
+      &:nth-child(6) .table-loadingPlaceholder,
+      &:nth-child(7) .table-loadingPlaceholder,
+      &:nth-child(8) .table-loadingPlaceholder,
+      &:nth-child(9) .table-loadingPlaceholder
+
+          width: calc(var(--spacing) * 5)
+
+
+      &:nth-child(10) .table-loadingPlaceholder
+
+        width: calc(var(--spacing) * 16)
+        height: calc(var(--spacing) * 8)

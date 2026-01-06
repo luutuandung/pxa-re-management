@@ -39,8 +39,6 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     const calcRegisterModule = await import(`./locales/${language}/calcRegister.json`);
     resources.calcRegister = calcRegisterModule.default;
 
-    const costVersionRegistrationModule = await import(`./locales/${language}/costVersionRegistration.json`);
-    resources.costVersionRegistration = costVersionRegistrationModule.default;
 
     await Promise.all([
       import(`./../pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsPageLocalization.${ language }.json`).then(
@@ -56,6 +54,11 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
       import(`./../pages/CostPricePatternsManagement/CostPricePatternsManagementPageLocalization.${ language }.json`).then(
         (translations: { [key: string]: string | object }): void => {
           resources.costPricePatternsManagementPage = translations;
+        }
+      ),
+      import(`./../pages/CostVersionRegistration/CostVersionRegistrationPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.costVersionRegistrationPage = translations;
         }
       ),
       import(`./../pages/CostPricePatternsManagement/components/CostPricesPatternsTypesManagementDialog/CostPricesPatternsTypesManagementDialogLocalization.${ language }.json`).then(
@@ -140,11 +143,11 @@ i18n.use(initReactI18next).init({
     'costAggregationScenario',
     'calcType',
     'calcRegister',
-    'costVersionRegistration',
     'costRegister',
     'businessCostPricesItemsSettingsSetupPage',
     'costPriceRegistrationPage',
     'costPricePatternsManagementPage',
+    'costVersionRegistrationPage',
     'costPricesPatternsTypesManagementDialog',
     'costPricePatternsCategoriesManager',
     'dropDownList',

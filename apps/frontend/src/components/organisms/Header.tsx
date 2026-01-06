@@ -7,6 +7,7 @@ import Icon from '../atoms/Icon';
 import Logo from '../atoms/Logo';
 import NavigationDropdown from '../molecules/NavigationDropdown';
 import SystemSelector from '../molecules/SystemSelector';
+import LanguageSelector from '../molecules/LanguageSelector';
 import UserMenu from '../molecules/UserMenu';
 
 const Header: React.FC = () => {
@@ -136,7 +137,7 @@ const Header: React.FC = () => {
             <NavigationDropdown
               title={t('navigation.master')}
               items={masterItems}
-              isOpen={headerMenus.master}
+            isOpen={headerMenus.master}
               onToggle={() => toggleHeaderMenu('master')}
               width="w-64"
             />
@@ -144,6 +145,7 @@ const Header: React.FC = () => {
 
           {/* Language Selector and User Menu */}
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             <UserMenu isOpen={headerMenus.user} onToggle={() => toggleHeaderMenu('user')} />
           </div>
         </div>

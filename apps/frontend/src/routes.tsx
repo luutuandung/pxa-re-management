@@ -4,7 +4,7 @@ import BusinessCostItemCodeRegistration from './pages/businessCostItemCodeRegist
 import CostAggregationScenario from './pages/costAggregationScenario';
 import CalcRegister from './pages/calcRegister';
 import CalcTypePage from './pages/calcType';
-import CostVersionRegistration from './pages/costVersionRegistration';
+import CostVersionRegistrationPage from '@/pages/CostVersionRegistration/CostVersionRegistrationPage';
 import Home from './pages/Home';
 import UniformCostItemCodeRegistration from './pages/uniformCostItemCodeRegistration';
 import BusinessUnitsCostPricesItemsSettingsPage from
@@ -82,7 +82,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'costVersionRegistration',
-        element: <CostVersionRegistration />,
+        element: <CostVersionRegistrationPage />,
         errorElement: <PageLoadFailed />,
       },
       {

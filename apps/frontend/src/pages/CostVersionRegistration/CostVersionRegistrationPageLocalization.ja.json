@@ -1,13 +1,5 @@
 {
   "title": "原価登録ー原価バージョン",
-  "controls": {
-    "create": "作成",
-    "duplicate": "複製",
-    "reportType": "帳票種類",
-    "costCopy": "原価複製",
-    "saving": "保存中...",
-    "allBusinessUnits": "すべて"
-  },
   "table": {
     "headers": {
       "select": "選択",
@@ -48,9 +40,25 @@
     "periodExceeds36Months": "期間は36か月以内である必要があります",
     "invalidDate": "日付の形式が正しくありません"
   },
+  "controls": {
+    "add": "追加",
+    "duplicate": "複製",
+    "reportType": "帳票種類",
+    "costCopy": "原価複製",
+    "saving": "保存中...",
+    "allBusinessUnits": "すべて",
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "拠点",
+        "placeholders": {
+          "normal": "拠点を選択",
+          "noData": "拠点がありません"
+        }
+      }
+    }
+  },
   "fields": {
     "id": "原価バージョンID",
-    "businessUnit": "事業部",
     "systemCode": "系統コード",
     "name": "原価バージョン名",
     "start": "適用開始",
@@ -79,3 +87,4 @@
     "deleteAlt": "削除"
   }
 }
+

@@ -1,13 +1,5 @@
 {
   "title": "Cost Registration - Cost Version",
-  "controls": {
-    "create": "Create",
-    "duplicate": "Duplicate",
-    "reportType": "Report Type",
-    "costCopy": "Cost Copy",
-    "saving": "Saving...",
-    "allBusinessUnits": "All"
-  },
   "table": {
     "headers": {
       "select": "Select",
@@ -48,9 +40,25 @@
     "periodExceeds36Months": "Period must be within 36 months",
     "invalidDate": "Date format is invalid"
   },
+  "controls": {
+    "add": "Add",
+    "duplicate": "Duplicate",
+    "reportType": "Report Type",
+    "costCopy": "Cost Copy",
+    "saving": "Saving...",
+    "allBusinessUnits": "All",
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "Location",
+        "placeholders": {
+          "normal": "Select the location",
+          "noData": "No locations"
+        }
+      }
+    }
+  },
   "fields": {
     "id": "Cost Version ID",
-    "businessUnit": "Business Unit",
     "systemCode": "System Code",
     "name": "Cost Version Name",
     "start": "Start",
@@ -79,3 +87,4 @@
     "deleteAlt": "Delete"
   }
 }
+

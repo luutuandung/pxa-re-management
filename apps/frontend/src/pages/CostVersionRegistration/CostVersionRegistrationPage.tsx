@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useStickyMessageActions } from '@/store/stickyMessage';
-import deleteIcon from '../assets/btn_delete.svg';
-import { useCostVersionActions, useCostVersionSelectors } from '../store/costVersion';
-import { normalizeToYearMonth, validateDateRange } from '../utils/dateUtils';
+import deleteIcon from '../../assets/btn_delete.svg';
+import { useCostVersionActions, useCostVersionSelectors } from '@/store/costVersion';
+import { normalizeToYearMonth, validateDateRange } from '@/utils/dateUtils';
 import BusinessUnitsDropDownList from '@/components/molecules/DropDownList/Specials/BusinessUnits/BusinessUnitsDropDownList.tsx';
 
-const CostVersionRegistration: FC = () => {
-  const { t } = useTranslation('costVersionRegistration');
+const CostVersionRegistrationPage: FC = () => {
+  const { t } = useTranslation('costVersionRegistrationPage');
   const { addErrorMessage } = useStickyMessageActions();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -246,29 +246,16 @@ const CostVersionRegistration: FC = () => {
         </div>
 
         <div className="px-6">
-          <div className="flex items-center gap-4 mb-6">
-            <button
-              type="button"
-              onClick={handleCreate}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-            >
-              {t('controls.create')}
-            </button>
-            <button
-              type="button"
-              onClick={handleDuplicate}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-              disabled={!selectedCostVersion}
-              title={!selectedCostVersion ? t('messages.selectBeforeDuplicate') : ''}
-            >
-              {t('controls.duplicate')}
-            </button>
-
-            <div className="flex items-center gap-2 ml-6">
-              <div className="w-72">
+          <div className="flex justify-between items-center gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <BusinessUnitsDropDownList
-                  label={t('fields.businessUnit')}
-                  placeholder={t('fields.businessUnit')}
+                  label={t('controls.dropDownLists.businessUnits.label')}
+                  placeholder={
+                    selectedBusinessUnitID === null
+                      ? t(`controls.dropDownLists.businessUnits.placeholders.${businessUnits.length > 0 ? 'normal' : 'noData'}`)
+                      : t('controls.dropDownLists.businessUnits.label')
+                  }
                   businessUnits={businessUnits}
                   selectedBusinessUnitID={selectedBusinessUnitID}
                   onBusinessUnitSelected={(value) => {
@@ -282,19 +269,39 @@ const CostVersionRegistration: FC = () => {
                   }}
                   loading={false}
                   isVerticalOrientation={false}
+                  className="w-72"
                 />
               </div>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={costCopy}
+                  onChange={(e) => setCostCopy(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">{t('controls.costCopy')}</span>
+              </label>
             </div>
 
-            <label className="flex items-center gap-2 ml-4">
-              <input
-                type="checkbox"
-                checked={costCopy}
-                onChange={(e) => setCostCopy(e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">{t('controls.costCopy')}</span>
-            </label>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={handleCreate}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+              >
+                {t('controls.add')}
+              </button>
+              <button
+                type="button"
+                onClick={handleDuplicate}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+                disabled={!selectedCostVersion}
+                title={!selectedCostVersion ? t('messages.selectBeforeDuplicate') : ''}
+              >
+                {t('controls.duplicate')}
+              </button>
+            </div>
           </div>
 
           <div className="mb-6 border border-gray-200 rounded-lg bg-white">
@@ -387,7 +394,7 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
+              <label className="w-32 text-sm font-medium">{t('controls.dropDownLists.businessUnits.label')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
@@ -452,7 +459,7 @@ const CostVersionRegistration: FC = () => {
               onClick={confirmCreate}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              {t('controls.create')}
+              {t('controls.add')}
             </button>
             <button
               type="button"
@@ -473,7 +480,7 @@ const CostVersionRegistration: FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <label className="w-32 text-sm font-medium">{t('fields.businessUnit')}</label>
+              <label className="w-32 text-sm font-medium">{t('controls.dropDownLists.businessUnits.label')}</label>
               <LocationSelectField
                 value={formData.businessunitId}
                 onValueChange={(v) => setFormData({ ...formData, businessunitId: v })}
@@ -621,4 +628,4 @@ const CostVersionRegistration: FC = () => {
   );
 };
 
-export default CostVersionRegistration;
+export default CostVersionRegistrationPage;

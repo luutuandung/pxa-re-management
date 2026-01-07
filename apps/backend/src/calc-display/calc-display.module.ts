@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
+import { UserModule } from '../user/user.module';
 import { CalcDisplayController } from './calc-display.controller';
 import { CalcDisplayService } from './calc-display.service';
 
@@ -7,6 +8,6 @@ import { CalcDisplayService } from './calc-display.service';
   providers: [CalcDisplayService],
   controllers: [CalcDisplayController],
   exports: [CalcDisplayService],
-  imports: [PrismaModule],
+  imports: [PrismaModule, UserModule],
 })
 export class CalcDisplayModule {}

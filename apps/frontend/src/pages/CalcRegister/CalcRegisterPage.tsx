@@ -12,9 +12,10 @@ import { useBusinessUnitActions, useBusinessUnitSelectors } from '@/store/busine
 import type { EditorBranchNode } from '@/store/calcRegister';
 import { useCalcRegisterActions, useCalcRegisterSelectors } from '@/store/calcRegister';
 import { useCalcTypeActions, useCalcTypeSelectors } from '@/store/calcType';
+import { useStickyMessageActions } from '@/store/stickyMessage';
 import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 
-const CalcRegister = () => {
+const CalcRegisterPage = () => {
   const { t } = useTranslation('calcRegister');
   const { businessUnits } = useBusinessUnitSelectors();
   const { fetchBusinessUnit } = useBusinessUnitActions();
@@ -54,6 +55,7 @@ const CalcRegister = () => {
 
   const [keyword, setKeyword] = useState('');
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const { addErrorMessage } = useStickyMessageActions();
 
   useEffect(() => {
     updateSelectedCalcType('');
@@ -144,6 +146,103 @@ const CalcRegister = () => {
     return editorBranches.find((b) => b.id === 'root') ?? editorBranches.find((b) => !b.parentId) ?? null;
   }, [editorBranches]);
 
+  // バリデーション: 原価種別が選択されているかチェック
+  const validateCostTypes = (): boolean => {
+    let hasErrors = false;
+    
+    // 原価項目コードから利用可能な原価種別を取得するヘルパー関数
+    const getValidCostTypes = (buCostCd: string): Array<'G' | 'R' | 'K'> => {
+      if (!buCostCd?.trim()) return [];
+      const code = buCostCodes.find((c) => c.buCostCd === buCostCd);
+      if (!code) return [];
+      const items = buCostItems.filter((i) => i.buCostCodeId === code.buCostCodeId);
+      return items.map((i) => i.costType);
+    };
+    
+    // 原価種別が有効かチェックするヘルパー関数
+    const isValidCostType = (buCostCd: string, costType: string | undefined): boolean => {
+      if (!buCostCd?.trim() || !costType) return false;
+      const validTypes = getValidCostTypes(buCostCd);
+      return validTypes.includes(costType as 'G' | 'R' | 'K');
+    };
+    
+    const validateBranch = (node: EditorBranchNode, branchPath: string = '') => {
+      const currentPath = branchPath || node.label;
+      
+      // 条件式のバリデーション
+      if (node.condition) {
+        if (!node.condition.leftConBuCostCd?.trim() || !node.condition.leftConCostType) {
+          addErrorMessage(t('errors.validation.conditionLeftCostItemRequired', { branchPath: currentPath }));
+          hasErrors = true;
+        } else if (!isValidCostType(node.condition.leftConBuCostCd, node.condition.leftConCostType)) {
+          addErrorMessage(t('errors.validation.conditionLeftCostTypeInvalid', { 
+            branchPath: currentPath,
+            costItemCode: node.condition.leftConBuCostCd
+          }));
+          hasErrors = true;
+        }
+        if (!node.condition.rightConBuCostCd?.trim() || !node.condition.rightConCostType) {
+          addErrorMessage(t('errors.validation.conditionRightCostItemRequired', { branchPath: currentPath }));
+          hasErrors = true;
+        } else if (!isValidCostType(node.condition.rightConBuCostCd, node.condition.rightConCostType)) {
+          addErrorMessage(t('errors.validation.conditionRightCostTypeInvalid', { 
+            branchPath: currentPath,
+            costItemCode: node.condition.rightConBuCostCd
+          }));
+          hasErrors = true;
+        }
+      }
+      
+      // IF演算のバリデーション
+      node.ifOps.forEach((op, idx) => {
+        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+          addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
+        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+          addErrorMessage(t('errors.validation.ifOperationCostTypeInvalid', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1,
+            costItemCode: op.opeBuCostCd
+          }));
+          hasErrors = true;
+        }
+      });
+      
+      // ELSE演算のバリデーション
+      node.elseOps.forEach((op, idx) => {
+        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+          addErrorMessage(t('errors.validation.elseOperationCostItemRequired', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
+        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+          addErrorMessage(t('errors.validation.elseOperationCostTypeInvalid', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1,
+            costItemCode: op.opeBuCostCd
+          }));
+          hasErrors = true;
+        }
+      });
+      
+      // 子分岐のバリデーション
+      const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
+      const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
+      ifChildren.forEach((child) => validateBranch(child, `${currentPath} - IF分岐`));
+      elseChildren.forEach((child) => validateBranch(child, `${currentPath} - ELSE分岐`));
+    };
+    
+    if (rootBranch) {
+      validateBranch(rootBranch);
+    }
+    
+    return !hasErrors;
+  };
+
   const BranchView = ({ node, depth }: { node: EditorBranchNode; depth: number }) => {
     const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
     const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
@@ -203,7 +302,7 @@ const CalcRegister = () => {
               (
                 <div className="mt-2 ml-6">
                   <Button size="sm" variant="secondary" onClick={() => addChildBranch(node.id, 'ELSE')}>
-                    + 条件分岐を追加
+                    {t('buttons.addBranch')}
                   </Button>
                 </div>
               ) :
@@ -261,7 +360,7 @@ const CalcRegister = () => {
                 </Select>
               </div>
               <div className="flex items-center space-x-2">
-                <label htmlFor="keyword" className="text-sm text-gray-700 w-18">
+                <label htmlFor="keyword" className="text-sm text-gray-700 whitespace-nowrap">
                   {t('labels.keyword')}
                 </label>
                 <Input id="keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder={t('placeholders.keyword')} />
@@ -363,6 +462,9 @@ const CalcRegister = () => {
                 className="bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => {
                   persistSelectedBranchFromEditor();
+                  if (!validateCostTypes()) {
+                    return;
+                  }
                   setShowSaveConfirm(true);
                 }}
               >
@@ -403,4 +505,5 @@ const CalcRegister = () => {
   );
 };
 
-export default CalcRegister;
+export default CalcRegisterPage;
+

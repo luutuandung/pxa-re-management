@@ -1,0 +1,65 @@
+{
+  "title": "計算式登録",
+  "labels": {
+    "location": "拠点",
+    "calcType": "計算種類",
+    "keyword": "キーワード",
+    "unset": "未設定",
+    "conditionUnset": "条件未設定"
+  },
+  "placeholders": {
+    "calcType": "計算種類を選択してください",
+    "keyword": "キーワード（未実装）"
+  },
+  "buttons": {
+    "search": "検索",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "addBranch": "+ 条件分岐を追加"
+  },
+  "table": {
+    "headers": {
+      "costItemCd": "原価項目",
+      "costItemName": "原価項目名",
+      "expression": "計算式表示",
+      "validation": "検証結果",
+      "judgement": "判定",
+      "message": "メッセージ"
+    }
+  },
+  "hints": {
+    "dblclickToEdit": "ダブルクリックで編集"
+  },
+  "dialogs": {
+    "editor": {
+      "title": "計算式編集",
+      "sections": {
+        "conditionBranch": "条件分岐"
+      }
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "保存の確認",
+      "message": "現在の編集内容を保存します。よろしいですか？",
+      "confirm": "保存する",
+      "cancel": "キャンセル"
+    }
+  },
+  "errors": {
+    "validation": {
+      "conditionRequired": "{{ branchPath }}: 条件式を選択してください",
+      "conditionLeftCostItemRequired": "{{ branchPath }}: 条件式の左側の原価項目と原価種別を選択してください",
+      "conditionLeftCostTypeInvalid": "{{ branchPath }}: 条件式の左側の原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
+      "conditionRightCostItemRequired": "{{ branchPath }}: 条件式の右側の原価項目と原価種別を選択してください",
+      "conditionRightCostTypeInvalid": "{{ branchPath }}: 条件式の右側の原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
+      "ifOperationCostItemRequired": "{{ branchPath }} - IF演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
+      "ifOperationCostTypeInvalid": "{{ branchPath }} - IF演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
+      "elseOperationCostItemRequired": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
+      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください"
+    }
+  }
+}
+

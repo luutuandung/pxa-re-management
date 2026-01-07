@@ -36,8 +36,6 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     const calcTypeModule = await import(`./locales/${language}/calcType.json`);
     resources.calcType = calcTypeModule.default;
 
-    const calcRegisterModule = await import(`./locales/${language}/calcRegister.json`);
-    resources.calcRegister = calcRegisterModule.default;
 
 
     await Promise.all([
@@ -59,6 +57,11 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
       import(`./../pages/CostVersionRegistration/CostVersionRegistrationPageLocalization.${ language }.json`).then(
         (translations: { [key: string]: string | object }): void => {
           resources.costVersionRegistrationPage = translations;
+        }
+      ),
+      import(`./../pages/CalcRegister/CalcRegisterPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.calcRegister = translations;
         }
       ),
       import(`./../pages/CostPricePatternsManagement/components/CostPricesPatternsTypesManagementDialog/CostPricesPatternsTypesManagementDialogLocalization.${ language }.json`).then(

@@ -21,6 +21,10 @@ export class CalcDisplayService {
 
   public constructor(private readonly prisma: PrismaService) {}
 
+  private normalizeUuid(value: string | null | undefined): string | null {
+    return value ? value.toLowerCase() : null;
+  }
+
   public async getBusinessUnitCostCodesSelection(
     {
       businessUnitID,
@@ -44,22 +48,63 @@ export class CalcDisplayService {
         },
       },
       include: {
-        buCostItems: {
-          include: {
-            calcDisplays: {
-              include: {
-                calcFormulas: true,
-              },
-              where: {
-                calcTypeId: calcTypeID,
-              },
-            },
-          },
-        },
+        buCostItems: true,
       },
     });
 
-    return businessCostCodes.map((businessUnitCode) => {
+    const allBuCostItemIds = businessCostCodes.flatMap(code => 
+      code.buCostItems.map(item => item.buCostItemId)
+    );
+    
+    const allCalcDisplays = await this.prisma.calcDisplay.findMany({
+      where: {
+        buCostItemId: { in: allBuCostItemIds },
+        businessunitId: businessUnitID,
+      },
+      include: {
+        calcFormulas: true,
+      },
+    });
+
+    const normalizedCalcTypeID = calcTypeID.toLowerCase();
+    const businessCostCodesWithFiltered = businessCostCodes.map(code => ({
+      ...code,
+      buCostCodeId: this.normalizeUuid(code.buCostCodeId)!,
+      businessunitId: this.normalizeUuid(code.businessunitId)!,
+      buCostItems: code.buCostItems.map(item => {
+        const itemCalcDisplays = allCalcDisplays
+          .filter(cd => 
+            cd.buCostItemId.toLowerCase() === item.buCostItemId.toLowerCase() &&
+            cd.calcTypeId.toLowerCase() === normalizedCalcTypeID
+          )
+          .map(cd => ({
+            ...cd,
+            calcDisplayId: this.normalizeUuid(cd.calcDisplayId)!,
+            calcTypeId: this.normalizeUuid(cd.calcTypeId)!,
+            buCostItemId: this.normalizeUuid(cd.buCostItemId)!,
+            businessunitId: this.normalizeUuid(cd.businessunitId)!,
+            calcFormulas: cd.calcFormulas.map(cf => ({
+              ...cf,
+              calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
+              calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
+              calcConditionId: this.normalizeUuid(cf.calcConditionId),
+              calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
+              elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
+              nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
+              elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
+            }))
+          }));
+        return {
+          ...item,
+          buCostItemId: this.normalizeUuid(item.buCostItemId)!,
+          buCostCodeId: this.normalizeUuid(item.buCostCodeId)!,
+          businessunitId: this.normalizeUuid(item.businessunitId)!,
+          calcDisplays: itemCalcDisplays
+        };
+      })
+    }));
+
+    return businessCostCodesWithFiltered.map((businessUnitCode) => {
 
       const targetBusinessCostItem =
           businessUnitCode.buCostItems.length > 1 ?
@@ -72,16 +117,34 @@ export class CalcDisplayService {
         )
       }
 
-
       const buCostItem =
           targetBusinessCostItem.calcDisplays.length > 0 ?
               ({
                 ...(targetBusinessCostItem as BuCostItem),
-                calcDisplay: targetBusinessCostItem.calcDisplays[0],
+                calcDisplay: {
+                  ...targetBusinessCostItem.calcDisplays[0],
+                  calcDisplayId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcDisplayId)!,
+                  calcTypeId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcTypeId)!,
+                  buCostItemId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].buCostItemId)!,
+                  businessunitId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].businessunitId)!,
+                  calcFormulas: targetBusinessCostItem.calcDisplays[0].calcFormulas.map(cf => ({
+                    ...cf,
+                    calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
+                    calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
+                    calcConditionId: this.normalizeUuid(cf.calcConditionId),
+                    calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
+                    elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
+                    nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
+                    elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
+                  }))
+                },
               } as BuCostItemWithCalcDisplay) :
               ({ ...(targetBusinessCostItem as BuCostItem) });
 
-      return { ...businessUnitCode, buCostItem };
+      return { 
+        ...businessUnitCode, 
+        buCostItem 
+      };
 
     });
 

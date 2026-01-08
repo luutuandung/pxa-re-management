@@ -1,0 +1,65 @@
+{
+  "title": "计算公式注册",
+  "labels": {
+    "location": "据点",
+    "calcType": "计算种类",
+    "keyword": "关键词",
+    "unset": "未设定",
+    "conditionUnset": "条件未设定"
+  },
+  "placeholders": {
+    "calcType": "请选择计算种类",
+    "keyword": "关键词（未实现）"
+  },
+  "buttons": {
+    "search": "搜索",
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "addBranch": "+ 添加条件分支"
+  },
+  "table": {
+    "headers": {
+      "costItemCd": "成本项目",
+      "costItemName": "成本项目名称",
+      "expression": "计算公式显示",
+      "validation": "验证结果",
+      "judgement": "判定",
+      "message": "消息"
+    }
+  },
+  "hints": {
+    "dblclickToEdit": "双击编辑"
+  },
+  "dialogs": {
+    "editor": {
+      "title": "计算公式编辑",
+      "sections": {
+        "conditionBranch": "条件分支"
+      }
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "确认保存",
+      "message": "是否保存当前的编辑内容？",
+      "confirm": "保存",
+      "cancel": "取消"
+    }
+  },
+  "errors": {
+    "validation": {
+      "conditionRequired": "{{ branchPath }}: 请选择条件式",
+      "conditionLeftCostItemRequired": "{{ branchPath }}: 请选择条件式左侧的成本项目和成本类型",
+      "conditionLeftCostTypeInvalid": "{{ branchPath }}: 条件式左侧的成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
+      "conditionRightCostItemRequired": "{{ branchPath }}: 请选择条件式右侧的成本项目和成本类型",
+      "conditionRightCostTypeInvalid": "{{ branchPath }}: 条件式右侧的成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
+      "ifOperationCostItemRequired": "{{ branchPath }} - IF运算{{ operationIndex }}: 请选择成本项目和成本类型",
+      "ifOperationCostTypeInvalid": "{{ branchPath }} - IF运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
+      "elseOperationCostItemRequired": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 请选择成本项目和成本类型",
+      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型"
+    }
+  }
+}
+

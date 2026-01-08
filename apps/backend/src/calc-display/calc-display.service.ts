@@ -37,6 +37,7 @@ export class CalcDisplayService {
     const businessCostCodes = await (prismaClient ?? this.prisma).buCostCode.findMany({
       where: {
         businessunitId: businessUnitID,
+        deleteFlg: false,
         buCostItems: {
           some: {
             calcValidFlg: true,
@@ -110,7 +111,7 @@ export class CalcDisplayService {
 
 
   /** @description 保存入口: calcDisplayId が無ければ (calcTypeId, buCostItemId) で表示を検索/作成してから完全置換 */
-  public async updateCalcDatas(updateCalcDatasDto: UpdateCalcDatasDto): Promise<void> {
+  public async updateCalcDatas(updateCalcDatasDto: UpdateCalcDatasDto, userId: string | null = null): Promise<void> {
 
     /* 【 意図 】 渡されたcalcDisplayIDに該当している項目がDBに存在しない場合は、(calcTypeId, buCostItemId) で検索し、なければ新規作成 */
     let calcDisplayId: string = updateCalcDatasDto.calcDisplayId;
@@ -158,8 +159,8 @@ export class CalcDisplayService {
             calcDisplayNameJa: '',
             calcDisplayNameEn: '',
             calcDisplayNameZh: '',
-            createdBy: '00000000-0000-0000-0000-000000000000',
-            modifiedBy: '00000000-0000-0000-0000-000000000000',
+            createdBy: userId ?? '00000000-0000-0000-0000-000000000000',
+            modifiedBy: userId ?? '00000000-0000-0000-0000-000000000000',
             businessunitId: businessUnitID
           },
         });
@@ -325,7 +326,9 @@ export class CalcDisplayService {
                 conditions: updateCalcDatasDto.calcConditions,
                 operations: updateCalcDatasDto.calcOperations,
                 businessUnitsCostsCodes: businessUnitCostCodesSelection
-              })
+              }),
+              modifiedBy: userId ?? '00000000-0000-0000-0000-000000000000',
+              modifiedOn: new Date()
             }
           });
         }
@@ -340,11 +343,19 @@ export class CalcDisplayService {
 
   async getCostItems(businessunitId: string, curCode: string = 'JPY'): Promise<GetCostItemsResponse> {
     const codes = await this.prisma.buCostCode.findMany({
-      where: { businessunitId },
+      where: { 
+        businessunitId,
+        deleteFlg: false,
+      },
       select: { buCostCodeId: true, buCostCd: true, buCostNameJa: true },
     });
     const items = await this.prisma.buCostItem.findMany({
-      where: { businessunitId },
+      where: { 
+        businessunitId,
+        buCostCode: {
+          deleteFlg: false,
+        },
+      },
       select: {
         buCostItemId: true,
         buCostCodeId: true,

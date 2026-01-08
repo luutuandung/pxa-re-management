@@ -1,13 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Query } from '@nestjs/common';
 import { CalcDisplayService } from './calc-display.service';
 import { GetCalcDisplayResponse } from './dto/get-calc-display.dto';
 import { GetCostItemsResponse } from './dto/get-cost-items.dto';
 import { UpdateCalcDatasDto } from './dto/update-calc-datas.dto';
+import { UserService } from '../user/user.service';
 
 @Controller('calc-display')
 export class CalcDisplayController {
 
-  constructor(private readonly calcDisplayService: CalcDisplayService) {}
+  constructor(
+    private readonly calcDisplayService: CalcDisplayService,
+    private readonly userService: UserService
+  ) {}
 
   @Get()
   async getCalcDisplays(
@@ -77,8 +81,22 @@ export class CalcDisplayController {
   }
 
   @Post()
-  async updateCalcDatas(@Body() updateCalcDatasDto: UpdateCalcDatasDto): Promise<void> {
-    await this.calcDisplayService.updateCalcDatas(updateCalcDatasDto);
+  async updateCalcDatas(
+    @Body() updateCalcDatasDto: UpdateCalcDatasDto,
+    @Headers('iv-user') globalId: string | undefined
+  ): Promise<void> {
+    let userId: string | null = null;
+    if (globalId) {
+      try {
+        const user = await this.userService.getUserByGlobalId(globalId);
+        userId = user.id;
+      } catch (error) {
+        userId = '00000000-0000-0000-0000-000000000000';
+      }
+    } else {
+      userId = '00000000-0000-0000-0000-000000000000';
+    }
+    await this.calcDisplayService.updateCalcDatas(updateCalcDatasDto, userId);
   }
 
 }

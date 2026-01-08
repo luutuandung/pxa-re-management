@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import MainLayout from './components/templates/MainLayout';
 import BusinessCostItemCodeRegistration from './pages/businessCostItemCodeRegistration';
 import CostAggregationScenario from './pages/costAggregationScenario';
-import CalcRegister from './pages/calcRegister';
+import CalcRegisterPage from '@/pages/CalcRegister/CalcRegisterPage';
 import CalcTypePage from './pages/calcType';
 import CostVersionRegistrationPage from '@/pages/CostVersionRegistration/CostVersionRegistrationPage';
 import Home from './pages/Home';
@@ -77,7 +77,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'calcRegister',
-        element: <CalcRegister />,
+        element: <CalcRegisterPage />,
         errorElement: <PageLoadFailed />,
       },
       {

@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useCalcRegisterActions, useCalcRegisterSelectors } from '@/store/calcRegister';
 
 type Props = {
-  // 条件式（単一）
   condition?: CalcCondition;
-  onChangeCondition: (partial: Partial<CalcCondition>) => void;
+  onChangeCondition: (partial: Partial<CalcCondition> | null) => void;
   // 選択肢
   buCostCodes: Array<{ buCostCodeId: string; buCostCd: string; buCostNameJa: string }>;
   buCostItems: Array<{ buCostItemId: string; buCostCodeId: string; costType: 'G' | 'R' | 'K' }>;
@@ -29,15 +28,31 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
       <div className="font-medium">条件</div>
 
       {/* 条件式 */}
-      <ConditionEditor
-        buCostCodes={buCostCodes}
-        buCostItems={buCostItems}
-        condition={condition}
-        onChange={(p) => {
-          onChangeCondition(p);
-          persistSelectedBranchFromEditor();
-        }}
-      />
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1">
+          <ConditionEditor
+            buCostCodes={buCostCodes}
+            buCostItems={buCostItems}
+            condition={condition}
+            onChange={(p) => {
+              onChangeCondition(p);
+              persistSelectedBranchFromEditor();
+            }}
+          />
+        </div>
+        {condition && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              onChangeCondition(null);
+              persistSelectedBranchFromEditor();
+            }}
+          >
+            削除
+          </Button>
+        )}
+      </div>
 
       {/* IF 演算配列 */}
       <div className="space-y-2">

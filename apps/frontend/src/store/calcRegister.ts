@@ -11,6 +11,13 @@ import type {
 import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '@/utils/api-client';
+import {
+  generateOperationId,
+  generateConditionId,
+  generateFormulaId,
+  generateBranchId,
+  generateOperationGroupId,
+} from '@/utils/id-generators';
 
 // モック: 事業部原価項目コード（1つの原価項目を表す）
 export type BuCostCodeMock = {
@@ -169,7 +176,11 @@ export const useCalcRegisterActions = () => {
       if (!opGroupId) return [];
       return calculation.calcOperations
         .filter((o) => o.calcOperationId === opGroupId)
-        .sort((a, b) => a.opeSeq - b.opeSeq);
+        .sort((a, b) => a.opeSeq - b.opeSeq)
+        .map((o) => ({
+          ...o,
+          calcOperationId: generateOperationId(),
+        }));
     };
 
     const walk = (f: CalcFormula, parentId?: string, side?: 'IF' | 'ELSE') => {
@@ -488,7 +499,7 @@ export const useCalcRegisterActions = () => {
       setEditorOperations((prev) => {
         const seq = (prev?.length ?? 0) + 1;
         const newOp: CalcOperation = {
-          calcOperationId: `op-${Date.now()}-${Math.random()}`,
+          calcOperationId: generateOperationId(),
           opeOperator: operator,
           opeBuCostCd: buCostCd,
           opeCostType: costType,
@@ -520,12 +531,17 @@ export const useCalcRegisterActions = () => {
   );
 
   const setCondition = useCallback(
-    (partial: Partial<CalcCondition>) => {
+    (partial: Partial<CalcCondition> | null) => {
+      if (partial === null) {
+        setEditorConditions([]);
+        setEditorCondition(null);
+        return;
+      }
       setEditorConditions((prev) => {
         const base =
           prev[0] ??
           ({
-            calcConditionId: `con-${Date.now()}`,
+            calcConditionId: generateConditionId(),
             leftConBuCostCd: '',
             leftConCostType: 'G',
             conOperator: '>=',
@@ -536,10 +552,9 @@ export const useCalcRegisterActions = () => {
         console.log('[calcRegister] setCondition:', updated[0]);
         return updated;
       });
-      // 単一ユニットにも反映
       setEditorCondition((prev) => {
         const next: CalcCondition = {
-          calcConditionId: prev?.calcConditionId ?? `con-${Date.now()}`,
+          calcConditionId: prev?.calcConditionId ?? generateConditionId(),
           leftConBuCostCd: partial.leftConBuCostCd ?? prev?.leftConBuCostCd ?? '',
           leftConCostType: partial.leftConCostType ?? prev?.leftConCostType ?? 'G',
           conOperator: partial.conOperator ?? prev?.conOperator ?? '>=',
@@ -558,7 +573,7 @@ export const useCalcRegisterActions = () => {
       const target = prev[0];
       if (!target) return prev;
       const nested: CalcFormula = {
-        calcFormulaId: `for-${Date.now()}`,
+        calcFormulaId: generateFormulaId(),
         calcDisplayId: target.calcDisplayId,
         calcConditionId: target.calcConditionId,
         calcOperationId: target.calcOperationId,
@@ -640,8 +655,8 @@ export const useCalcRegisterActions = () => {
         conditions.push(n.condition);
       }
       // IF/ELSE 演算（グループIDを統一し、opeSeqは配列順で再採番）
-      const ifGroupId = n.ifOperationGroupId || n.ifOps[0]?.calcOperationId || `opgrp-${n.id}-IF`;
-      const elseGroupId = n.elseOperationGroupId || n.elseOps[0]?.calcOperationId || `opgrp-${n.id}-ELSE`;
+      const ifGroupId = n.ifOperationGroupId || generateOperationGroupId(n.id, 'IF');
+      const elseGroupId = n.elseOperationGroupId || generateOperationGroupId(n.id, 'ELSE');
       const ifOpsSeq = n.ifOps.map((o, idx) => ({ ...o, calcOperationId: ifGroupId, opeSeq: idx + 1 }));
       const elseOpsSeq = n.elseOps.map((o, idx) => ({ ...o, calcOperationId: elseGroupId, opeSeq: idx + 1 }));
       operations.push(...ifOpsSeq, ...elseOpsSeq);
@@ -748,8 +763,8 @@ export const useCalcRegisterActions = () => {
         conditions.push({ ...n.condition, calcConditionId: cid });
       }
       // 演算グループIDのGUID化
-      const ifGroupRaw = n.ifOperationGroupId || n.ifOps[0]?.calcOperationId || `opgrp-${n.id}-IF`;
-      const elseGroupRaw = n.elseOperationGroupId || n.elseOps[0]?.calcOperationId || `opgrp-${n.id}-ELSE`;
+      const ifGroupRaw = n.ifOperationGroupId || n.ifOps[0]?.calcOperationId || generateOperationGroupId(n.id, 'IF');
+      const elseGroupRaw = n.elseOperationGroupId || n.elseOps[0]?.calcOperationId || generateOperationGroupId(n.id, 'ELSE');
       const ifGroupId = ensureGuid(opGroupIdMap, ifGroupRaw);
       const elseGroupId = n.elseOps.length > 0 ? ensureGuid(opGroupIdMap, elseGroupRaw) : '';
       const ifOpsSeq = n.ifOps.map((o, idx) => ({
@@ -850,7 +865,7 @@ export const useCalcRegisterActions = () => {
       setEditorIfOperations((prev) => [
         ...prev,
         {
-          calcOperationId: `op-${Date.now()}-${Math.random()}`,
+          calcOperationId: generateOperationId(),
           opeOperator: operator,
           opeBuCostCd: buCostCd,
           opeCostType: costType,
@@ -871,7 +886,7 @@ export const useCalcRegisterActions = () => {
       setEditorElseOperations((prev) => [
         ...prev,
         {
-          calcOperationId: `op-${Date.now()}-${Math.random()}`,
+          calcOperationId: generateOperationId(),
           opeOperator: operator,
           opeBuCostCd: buCostCd,
           opeCostType: costType,
@@ -905,7 +920,7 @@ export const useCalcRegisterActions = () => {
     },
     addBranch: () =>
       setEditorBranches((prev) => {
-        const id = `br-${Date.now()}-${Math.random()}`;
+        const id = generateBranchId();
         const node: EditorBranchNode = {
           id,
           label: `条件分岐${prev.length + 1}`,
@@ -923,7 +938,7 @@ export const useCalcRegisterActions = () => {
       }),
     addChildBranch: (parentId: string, side: 'IF' | 'ELSE') =>
       setEditorBranches((prev) => {
-        const id = `br-${Date.now()}-${Math.random()}`;
+        const id = generateBranchId();
         const node: EditorBranchNode = {
           id,
           label: `条件分岐${prev.length + 1}`,
@@ -963,8 +978,8 @@ export const useCalcRegisterActions = () => {
       setEditorBranches((prev) =>
         prev.map((b) => {
           if (b.id !== branchId) return b;
-          const nextIfGroupId = b.ifOperationGroupId || ifOps?.[0]?.calcOperationId || `opgrp-${b.id}-IF`;
-          const nextElseGroupId = b.elseOperationGroupId || elseOps?.[0]?.calcOperationId || `opgrp-${b.id}-ELSE`;
+          const nextIfGroupId = b.ifOperationGroupId || ifOps?.[0]?.calcOperationId || generateOperationGroupId(b.id, 'IF');
+          const nextElseGroupId = b.elseOperationGroupId || elseOps?.[0]?.calcOperationId || generateOperationGroupId(b.id, 'ELSE');
           const nextIf = (ifOps ?? []).map((o, idx) => ({ ...o, calcOperationId: nextIfGroupId, opeSeq: idx + 1 }));
           const nextElse = (elseOps ?? []).map((o, idx) => ({
             ...o,

@@ -9,7 +9,8 @@
   },
   "placeholders": {
     "calcType": "Select calculation type",
-    "keyword": "Keyword (not implemented)"
+    "keyword": "Keyword (not implemented)",
+    "selectOperator": "Select operator"
   },
   "buttons": {
     "search": "Search",
@@ -48,6 +49,9 @@
       "cancel": "Cancel"
     }
   },
+  "operationEditor": {
+    "operation": "Operation"
+  },
   "errors": {
     "validation": {
       "conditionRequired": "{{ branchPath }}: Please select a condition",
@@ -57,8 +61,12 @@
       "conditionRightCostTypeInvalid": "{{ branchPath }}: Invalid cost type for the right side of the condition. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
       "ifOperationCostItemRequired": "{{ branchPath }} - IF Operation {{ operationIndex }}: Please select cost item and cost type",
       "ifOperationCostTypeInvalid": "{{ branchPath }} - IF Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
+      "ifOperationFirstOperatorMustBeS": "{{ branchPath }} - IF Operation: The first operation must use operator \"S\"",
+      "ifOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - IF Operation {{ operationIndex }}: Operator \"S\" cannot be used for operations after the first one",
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Please select cost item and cost type",
-      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\""
+      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
+      "elseOperationFirstOperatorMustBeS": "{{ branchPath }} - ELSE Operation: The first operation must use operator \"S\"",
+      "elseOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Operator \"S\" cannot be used for operations after the first one"
     }
   }
 }

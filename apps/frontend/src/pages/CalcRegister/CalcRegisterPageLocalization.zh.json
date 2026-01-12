@@ -9,7 +9,8 @@
   },
   "placeholders": {
     "calcType": "请选择计算种类",
-    "keyword": "关键词（未实现）"
+    "keyword": "关键词（未实现）",
+    "selectOperator": "选择运算符"
   },
   "buttons": {
     "search": "搜索",
@@ -48,6 +49,9 @@
       "cancel": "取消"
     }
   },
+  "operationEditor": {
+    "operation": "运算"
+  },
   "errors": {
     "validation": {
       "conditionRequired": "{{ branchPath }}: 请选择条件式",
@@ -57,8 +61,12 @@
       "conditionRightCostTypeInvalid": "{{ branchPath }}: 条件式右侧的成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
       "ifOperationCostItemRequired": "{{ branchPath }} - IF运算{{ operationIndex }}: 请选择成本项目和成本类型",
       "ifOperationCostTypeInvalid": "{{ branchPath }} - IF运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
+      "ifOperationFirstOperatorMustBeS": "{{ branchPath }} - IF运算: 第一个运算必须使用运算符「S」",
+      "ifOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - IF运算{{ operationIndex }}: 第一个运算之后不能使用运算符「S」",
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 请选择成本项目和成本类型",
-      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型"
+      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
+      "elseOperationFirstOperatorMustBeS": "{{ branchPath }} - ELSE运算: 第一个运算必须使用运算符「S」",
+      "elseOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 第一个运算之后不能使用运算符「S」"
     }
   }
 }

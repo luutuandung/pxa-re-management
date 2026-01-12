@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import MainLayout from './components/templates/MainLayout';
-import BusinessCostItemCodeRegistration from './pages/businessCostItemCodeRegistration';
+import BusinessCostItemCodeRegistrationPage from '@/pages/BusinessCostItemCodeRegistration/BusinessCostItemCodeRegistrationPage';
 import CostAggregationScenario from './pages/costAggregationScenario';
 import CalcRegisterPage from '@/pages/CalcRegister/CalcRegisterPage';
 import CalcTypePage from './pages/calcType';
@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'businessCostItemCodeRegistration',
-        element: <BusinessCostItemCodeRegistration />,
+        element: <BusinessCostItemCodeRegistrationPage />,
         errorElement: <PageLoadFailed />,
       },
       {

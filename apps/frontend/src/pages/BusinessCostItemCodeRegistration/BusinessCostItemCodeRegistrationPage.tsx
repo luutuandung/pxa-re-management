@@ -2,7 +2,11 @@ import {
   BusinessCostWithNamesResponse,
   BusinessUnit,
   BusinessUnitTransactions,
-  GeneralCostCode
+  GeneralCostCode,
+  CommonEnglishNamingValidator,
+  CommonJapaneseNamingValidator,
+  CommonChineseNamingValidator,
+  isHalfWidthOnly,
 } from '@pxa-re-management/shared';
 import * as ReactTable from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -21,7 +25,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useStickyMessageActions } from '@/store/stickyMessage';
 import { api } from '@/utils/api-client';
-import deleteIcon from '../assets/btn_delete.svg';
+import deleteIcon from '../../assets/btn_delete.svg';
 
 // フロントエンド固有の型定義（新構造対応）
 interface BusinessCostItem {
@@ -42,7 +46,7 @@ interface BusinessCostItem {
   businessunitId?: string; // 拠点コード追加
 }
 
-const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
+const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
 
   // i18n
   const { t } = useTranslation('businessCostItemCodeRegistration');
@@ -67,6 +71,29 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
   // stickyMessage actions
   const { addSuccessMessage, addErrorMessage } = useStickyMessageActions();
+
+  // コードのバリデーション（半角文字のみ）
+  const validateCodeField = (value: string): { isValid: true; error?: never } | { isValid: false; error: string } => {
+    if (!isHalfWidthOnly(value)) {
+      return {
+        isValid: false,
+        error: 'validation.codeHalfWidthOnly',
+      };
+    }
+    return { isValid: true };
+  };
+
+  // Error codeをcamelCaseのtranslation keyに変換（他のvalidation keysと統一するため）
+  const convertErrorCodeToTranslationKey = (errorCode: string): string => {
+    return errorCode
+      .split(/[-_]/)
+      .map((word, index) =>
+        index === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join('');
+  };
 
   const fetchLocationItems = async (buCd: string) => {
     const allResponses = await api
@@ -492,34 +519,139 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     [ createNewBusinessCostItem, setLocationItems, highlightedItemID, pagination.pageIndex, setPagination ]
   );
 
-  // 保存処理
-  const handleSaveConfirm = async () => {
+  // 保存処理（バリデーション実行）
+  const handleSave = () => {
+    if (isLoading) return;
+
+    // 実際に変更されたアイテムのみを取得
+    const changedItems = locationItems.filter((item) => {
+      if (item.isNew) {
+        // 新規項目：何かしら入力があるもの
+        const hasInput =
+          item.buCostCd.trim() !== '' ||
+          item.buCostNameJa.trim() !== '' ||
+          item.buCostNameEn.trim() !== '' ||
+          item.buCostNameZh.trim() !== '';
+        return hasInput;
+      } else {
+        // 既存項目：元の値から変更があるもの
+        const originalItem = originalLocationItems.find((orig) => orig.id === item.id);
+        if (!originalItem) return false;
+
+        const hasChanged =
+          originalItem.buCostCd !== item.buCostCd ||
+          originalItem.buCostNameJa !== item.buCostNameJa ||
+          originalItem.buCostNameEn !== item.buCostNameEn ||
+          originalItem.buCostNameZh !== item.buCostNameZh;
+        return hasChanged;
+      }
+    });
+
+    // バリデーション: 必須フィールドチェック（buCostCdのみ。他のフィールドはCommon***NamingValidatorでチェック済み）
+    const hasEmptyCode = changedItems.some(
+      (item) => !item.buCostCd
+    );
+
+    if (hasEmptyCode) {
+      addErrorMessage(t('validation.buCostCd'));
+      return;
+    }
+
+    // バリデーション: 文字種チェック
+    for (const item of changedItems) {
+      // コードのバリデーション
+      const codeValidation = validateCodeField(item.buCostCd);
+      if (!codeValidation.isValid) {
+        addErrorMessage(t(codeValidation.error));
+        return;
+      }
+
+      // 英語名称のバリデーション
+      const englishValidation = CommonEnglishNamingValidator.validate(item.buCostNameEn);
+      if (englishValidation.isInvalid) {
+        // CommonEnglishNamingValidatorのエラーをerror codeをtranslation keyとして使用して処理
+        const { code, ...parameters } = englishValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
+      }
+
+      // 日本語名称のバリデーション
+      const japaneseValidation = CommonJapaneseNamingValidator.validate(item.buCostNameJa);
+      if (japaneseValidation.isInvalid) {
+        const { code, ...parameters } = japaneseValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
+      }
+
+      // 中国語名称のバリデーション
+      const chineseValidation = CommonChineseNamingValidator.validate(item.buCostNameZh);
+      if (chineseValidation.isInvalid) {
+        const { code, ...parameters } = chineseValidation.validationErrorData;
+        const translationKey = convertErrorCodeToTranslationKey(code);
+        addErrorMessage(t(`validation.${ translationKey }`, parameters));
+        return;
+      }
+    }
+
+    // 重複チェック
+    const codes = changedItems.map((item) => item.buCostCd);
+    const duplicates = codes.filter((code, index) => codes.indexOf(code) !== index);
+    if (duplicates.length > 0) {
+      addErrorMessage(`${t('messages.saveError')}: ${duplicates.join(', ')}`);
+      return;
+    }
+
+    if (changedItems.length === 0) {
+      addErrorMessage(t('messages.saveError'));
+      return;
+    }
+
+    setShowSaveDialog(true);
+  };
+
+  // 保存確認（実際の保存処理）
+  const confirmSave = async () => {
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
 
-      const businessCostItems = locationItems
-        .filter((item) => {
-          if (item.isNew) {
-            // 新規項目：入力があるもの
-            return (
-              item.buCostCd.trim() !== '' &&
-              (item.buCostNameJa.trim() !== '' || item.buCostNameEn.trim() !== '' || item.buCostNameZh.trim() !== '')
-            );
-          } else {
-            // 既存項目：実際に変更があるもののみ
-            return item.isChanged === true;
-          }
-        })
-        .map((item) => ({
-          ...(item.isNew ? {} : { buCostCodeId: item.id }),
-          businessunitId: item.businessunitId || locations[0]?.buCd || '', // アイテム自体の拠点コードを使用
-          generalCostCd: item.generalCostCd,
-          buCostCd: item.buCostCd,
-          buCostNameJa: item.buCostNameJa,
-          buCostNameEn: item.buCostNameEn,
-          buCostNameZh: item.buCostNameZh,
-          deleteFlg: item.deleteFlg,
-        }));
+      // 実際に変更されたアイテムのみを取得（handleSaveと同じロジック）
+      const changedItems = locationItems.filter((item) => {
+        if (item.isNew) {
+          // 新規項目：何かしら入力があるもの
+          return (
+            item.buCostCd.trim() !== '' ||
+            item.buCostNameJa.trim() !== '' ||
+            item.buCostNameEn.trim() !== '' ||
+            item.buCostNameZh.trim() !== ''
+          );
+        } else {
+          // 既存項目：元の値から変更があるもの
+          const originalItem = originalLocationItems.find((orig) => orig.id === item.id);
+          if (!originalItem) return false;
+
+          return (
+            originalItem.buCostCd !== item.buCostCd ||
+            originalItem.buCostNameJa !== item.buCostNameJa ||
+            originalItem.buCostNameEn !== item.buCostNameEn ||
+            originalItem.buCostNameZh !== item.buCostNameZh
+          );
+        }
+      });
+
+      const businessCostItems = changedItems.map((item) => ({
+        ...(item.isNew ? {} : { buCostCodeId: item.id }),
+        businessunitId: item.businessunitId || locations[0]?.buCd || '', // アイテム自体の拠点コードを使用
+        generalCostCd: item.generalCostCd,
+        buCostCd: item.buCostCd,
+        buCostNameJa: item.buCostNameJa,
+        buCostNameEn: item.buCostNameEn,
+        buCostNameZh: item.buCostNameZh,
+        deleteFlg: item.deleteFlg,
+      }));
 
       await api.post('businessCost/save', {
         json: { businessCostItems },
@@ -544,7 +676,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
 
-        { /* ┉┉┉ ページ見出し ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+        { /* ┉┉┉ ページ見出し ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
         <div className="px-6 py-4">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('title')}</h1>
           <div className="h-0.5 bg-blue-600 w-full"></div>
@@ -552,10 +684,10 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
 
           <div className="p-6">
 
-            { /* ┉┉┉ 補助見出し ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+            { /* ┉┉┉ 補助見出し ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
             <h2 className="text-lg font-semibold text-gray-800 mb-6">{t('sections.businessCostItems')}</h2>
 
-            { /* ┉┉┉ トップアクションバー ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+            { /* ┉┉┉ トップアクションバー ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
             <div className="flex justify-between items-center mb-6">
 
               <div className="flex items-center space-x-6">
@@ -629,7 +761,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                     ))}
                   </TableHeader>
 
-                  { /* ┅┅┅ ボディ ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */ }
+                  { /* ┅┅┅ ボディ ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */ }
                   <TableBody className="bg-white">
                     {
                       table.getRowModel().rows.length > 0 ? (
@@ -674,16 +806,16 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
               </div>
             </div>
 
-            { /* ┉┉┉ ページネーション ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+            { /* ┉┉┉ ページネーション ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
             <div className="flex pb-8">
               <DataTablePagination table={table} />
             </div>
 
-            { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
+            { /* ┉┉┉ 保存ボタン ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉ */ }
             <div className="flex justify-center space-x-3">
               <button
                 type="button"
-                onClick={() => setShowSaveDialog(true)}
+                onClick={handleSave}
                 className={`px-4 py-2 rounded text-sm ${
                   locationFilter === '' || isLoading || !isChanged
                     ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
@@ -715,7 +847,7 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
             </button>
             <button
               type="button"
-              onClick={handleSaveConfirm}
+              onClick={confirmSave}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
               disabled={isLoading}
             >
@@ -728,4 +860,4 @@ const BusinessCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   );
 };
 
-export default BusinessCostItemCodeRegistration;
+export default BusinessCostItemCodeRegistrationPage;

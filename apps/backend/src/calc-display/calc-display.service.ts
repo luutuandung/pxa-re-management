@@ -21,10 +21,6 @@ export class CalcDisplayService {
 
   public constructor(private readonly prisma: PrismaService) {}
 
-  private normalizeUuid(value: string | null | undefined): string | null {
-    return value ? value.toLowerCase() : null;
-  }
-
   public async getBusinessUnitCostCodesSelection(
     {
       businessUnitID,
@@ -49,63 +45,22 @@ export class CalcDisplayService {
         },
       },
       include: {
-        buCostItems: true,
+        buCostItems: {
+          include: {
+            calcDisplays: {
+              include: {
+                calcFormulas: true,
+              },
+              where: {
+                calcTypeId: calcTypeID,
+              },
+            },
+          },
+        },
       },
     });
 
-    const allBuCostItemIds = businessCostCodes.flatMap(code => 
-      code.buCostItems.map(item => item.buCostItemId)
-    );
-    
-    const allCalcDisplays = await this.prisma.calcDisplay.findMany({
-      where: {
-        buCostItemId: { in: allBuCostItemIds },
-        businessunitId: businessUnitID,
-      },
-      include: {
-        calcFormulas: true,
-      },
-    });
-
-    const normalizedCalcTypeID = calcTypeID.toLowerCase();
-    const businessCostCodesWithFiltered = businessCostCodes.map(code => ({
-      ...code,
-      buCostCodeId: this.normalizeUuid(code.buCostCodeId)!,
-      businessunitId: this.normalizeUuid(code.businessunitId)!,
-      buCostItems: code.buCostItems.map(item => {
-        const itemCalcDisplays = allCalcDisplays
-          .filter(cd => 
-            cd.buCostItemId.toLowerCase() === item.buCostItemId.toLowerCase() &&
-            cd.calcTypeId.toLowerCase() === normalizedCalcTypeID
-          )
-          .map(cd => ({
-            ...cd,
-            calcDisplayId: this.normalizeUuid(cd.calcDisplayId)!,
-            calcTypeId: this.normalizeUuid(cd.calcTypeId)!,
-            buCostItemId: this.normalizeUuid(cd.buCostItemId)!,
-            businessunitId: this.normalizeUuid(cd.businessunitId)!,
-            calcFormulas: cd.calcFormulas.map(cf => ({
-              ...cf,
-              calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
-              calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
-              calcConditionId: this.normalizeUuid(cf.calcConditionId),
-              calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
-              elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
-              nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
-              elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
-            }))
-          }));
-        return {
-          ...item,
-          buCostItemId: this.normalizeUuid(item.buCostItemId)!,
-          buCostCodeId: this.normalizeUuid(item.buCostCodeId)!,
-          businessunitId: this.normalizeUuid(item.businessunitId)!,
-          calcDisplays: itemCalcDisplays
-        };
-      })
-    }));
-
-    return businessCostCodesWithFiltered.map((businessUnitCode) => {
+    return businessCostCodes.map((businessUnitCode) => {
 
       const targetBusinessCostItem =
           businessUnitCode.buCostItems.length > 1 ?
@@ -118,34 +73,16 @@ export class CalcDisplayService {
         )
       }
 
+
       const buCostItem =
           targetBusinessCostItem.calcDisplays.length > 0 ?
               ({
                 ...(targetBusinessCostItem as BuCostItem),
-                calcDisplay: {
-                  ...targetBusinessCostItem.calcDisplays[0],
-                  calcDisplayId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcDisplayId)!,
-                  calcTypeId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcTypeId)!,
-                  buCostItemId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].buCostItemId)!,
-                  businessunitId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].businessunitId)!,
-                  calcFormulas: targetBusinessCostItem.calcDisplays[0].calcFormulas.map(cf => ({
-                    ...cf,
-                    calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
-                    calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
-                    calcConditionId: this.normalizeUuid(cf.calcConditionId),
-                    calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
-                    elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
-                    nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
-                    elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
-                  }))
-                },
+                calcDisplay: targetBusinessCostItem.calcDisplays[0],
               } as BuCostItemWithCalcDisplay) :
               ({ ...(targetBusinessCostItem as BuCostItem) });
 
-      return { 
-        ...businessUnitCode, 
-        buCostItem 
-      };
+      return { ...businessUnitCode, buCostItem };
 
     });
 
@@ -234,25 +171,31 @@ export class CalcDisplayService {
 
     }
 
+    const targetCalcDisplayData = await this.prisma.calcDisplay.findUnique({
+      where: { calcDisplayId },
+      select: { businessunitId: true, calcTypeId: true }
+    });
 
-    /* サーバ主導のevalSeq再採番（BU×CalcTypeスコープ、ポストオーダー）*/
-    await this.prisma.$transaction(
-      async (prismaClient): Promise<void> => {
+    if (!targetCalcDisplayData) {
+      throw new NotFoundException('calcDisplay', calcDisplayId);
+    }
 
-        const targetCalcDisplayData: Pick<Prisma.CalcDisplay, 'businessunitId' | 'calcTypeId'> | null =
-            await prismaClient.calcDisplay.findUnique({
-              where: { calcDisplayId: calcDisplayId },
-              select: {
-                businessunitId: true,
-                calcTypeId: true
-              }
-            });
+    if (businessUnitCostCodesSelection.length === 0) {
+      businessUnitCostCodesSelection = await this.getBusinessUnitCostCodesSelection({
+        businessUnitID: targetCalcDisplayData.businessunitId,
+        calcTypeID: targetCalcDisplayData.calcTypeId
+      });
+    }
 
-        if (targetCalcDisplayData === null) {
-          throw new NotFoundException('calcDisplay', calcDisplayId);
-        }
+    const calcDisplayCode = CalcDisplayCodeBuilder.build({
+      formulas: updateCalcDatasDto.calcFormulas,
+      conditions: updateCalcDatasDto.calcConditions,
+      operations: updateCalcDatasDto.calcOperations,
+      businessUnitsCostsCodes: businessUnitCostCodesSelection
+    });
 
-
+    try {
+      await this.prisma.$transaction(async (prismaClient) => {
         const { _max: { evalSeq: evaluationSequence } } = await prismaClient.calcFormula.aggregate({
           _max: { evalSeq: true },
           where: {
@@ -262,7 +205,6 @@ export class CalcDisplayService {
             }
           }
         });
-
 
         // ツリー復元用に参照集合を構築
         const formulasByIDs: Map<string, CalcFormula> = new Map();
@@ -299,7 +241,6 @@ export class CalcDisplayService {
           orderedFormulas.push({ ...f, evalSeq: (evaluationSequence ?? 0) + 1 });
 
         };
-
 
         for (const r of roots) visit(r.calcFormulaId);
 
@@ -370,38 +311,26 @@ export class CalcDisplayService {
           });
         }
 
-        if (businessUnitCostCodesSelection.length === 0) {
-           businessUnitCostCodesSelection = await this.getBusinessUnitCostCodesSelection(
-             {
-                businessUnitID: targetCalcDisplayData.businessunitId,
-                calcTypeID: targetCalcDisplayData.calcTypeId
-              },
-              prismaClient
-          );
-        }
-
         if (existingCalcDisplay !== null) {
           await prismaClient.calcDisplay.update({
             where: { calcDisplayId },
             data: {
-              calcDisplayCode: CalcDisplayCodeBuilder.build({
-                formulas: updateCalcDatasDto.calcFormulas,
-                conditions: updateCalcDatasDto.calcConditions,
-                operations: updateCalcDatasDto.calcOperations,
-                businessUnitsCostsCodes: businessUnitCostCodesSelection
-              }),
+              calcDisplayCode,
               modifiedBy: userId ?? '00000000-0000-0000-0000-000000000000',
               modifiedOn: new Date()
             }
           });
         }
 
-      },
-      { timeout: 10000 }
-    );
+      }, { timeout: 10000 });
+    } catch (error) {
+      throw error;
+    }
 
-    return this.reassignCalcFormulasEvaluationSequences(businessUnitCostCodesSelection);
-
+    // フロントエンドのタイムアウトを避けるため、非同期で再割り当てを実行
+    this.reassignCalcFormulasEvaluationSequences(businessUnitCostCodesSelection).catch((error) => {
+      console.error('Failed to reassign evaluation sequences:', error);
+    });
   }
 
   async getCostItems(businessunitId: string, curCode: string = 'JPY'): Promise<GetCostItemsResponse> {
@@ -512,23 +441,40 @@ export class CalcDisplayService {
           calcOperations: operations
         });
 
-    await this.prisma.$transaction(
-      async (prismaClient): Promise<void> => {
-        await Promise.all(
-          calcFormulasEvaluationSequencesAssigningResult.map(
-            async (
-              {
-                calcFormulaID,
-                evaluationSequence
-              }: CalcFormulasEvaluationSequencesAssigner.Output.Item): Promise<unknown> =>
-                  prismaClient.calcFormula.update({
-                    where: {calcFormulaId: calcFormulaID},
-                    data: {evalSeq: evaluationSequence}
-                  })
-          )
-        )
-      }
-    );
+    try {
+      await this.prisma.$transaction(
+        async (prismaClient): Promise<void> => {
+          const existingFormulaIds = new Set(
+            (await prismaClient.calcFormula.findMany({
+              where: {
+                calcFormulaId: {
+                  in: calcFormulasEvaluationSequencesAssigningResult.map(item => item.calcFormulaID)
+                }
+              },
+              select: { calcFormulaId: true }
+            })).map(f => f.calcFormulaId)
+          );
+
+          const validUpdates = calcFormulasEvaluationSequencesAssigningResult.filter(
+            item => existingFormulaIds.has(item.calcFormulaID)
+          );
+
+          if (validUpdates.length === 0) {
+            return;
+          }
+
+          for (const { calcFormulaID, evaluationSequence } of validUpdates) {
+            await prismaClient.calcFormula.update({
+              where: { calcFormulaId: calcFormulaID },
+              data: { evalSeq: evaluationSequence }
+            });
+          }
+        },
+        { timeout: 60000 }
+      );
+    } catch (error) {
+        throw error;
+    }
 
   }
 

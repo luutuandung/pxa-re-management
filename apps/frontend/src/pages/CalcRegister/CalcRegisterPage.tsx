@@ -195,6 +195,7 @@ const CalcRegisterPage = () => {
       
       // IF演算のバリデーション
       node.ifOps.forEach((op, idx) => {
+        const opeSeq = idx + 1;
         if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
           addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
             branchPath: currentPath,
@@ -206,6 +207,18 @@ const CalcRegisterPage = () => {
             branchPath: currentPath,
             operationIndex: idx + 1,
             costItemCode: op.opeBuCostCd
+          }));
+          hasErrors = true;
+        }
+        if (opeSeq === 1 && op.opeOperator !== 'S') {
+          addErrorMessage(t('errors.validation.ifOperationFirstOperatorMustBeS', { 
+            branchPath: currentPath
+          }));
+          hasErrors = true;
+        } else if (opeSeq >= 2 && op.opeOperator === 'S') {
+          addErrorMessage(t('errors.validation.ifOperationSubsequentOperatorCannotBeS', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
           }));
           hasErrors = true;
         }
@@ -443,17 +456,30 @@ const CalcRegisterPage = () => {
 
             {/* 右: 詳細エディタ */}
             <div className="min-w-0">
-              {editorTargetDisplay ? (
-                <FormulaSectionEditor
-                  condition={editorCondition ?? undefined}
-                  onChangeCondition={(p) => {
-                    setCondition(p);
-                    persistSelectedBranchFromEditor();
-                  }}
-                  buCostCodes={buCostCodes}
-                  buCostItems={buCostItems}
-                />
-              ) : null}
+              {editorTargetDisplay ? (() => {
+                // 選択されたブランチにELSE/IF側の子分岐があるかどうかをチェック
+                const selectedBranch = editorBranches.find((b) => b.id === selectedBranchId);
+                const hasElseChildren = selectedBranch
+                  ? editorBranches.some((b) => b.parentId === selectedBranch.id && b.side === 'ELSE')
+                  : false;
+                const hasIfChildren = selectedBranch
+                  ? editorBranches.some((b) => b.parentId === selectedBranch.id && b.side === 'IF')
+                  : false;
+                
+                return (
+                  <FormulaSectionEditor
+                    condition={editorCondition ?? undefined}
+                    onChangeCondition={(p) => {
+                      setCondition(p);
+                      persistSelectedBranchFromEditor();
+                    }}
+                    buCostCodes={buCostCodes}
+                    buCostItems={buCostItems}
+                    hasElseChildren={hasElseChildren}
+                    hasIfChildren={hasIfChildren}
+                  />
+                );
+              })() : null}
             </div>
             </div>
 

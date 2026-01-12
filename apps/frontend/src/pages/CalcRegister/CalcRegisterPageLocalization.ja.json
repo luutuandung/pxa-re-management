@@ -9,7 +9,8 @@
   },
   "placeholders": {
     "calcType": "計算種類を選択してください",
-    "keyword": "キーワード（未実装）"
+    "keyword": "キーワード（未実装）",
+    "selectOperator": "演算子を選択"
   },
   "buttons": {
     "search": "検索",
@@ -48,6 +49,9 @@
       "cancel": "キャンセル"
     }
   },
+  "operationEditor": {
+    "operation": "演算"
+  },
   "errors": {
     "validation": {
       "conditionRequired": "{{ branchPath }}: 条件式を選択してください",
@@ -57,8 +61,12 @@
       "conditionRightCostTypeInvalid": "{{ branchPath }}: 条件式の右側の原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
       "ifOperationCostItemRequired": "{{ branchPath }} - IF演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
       "ifOperationCostTypeInvalid": "{{ branchPath }} - IF演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
+      "ifOperationFirstOperatorMustBeS": "{{ branchPath }} - IF演算: 最初の演算は演算子「S」を使用する必要があります",
+      "ifOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - IF演算{{ operationIndex }}: 最初の演算以降では演算子「S」を使用できません",
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
-      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください"
+      "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
+      "elseOperationFirstOperatorMustBeS": "{{ branchPath }} - ELSE演算: 最初の演算は演算子「S」を使用する必要があります",
+      "elseOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 最初の演算以降では演算子「S」を使用できません"
     }
   }
 }

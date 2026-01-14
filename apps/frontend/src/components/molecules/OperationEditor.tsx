@@ -64,6 +64,7 @@ const OperationEditor = ({ label, buCostCodes, buCostItems, value, opeSeq, onCha
             buCostItems={buCostItems}
             value={{ buCostCd: value?.opeBuCostCd ?? '', costType: (value?.opeCostType ?? 'G') as 'G' | 'R' | 'K' }}
             onChange={(v) => onChange({ opeBuCostCd: v.buCostCd, opeCostType: v.costType })}
+            excludeZero={currentOperator === '/'}
           />
         )}
       </div>

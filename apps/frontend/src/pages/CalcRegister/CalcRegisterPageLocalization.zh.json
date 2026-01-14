@@ -68,7 +68,8 @@
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 请选择成本项目和成本类型",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE运算{{ operationIndex }}: 成本类型无效。请为成本项目「{{ costItemCode }}」选择有效的成本类型",
       "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE运算: 括号未正确闭合。缺少 {{ count }} 个闭括号 \")\"",
-      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE运算: 括号未正确打开。缺少 {{ count }} 个开括号 \"(\""
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE运算: 括号未正确打开。缺少 {{ count }} 个开括号 \"(\"",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - 运算{{ operationIndex }}: 不允许除以零。不能使用成本项目「ZERO」作为除数"
     }
   }
 }

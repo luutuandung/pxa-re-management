@@ -68,7 +68,8 @@
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
       "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE演算: 括弧が正しく閉じられていません。閉じ括弧 \")\" が {{ count }} 個不足しています",
-      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE演算: 括弧が正しく開かれていません。開き括弧 \"(\" が {{ count }} 個不足しています"
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE演算: 括弧が正しく開かれていません。開き括弧 \"(\" が {{ count }} 個不足しています",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - 演算{{ operationIndex }}: ゼロ除算は許可されていません。原価項目「ZERO」を除数として使用することはできません"
     }
   }
 }

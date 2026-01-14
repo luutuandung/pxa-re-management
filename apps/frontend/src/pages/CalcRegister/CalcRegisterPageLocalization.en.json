@@ -68,7 +68,8 @@
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Please select cost item and cost type",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
       "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE Operation: Parentheses are not properly closed. Missing {{ count }} closing parenthesis \")\"",
-      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\""
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\"",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - Operation {{ operationIndex }}: Division by zero is not allowed. Cost item \"ZERO\" cannot be used as a divisor"
     }
   }
 }

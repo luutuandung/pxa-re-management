@@ -166,6 +166,11 @@ const CalcRegisterPage = () => {
       return validTypes.includes(costType as 'G' | 'R' | 'K');
     };
     
+    // ゼロ除算チェックのヘルパー関数
+    const isZeroDivision = (operator: string, buCostCd: string): boolean => {
+      return operator === '/' && buCostCd === 'ZERO';
+    };
+    
     const validateBranch = (node: EditorBranchNode, branchPath: string = '') => {
       const currentPath = branchPath || node.label;
       
@@ -210,6 +215,15 @@ const CalcRegisterPage = () => {
               branchPath: currentPath,
               operationIndex: idx + 1,
               costItemCode: op.opeBuCostCd
+            }));
+            hasErrors = true;
+          }
+          
+          // ゼロ除算のチェック
+          if (isZeroDivision(op.opeOperator, op.opeBuCostCd)) {
+            addErrorMessage(t('errors.validation.divisionByZeroNotAllowed', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1
             }));
             hasErrors = true;
           }
@@ -264,6 +278,15 @@ const CalcRegisterPage = () => {
               branchPath: currentPath,
               operationIndex: idx + 1,
               costItemCode: op.opeBuCostCd
+            }));
+            hasErrors = true;
+          }
+          
+          // ゼロ除算のチェック
+          if (isZeroDivision(op.opeOperator, op.opeBuCostCd)) {
+            addErrorMessage(t('errors.validation.divisionByZeroNotAllowed', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1
             }));
             hasErrors = true;
           }

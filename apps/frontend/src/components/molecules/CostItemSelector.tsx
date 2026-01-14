@@ -8,14 +8,20 @@ type Props = {
   value?: { buCostCd: string; costType: 'G' | 'R' | 'K' };
   onChange: (v: { buCostCd: string; costType: 'G' | 'R' | 'K' }) => void;
   label?: string;
+  excludeZero?: boolean; // 除算時にZEROを除外するフラグ
 };
 
-const CostItemSelector = ({ buCostCodes, buCostItems, value, onChange, label }: Props) => {
-  const current = buCostCodes.find((b) => b.buCostCd === value?.buCostCd) ?? buCostCodes[0];
+const CostItemSelector = ({ buCostCodes, buCostItems, value, onChange, label, excludeZero = false }: Props) => {
+  // 除算の場合はZEROを除外
+  const filteredCostCodes = excludeZero 
+    ? buCostCodes.filter((b) => b.buCostCd !== 'ZERO')
+    : buCostCodes;
+  
+  const current = filteredCostCodes.find((b) => b.buCostCd === value?.buCostCd) ?? filteredCostCodes[0];
   const currentTypes = buCostItems.filter((i) => i.buCostCodeId === current?.buCostCodeId).map((i) => i.costType);
   const types = currentTypes.length > 0 ? currentTypes : (['G'] as Array<'G' | 'R' | 'K'>);
 
-  const costCdOptions = buCostCodes.map((b) => {
+  const costCdOptions = filteredCostCodes.map((b) => {
     return { value: b.buCostCd, label: `[${b.buCostCd}] ${b.buCostNameJa}` }
   });
   

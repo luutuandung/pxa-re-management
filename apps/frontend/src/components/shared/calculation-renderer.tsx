@@ -54,18 +54,57 @@ export const renderCondition = (cond: CalcCondition | undefined, buCostCodes: Bu
 
 export const renderOpsExpr = (ops: CalcOperation[], buCostCodes: BuCostCodeLike[]) => {
   if (ops.length === 0) return <span className="text-gray-500">未設定</span>;
+  
+  // Calculate depth for each operation at runtime
+  const sorted = [...ops].sort((a, b) => a.opeSeq - b.opeSeq);
+  const depthMap = new Map<number, number>();
+  let currentDepth = 0;
+  
+  for (const op of sorted) {
+    if (op.opeOperator === '(') {
+      depthMap.set(op.opeSeq, currentDepth);
+      currentDepth++;
+    } else if (op.opeOperator === ')') {
+      currentDepth--;
+      depthMap.set(op.opeSeq, currentDepth);
+    } else {
+      depthMap.set(op.opeSeq, currentDepth);
+    }
+  }
+  
   return (
     <span className="space-x-1">
-      {ops.map((o, idx) => (
-        <span key={`${o.calcOperationId}-${o.opeSeq}-${idx}`} className="space-x-1">
-          {o.opeOperator !== 'S' ? <span>{o.opeOperator}</span> : null}
-          <CostItemLabel
-            buCostCd={o.opeBuCostCd}
-            costType={o.opeCostType as 'G' | 'R' | 'K'}
-            buCostCodes={buCostCodes}
-          />
-        </span>
-      ))}
+      {ops.map((o, idx) => {
+        const depth = depthMap.get(o.opeSeq) ?? 0;
+        const color = depth > 0 
+          ? `hsl(${(depth * 60) % 360}, 70%, 50%)`
+          : 'inherit';
+
+        // Render parentheses
+        if (o.opeOperator === '(' || o.opeOperator === ')') {
+          return (
+            <span 
+              key={`${o.calcOperationId}-${o.opeSeq}-${idx}`}
+              className="font-bold text-xl"
+              style={{ color }}
+            >
+              {o.opeOperator}
+            </span>
+          );
+        }
+
+        // Render regular operations
+        return (
+          <span key={`${o.calcOperationId}-${o.opeSeq}-${idx}`} className="space-x-1">
+            {o.opeOperator !== 'S' ? <span>{o.opeOperator}</span> : null}
+            <CostItemLabel
+              buCostCd={o.opeBuCostCd}
+              costType={o.opeCostType as 'G' | 'R' | 'K'}
+              buCostCodes={buCostCodes}
+            />
+          </span>
+        );
+      })}
     </span>
   );
 };

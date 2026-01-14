@@ -26,6 +26,7 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
     removeElseOperation,
     persistSelectedBranchFromEditor,
   } = useCalcRegisterActions();
+
   return (
     <div className="space-y-2">
       <div className="font-medium">条件</div>
@@ -98,7 +99,9 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
               size="sm"
               variant="secondary"
               onClick={() => {
-                addIfOperation('S', buCostCodes[0]?.buCostCd ?? '', 'G');
+                const isFirst = editorIfOperations.length === 0;
+                const defaultOperator = isFirst ? 'S' : '+';
+                addIfOperation(defaultOperator, buCostCodes[0]?.buCostCd ?? '', 'G');
                 persistSelectedBranchFromEditor();
               }}
             >
@@ -148,7 +151,9 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
               size="sm"
               variant="secondary"
               onClick={() => {
-                addElseOperation('S', buCostCodes[0]?.buCostCd ?? '', 'G');
+                const isFirst = editorElseOperations.length === 0;
+                const defaultOperator = isFirst ? 'S' : '+';
+                addElseOperation(defaultOperator, buCostCodes[0]?.buCostCd ?? '', 'G');
                 persistSelectedBranchFromEditor();
               }}
             >

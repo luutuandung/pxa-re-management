@@ -9,7 +9,8 @@ import {
 } from '@pxa-re-management/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCostItemsResponse } from './dto/get-cost-items.dto';
-import { BusinessException, NotFoundException } from "../common";
+import { BusinessException, NotFoundException, ValidationException } from "../common";
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import * as Prisma from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import CalcDisplayCodeBuilder from "./utils/CalcDisplayCodeBuilder";
@@ -20,6 +21,10 @@ import CalcFormulasEvaluationSequencesAssigner from "./utils/CalcFormulasEvaluat
 export class CalcDisplayService {
 
   public constructor(private readonly prisma: PrismaService) {}
+
+  private normalizeUuid(value: string | null | undefined): string | null {
+    return value ? value.toLowerCase() : null;
+  }
 
   public async getBusinessUnitCostCodesSelection(
     {
@@ -45,22 +50,63 @@ export class CalcDisplayService {
         },
       },
       include: {
-        buCostItems: {
-          include: {
-            calcDisplays: {
-              include: {
-                calcFormulas: true,
-              },
-              where: {
-                calcTypeId: calcTypeID,
-              },
-            },
-          },
-        },
+        buCostItems: true,
       },
     });
 
-    return businessCostCodes.map((businessUnitCode) => {
+    const allBuCostItemIds = businessCostCodes.flatMap(code => 
+      code.buCostItems.map(item => item.buCostItemId)
+    );
+    
+    const allCalcDisplays = await this.prisma.calcDisplay.findMany({
+      where: {
+        buCostItemId: { in: allBuCostItemIds },
+        businessunitId: businessUnitID,
+      },
+      include: {
+        calcFormulas: true,
+      },
+    });
+
+    const normalizedCalcTypeID = calcTypeID.toLowerCase();
+    const businessCostCodesWithFiltered = businessCostCodes.map(code => ({
+      ...code,
+      buCostCodeId: this.normalizeUuid(code.buCostCodeId)!,
+      businessunitId: this.normalizeUuid(code.businessunitId)!,
+      buCostItems: code.buCostItems.map(item => {
+        const itemCalcDisplays = allCalcDisplays
+          .filter(cd => 
+            cd.buCostItemId.toLowerCase() === item.buCostItemId.toLowerCase() &&
+            cd.calcTypeId.toLowerCase() === normalizedCalcTypeID
+          )
+          .map(cd => ({
+            ...cd,
+            calcDisplayId: this.normalizeUuid(cd.calcDisplayId)!,
+            calcTypeId: this.normalizeUuid(cd.calcTypeId)!,
+            buCostItemId: this.normalizeUuid(cd.buCostItemId)!,
+            businessunitId: this.normalizeUuid(cd.businessunitId)!,
+            calcFormulas: cd.calcFormulas.map(cf => ({
+              ...cf,
+              calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
+              calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
+              calcConditionId: this.normalizeUuid(cf.calcConditionId),
+              calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
+              elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
+              nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
+              elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
+            }))
+          }));
+        return {
+          ...item,
+          buCostItemId: this.normalizeUuid(item.buCostItemId)!,
+          buCostCodeId: this.normalizeUuid(item.buCostCodeId)!,
+          businessunitId: this.normalizeUuid(item.businessunitId)!,
+          calcDisplays: itemCalcDisplays
+        };
+      })
+    }));
+
+    return businessCostCodesWithFiltered.map((businessUnitCode) => {
 
       const targetBusinessCostItem =
           businessUnitCode.buCostItems.length > 1 ?
@@ -73,16 +119,34 @@ export class CalcDisplayService {
         )
       }
 
-
       const buCostItem =
           targetBusinessCostItem.calcDisplays.length > 0 ?
               ({
                 ...(targetBusinessCostItem as BuCostItem),
-                calcDisplay: targetBusinessCostItem.calcDisplays[0],
+                calcDisplay: {
+                  ...targetBusinessCostItem.calcDisplays[0],
+                  calcDisplayId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcDisplayId)!,
+                  calcTypeId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].calcTypeId)!,
+                  buCostItemId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].buCostItemId)!,
+                  businessunitId: this.normalizeUuid(targetBusinessCostItem.calcDisplays[0].businessunitId)!,
+                  calcFormulas: targetBusinessCostItem.calcDisplays[0].calcFormulas.map(cf => ({
+                    ...cf,
+                    calcFormulaId: this.normalizeUuid(cf.calcFormulaId)!,
+                    calcDisplayId: this.normalizeUuid(cf.calcDisplayId)!,
+                    calcConditionId: this.normalizeUuid(cf.calcConditionId),
+                    calcOperationId: this.normalizeUuid(cf.calcOperationId)!,
+                    elseCalcOperationId: this.normalizeUuid(cf.elseCalcOperationId),
+                    nestCalcFormulaId: this.normalizeUuid(cf.nestCalcFormulaId),
+                    elseNestCalcFormulaId: this.normalizeUuid(cf.elseNestCalcFormulaId),
+                  }))
+                },
               } as BuCostItemWithCalcDisplay) :
               ({ ...(targetBusinessCostItem as BuCostItem) });
 
-      return { ...businessUnitCode, buCostItem };
+      return { 
+        ...businessUnitCode, 
+        buCostItem 
+      };
 
     });
 
@@ -106,7 +170,10 @@ export class CalcDisplayService {
     const operations = await this.prisma.calcOperation.findMany({
       where: { calcOperationId: { in: operationIds } },
     });
-    return { conditions, operations };
+    return { 
+      conditions: conditions as CalcCondition[], 
+      operations: operations as CalcOperation[] 
+    };
   }
 
 
@@ -206,6 +273,7 @@ export class CalcDisplayService {
           }
         });
 
+
         // ツリー復元用に参照集合を構築
         const formulasByIDs: Map<string, CalcFormula> = new Map();
         const referenced = new Set<string>();
@@ -241,6 +309,7 @@ export class CalcDisplayService {
           orderedFormulas.push({ ...f, evalSeq: (evaluationSequence ?? 0) + 1 });
 
         };
+
 
         for (const r of roots) visit(r.calcFormulaId);
 
@@ -324,13 +393,11 @@ export class CalcDisplayService {
 
       }, { timeout: 10000 });
     } catch (error) {
-      throw error;
+      this.handlePrismaError(error);
     }
 
-    // フロントエンドのタイムアウトを避けるため、非同期で再割り当てを実行
-    this.reassignCalcFormulasEvaluationSequences(businessUnitCostCodesSelection).catch((error) => {
-      console.error('Failed to reassign evaluation sequences:', error);
-    });
+    return this.reassignCalcFormulasEvaluationSequences(businessUnitCostCodesSelection);
+
   }
 
   async getCostItems(businessunitId: string, curCode: string = 'JPY'): Promise<GetCostItemsResponse> {
@@ -463,19 +530,53 @@ export class CalcDisplayService {
             return;
           }
 
-          for (const { calcFormulaID, evaluationSequence } of validUpdates) {
-            await prismaClient.calcFormula.update({
-              where: { calcFormulaId: calcFormulaID },
-              data: { evalSeq: evaluationSequence }
-            });
-          }
-        },
-        { timeout: 60000 }
+          await Promise.all(
+            validUpdates.map(
+              async (
+                {
+                  calcFormulaID,
+                  evaluationSequence
+                }: CalcFormulasEvaluationSequencesAssigner.Output.Item): Promise<unknown> =>
+                    prismaClient.calcFormula.update({
+                      where: {calcFormulaId: calcFormulaID},
+                      data: {evalSeq: evaluationSequence}
+                    })
+            )
+          )
+        }
       );
     } catch (error) {
-        throw error;
+      this.handlePrismaError(error);
     }
+  }
 
+  private handlePrismaError(error: unknown): never {
+    if (error instanceof NotFoundException || error instanceof BusinessException) {
+      throw error;
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new ValidationException('A record with this value already exists', { code: error.code, meta: error.meta });
+      }
+      if (error.code === 'P2003') {
+        throw new ValidationException('Foreign key constraint failed. Please check that all referenced records exist.', { code: error.code, meta: error.meta });
+      }
+      if (error.code === 'P2025') {
+        throw new NotFoundException('Record not found for update operation', error.meta?.target?.[0] || 'unknown');
+      }
+      throw new BusinessException(
+        `Database operation failed: ${error.message}`,
+        'DATABASE_ERROR',
+        { code: error.code, meta: error.meta },
+        error
+      );
+    }
+    throw new BusinessException(
+      `Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      'UNEXPECTED_ERROR',
+      undefined,
+      error instanceof Error ? error : undefined
+    );
   }
 
 }

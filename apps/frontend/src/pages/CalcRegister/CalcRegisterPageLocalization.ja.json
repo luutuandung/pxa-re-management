@@ -63,10 +63,12 @@
       "ifOperationCostTypeInvalid": "{{ branchPath }} - IF演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
       "ifOperationFirstOperatorMustBeS": "{{ branchPath }} - IF演算: 最初の演算は演算子「S」を使用する必要があります",
       "ifOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - IF演算{{ operationIndex }}: 最初の演算以降では演算子「S」を使用できません",
+      "ifOperationParenthesisMissingClose": "{{ branchPath }} - IF演算: 括弧が正しく閉じられていません。閉じ括弧 \")\" が {{ count }} 個不足しています",
+      "ifOperationParenthesisMissingOpen": "{{ branchPath }} - IF演算: 括弧が正しく開かれていません。開き括弧 \"(\" が {{ count }} 個不足しています",
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価項目と原価種別を選択してください",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 原価種別が無効です。原価項目「{{ costItemCode }}」で利用可能な原価種別を選択してください",
-      "elseOperationFirstOperatorMustBeS": "{{ branchPath }} - ELSE演算: 最初の演算は演算子「S」を使用する必要があります",
-      "elseOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - ELSE演算{{ operationIndex }}: 最初の演算以降では演算子「S」を使用できません"
+      "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE演算: 括弧が正しく閉じられていません。閉じ括弧 \")\" が {{ count }} 個不足しています",
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE演算: 括弧が正しく開かれていません。開き括弧 \"(\" が {{ count }} 個不足しています"
     }
   }
 }

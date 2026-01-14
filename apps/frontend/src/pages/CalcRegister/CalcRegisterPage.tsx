@@ -196,20 +196,26 @@ const CalcRegisterPage = () => {
       // IF演算のバリデーション
       node.ifOps.forEach((op, idx) => {
         const opeSeq = idx + 1;
-        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
-          addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
-            branchPath: currentPath,
-            operationIndex: idx + 1
-          }));
-          hasErrors = true;
-        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
-          addErrorMessage(t('errors.validation.ifOperationCostTypeInvalid', { 
-            branchPath: currentPath,
-            operationIndex: idx + 1,
-            costItemCode: op.opeBuCostCd
-          }));
-          hasErrors = true;
+        
+        // 閉じ括弧以外は原価項目と原価種別のバリデーションが必要
+        if (op.opeOperator !== ')') {
+          if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+            addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1
+            }));
+            hasErrors = true;
+          } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+            addErrorMessage(t('errors.validation.ifOperationCostTypeInvalid', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1,
+              costItemCode: op.opeBuCostCd
+            }));
+            hasErrors = true;
+          }
         }
+        
+        // 演算子のバリデーション
         if (opeSeq === 1 && op.opeOperator !== 'S') {
           addErrorMessage(t('errors.validation.ifOperationFirstOperatorMustBeS', { 
             branchPath: currentPath
@@ -224,23 +230,64 @@ const CalcRegisterPage = () => {
         }
       });
       
+      // IF演算の括弧バリデーション
+      const ifOpenCount = node.ifOps.filter(op => op.opeOperator === '(').length;
+      const ifCloseCount = node.ifOps.filter(op => op.opeOperator === ')').length;
+      if (ifOpenCount !== ifCloseCount) {
+        const diff = ifOpenCount - ifCloseCount;
+        if (diff > 0) {
+          addErrorMessage(t('errors.validation.ifOperationParenthesisMissingClose', { 
+            branchPath: currentPath,
+            count: diff
+          }));
+        } else {
+          addErrorMessage(t('errors.validation.ifOperationParenthesisMissingOpen', { 
+            branchPath: currentPath,
+            count: Math.abs(diff)
+          }));
+        }
+        hasErrors = true;
+      }
+      
       // ELSE演算のバリデーション
       node.elseOps.forEach((op, idx) => {
-        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
-          addErrorMessage(t('errors.validation.elseOperationCostItemRequired', { 
-            branchPath: currentPath,
-            operationIndex: idx + 1
-          }));
-          hasErrors = true;
-        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
-          addErrorMessage(t('errors.validation.elseOperationCostTypeInvalid', { 
-            branchPath: currentPath,
-            operationIndex: idx + 1,
-            costItemCode: op.opeBuCostCd
-          }));
-          hasErrors = true;
+        // 閉じ括弧以外は原価項目と原価種別のバリデーションが必要
+        if (op.opeOperator !== ')') {
+          if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+            addErrorMessage(t('errors.validation.elseOperationCostItemRequired', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1
+            }));
+            hasErrors = true;
+          } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+            addErrorMessage(t('errors.validation.elseOperationCostTypeInvalid', { 
+              branchPath: currentPath,
+              operationIndex: idx + 1,
+              costItemCode: op.opeBuCostCd
+            }));
+            hasErrors = true;
+          }
         }
       });
+      
+      // ELSE演算の括弧バリデーション
+      const elseOpenCount = node.elseOps.filter(op => op.opeOperator === '(').length;
+      const elseCloseCount = node.elseOps.filter(op => op.opeOperator === ')').length;
+      if (elseOpenCount !== elseCloseCount) {
+        const diff = elseOpenCount - elseCloseCount;
+        if (diff > 0) {
+          addErrorMessage(t('errors.validation.elseOperationParenthesisMissingClose', { 
+            branchPath: currentPath,
+            count: diff
+          }));
+        } else {
+          addErrorMessage(t('errors.validation.elseOperationParenthesisMissingOpen', { 
+            branchPath: currentPath,
+            count: Math.abs(diff)
+          }));
+        }
+        hasErrors = true;
+      }
       
       // 子分岐のバリデーション
       const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');

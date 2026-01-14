@@ -495,7 +495,7 @@ export const useCalcRegisterActions = () => {
   }, [setEditorOpen]);
 
   const addOperation = useCallback(
-    (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') => {
+    (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') => {
       setEditorOperations((prev) => {
         const seq = (prev?.length ?? 0) + 1;
         const newOp: CalcOperation = {
@@ -861,7 +861,7 @@ export const useCalcRegisterActions = () => {
     updateOperation,
     setCondition,
     // IF操作
-    addIfOperation: (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') =>
+    addIfOperation: (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') =>
       setEditorIfOperations((prev) => [
         ...prev,
         {
@@ -882,7 +882,7 @@ export const useCalcRegisterActions = () => {
     removeIfOperation: (calcOperationId: string) =>
       setEditorIfOperations((prev) => prev.filter((o) => o.calcOperationId !== calcOperationId)),
     // ELSE操作
-    addElseOperation: (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') =>
+    addElseOperation: (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') =>
       setEditorElseOperations((prev) => [
         ...prev,
         {

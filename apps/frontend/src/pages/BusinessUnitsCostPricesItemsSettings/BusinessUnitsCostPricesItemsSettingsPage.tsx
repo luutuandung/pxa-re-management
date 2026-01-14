@@ -89,8 +89,8 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
 
 
   /* ┅┅┅ Drop Down Lists ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
-  private readonly yearOfActualityStartingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
-  private readonly yearOfActualityEndingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
+  private readonly initialYearOfActualityStartingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
+  private readonly initialYearOfActualityEndingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
 
   private readonly monthDropDownListsData: ReadonlyArray<DropDownList.ItemData> = Array.from(new Array(12).keys()).map(
     (monthNumber__numerationFrom0: number): DropDownList.ItemData => {
@@ -142,6 +142,8 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
 
     /* ╍╍╍ Currency Drop Down List ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ */
     currencyCodeDropDownListItems: [],
+    yearOfActualityStartingDropDownListItemsData: [],
+    yearOfActualityEndingDropDownListItemsData: [],
 
     /* ┅┅┅ Updating of Data by GUI ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     hasUnsavedChanges: false,
@@ -192,8 +194,14 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
       })
     }
 
-    this.yearOfActualityStartingDropDownListItemsData = yearOfActualityStartingDropDownListItemsData;
-    this.yearOfActualityEndingDropDownListItemsData = yearOfActualityEndingDropDownListItemsData;
+    this.initialYearOfActualityStartingDropDownListItemsData = yearOfActualityStartingDropDownListItemsData;
+    this.initialYearOfActualityEndingDropDownListItemsData = yearOfActualityEndingDropDownListItemsData;
+
+    this.state = {
+      ...this.state,
+      yearOfActualityStartingDropDownListItemsData: yearOfActualityStartingDropDownListItemsData,
+      yearOfActualityEndingDropDownListItemsData: yearOfActualityEndingDropDownListItemsData,
+    };
 
   }
 
@@ -366,6 +374,56 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
     }
 
 
+    // 開始年の年度をデータから抽出
+    const yearsFromStartingData = new Set<number>();
+    for (const rowData of rawTableData) {
+      yearsFromStartingData.add(rowData.yearAndMonthOfActualityStarting.year);
+    }
+
+    // 終了年の年度をデータから抽出
+    const yearsFromEndingData = new Set<number>();
+    for (const rowData of rawTableData) {
+      if (rowData.yearAndMonthOfActualityEnding !== null) {
+        yearsFromEndingData.add(rowData.yearAndMonthOfActualityEnding.year);
+      }
+    }
+
+    // 開始年のドロップダウンリストを更新（既存の年 + データから抽出した年）
+    const updatedYearOfActualityStartingDropDownListItemsData = new Map<number, DropDownList.ItemData>();
+    for (const item of this.initialYearOfActualityStartingDropDownListItemsData) {
+      updatedYearOfActualityStartingDropDownListItemsData.set(item.key as number, item);
+    }
+    for (const year of yearsFromStartingData) {
+      if (!updatedYearOfActualityStartingDropDownListItemsData.has(year)) {
+        updatedYearOfActualityStartingDropDownListItemsData.set(year, {
+          key: year,
+          value: String(year),
+          displayingNode: year
+        });
+      }
+    }
+
+    // 終了年のドロップダウンリストを更新（既存の年 + データから抽出した年）
+    const updatedYearOfActualityEndingDropDownListItemsData = new Map<number, DropDownList.ItemData>();
+    for (const item of this.initialYearOfActualityEndingDropDownListItemsData) {
+      updatedYearOfActualityEndingDropDownListItemsData.set(item.key as number, item);
+    }
+    for (const year of yearsFromEndingData) {
+      if (!updatedYearOfActualityEndingDropDownListItemsData.has(year)) {
+        updatedYearOfActualityEndingDropDownListItemsData.set(year, {
+          key: year,
+          value: String(year),
+          displayingNode: year
+        });
+      }
+    }
+
+    // 年でソート
+    const sortedYearOfActualityStartingItems = Array.from(updatedYearOfActualityStartingDropDownListItemsData.values())
+      .sort((a, b) => (a.key as number) - (b.key as number));
+    const sortedYearOfActualityEndingItems = Array.from(updatedYearOfActualityEndingDropDownListItemsData.values())
+      .sort((a, b) => (a.key as number) - (b.key as number));
+
     this.setState({
       tableData: rawTableData.map(
         (
@@ -379,6 +437,8 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
               compoundKey__mayBeNonUnique: BusinessUnitCostPriceItem.generateCompoundKeyWhichMustBeUnique(rowData)
             })
       ),
+      yearOfActualityStartingDropDownListItemsData: sortedYearOfActualityStartingItems,
+      yearOfActualityEndingDropDownListItemsData: sortedYearOfActualityEndingItems,
       isTableDataRetrievingInProgress: false,
       hasTableDataRetrievingErrorOccurred: false
     });
@@ -1646,7 +1706,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
                         accessibilityGuidance={
                           this.getLocalizedString("controls.dropDownLists.yearOfActualityStarting.accessibilityGuidance")
                         }
-                        itemsData={ this.yearOfActualityStartingDropDownListItemsData }
+                        itemsData={ this.state.yearOfActualityStartingDropDownListItemsData }
                         value={ String(rowData.yearAndMonthOfActualityStarting.year) }
                         onValueChange={
                           (newYearOfActualityStarting: string): void => {
@@ -1700,7 +1760,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
                         }
                         itemsData={
                           [
-                            ...this.yearOfActualityEndingDropDownListItemsData,
+                            ...this.state.yearOfActualityEndingDropDownListItemsData,
                             {
                               key: BusinessUnitsCostPricesItemsSettingsPage.DROP_DOWN_LIST_EMPTY_SELECTION_KEY_OF_VALUE,
                               value: BusinessUnitsCostPricesItemsSettingsPage.DROP_DOWN_LIST_EMPTY_SELECTION_KEY_OF_VALUE,
@@ -1880,6 +1940,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
     (this.reactReferences.excelFilePicker.current ?? { value: "" }).value = "";
   }
 
+
 }
 
 
@@ -1928,6 +1989,8 @@ namespace BusinessUnitsCostPricesItemsSettingsPage {
 
     /* ╍╍╍ Currency Drop Down List ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ */
     currencyCodeDropDownListItems: ReadonlyArray<DropDownList.ItemData>;
+    yearOfActualityStartingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
+    yearOfActualityEndingDropDownListItemsData: ReadonlyArray<DropDownList.ItemData>;
 
     /* ┅┅┅ Updating of Data by GUI ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     hasUnsavedChanges: boolean;

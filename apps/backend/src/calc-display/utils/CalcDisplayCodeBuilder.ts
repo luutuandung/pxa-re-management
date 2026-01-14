@@ -204,30 +204,41 @@ export default class CalcDisplayCodeBuilder {
     }>
   ): string {
 
-    let targetOperation: CalcOperation | undefined;
-
     if (typeof targetOperationID !== "undefined") {
 
-      targetOperation = this.operations.find(
+      const operations = this.operations.filter(
         (operation: CalcOperation): boolean => operation.calcOperationId === targetOperationID
-      );
+      ).sort((a, b) => a.opeSeq - b.opeSeq);
 
-      if (typeof targetOperation === "undefined") {
+      if (operations.length === 0) {
         console.warn(`ID「${ targetOperationID }」オペレーションが発見されなかった`);
+        return "";
       }
 
-    }
-
-
-    /* 【 一時的 】 「nestCalcFormulaId」と「elseNestCalcFormulaId」は意図上任意ではあるが、既存のコードが空文字が入る事がある。将来的に解決するべき。 */
-    if (typeof targetOperation !== "undefined" && (typeof nestedFormulaID === "undefined" || nestedFormulaID === "")) {
-
-      if (typeof CalcDisplayCodeBuilder.reservedOperands[targetOperation.opeBuCostCd] !== "undefined") {
-        return CalcDisplayCodeBuilder.reservedOperands[targetOperation.opeBuCostCd];
+      if (operations.length === 1) {
+        const op = operations[0];
+        if (op.opeOperator === '(' || op.opeOperator === ')') {
+          return op.opeOperator;
+        }
+        if (typeof CalcDisplayCodeBuilder.reservedOperands[op.opeBuCostCd] !== "undefined") {
+          return CalcDisplayCodeBuilder.reservedOperands[op.opeBuCostCd];
+        }
+        return `${ op.opeBuCostCd }[${ op.opeCostType }]`;
       }
 
-
-      return `${ targetOperation.opeBuCostCd }[${ targetOperation.opeCostType }]`;
+      let result = '';
+      for (const op of operations) {
+        if (op.opeOperator === '(' || op.opeOperator === ')') {
+          result += op.opeOperator + ' ';
+        } else if (op.opeOperator === 'S') {
+          const value = CalcDisplayCodeBuilder.reservedOperands[op.opeBuCostCd] ?? `${ op.opeBuCostCd }[${ op.opeCostType }]`;
+          result += value + ' ';
+        } else {
+          const value = CalcDisplayCodeBuilder.reservedOperands[op.opeBuCostCd] ?? `${ op.opeBuCostCd }[${ op.opeCostType }]`;
+          result += `${ op.opeOperator } ${ value } `;
+        }
+      }
+      return result.trim();
 
     }
 

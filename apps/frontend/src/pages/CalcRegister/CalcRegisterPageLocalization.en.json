@@ -63,10 +63,12 @@
       "ifOperationCostTypeInvalid": "{{ branchPath }} - IF Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
       "ifOperationFirstOperatorMustBeS": "{{ branchPath }} - IF Operation: The first operation must use operator \"S\"",
       "ifOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - IF Operation {{ operationIndex }}: Operator \"S\" cannot be used for operations after the first one",
+      "ifOperationParenthesisMissingClose": "{{ branchPath }} - IF Operation: Parentheses are not properly closed. Missing {{ count }} closing parenthesis \")\"",
+      "ifOperationParenthesisMissingOpen": "{{ branchPath }} - IF Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\"",
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Please select cost item and cost type",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
-      "elseOperationFirstOperatorMustBeS": "{{ branchPath }} - ELSE Operation: The first operation must use operator \"S\"",
-      "elseOperationSubsequentOperatorCannotBeS": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Operator \"S\" cannot be used for operations after the first one"
+      "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE Operation: Parentheses are not properly closed. Missing {{ count }} closing parenthesis \")\"",
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\""
     }
   }
 }

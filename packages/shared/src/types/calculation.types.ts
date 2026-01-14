@@ -1,9 +1,18 @@
 import type { BuCostCode } from './business-cost.types';
 import type { BuCostItem } from './business-cost-item.types';
 
+export type OperatorType = 
+  | 'S'
+  | '+'
+  | '-'
+  | '*'
+  | '/'
+  | '('
+  | ')';
+
 export type CalcOperation = {
   calcOperationId: string;
-  opeOperator: string;
+  opeOperator: OperatorType;
   opeBuCostCd: string;
   opeCostType: string;
   opeSeq: number;

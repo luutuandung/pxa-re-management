@@ -11,6 +11,9 @@
     }
   },
   "controls": {
+    "tableSearchBox": {
+      "placeholder": "原価項目コードまたは名称で検索..."
+    },
     "dropDownLists": {
       "businessUnits": {
         "label": "拠点",
@@ -58,7 +61,8 @@
         "amount": "額",
         "rate": "レート"
       }
-    }
+    },
+    "noSearchResults": "検索条件に一致するデータが見つかりません"
   },
   "errors": {
     "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中不具合が発生しました。",

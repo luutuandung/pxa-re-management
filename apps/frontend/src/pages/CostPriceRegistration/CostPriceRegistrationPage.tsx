@@ -597,7 +597,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
         { this.upperErrorsMessagesBoxes }
 
-        <div className={ CSS_Classes["table-decorativeWrapper"] }>
+        <div className={ `${CSS_Classes["table-decorativeWrapper"]} overflow-auto max-h-[70vh]` }>
           { this.tableView }
         </div>
 
@@ -825,7 +825,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
         </Table>
 
@@ -844,7 +844,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
         </Table>
 
@@ -861,7 +861,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   private get tableLoadingPlaceholder(): React.ReactNode {
     return (
-      <Table>
+      <Table className="min-w-full">
 
         <TableCaption className="sr-only">
           { this.getLocalizedString("guidances.screenReaderOnly.tableDataLoadingInProgress") }
@@ -921,7 +921,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
         </Table>
 
@@ -940,7 +940,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
         </Table>
 
@@ -963,7 +963,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
         </Table>
 
@@ -981,7 +981,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
   private get tableWithData(): React.ReactNode {
     return (
       <>
-        <Table>
+        <Table className="min-w-full">
           { this.tableHeader }
           <TableBody className="bg-white">
             {

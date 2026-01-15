@@ -11,6 +11,9 @@
     }
   },
   "controls": {
+    "tableSearchBox": {
+      "placeholder": "按成本项目代码或名称搜索..."
+    },
     "dropDownLists": {
       "businessUnits": {
         "label": "拠点",
@@ -58,7 +61,8 @@
         "amount": "額",
         "rate": "レート"
       }
-    }
+    },
+    "noSearchResults": "未找到符合搜索条件的数据"
   },
   "errors": {
     "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中不具合が発生しました。",

@@ -11,6 +11,9 @@
     }
   },
   "controls": {
+    "tableSearchBox": {
+      "placeholder": "Search by cost item code or name..."
+    },
     "dropDownLists": {
       "businessUnits": {
         "label": "Location",
@@ -58,7 +61,8 @@
         "amount": "Amount",
         "rate": "Rate"
       }
-    }
+    },
+    "noSearchResults": "No data matches your search criteria"
   },
   "errors": {
     "businessUnitsDataRetrievingFailed": "The malfunction has occurred during the retrieving of business units data which requires for filtering.",

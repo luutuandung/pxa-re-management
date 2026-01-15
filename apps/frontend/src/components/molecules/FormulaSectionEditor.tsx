@@ -150,7 +150,9 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
             <Button
               size="sm"
               variant="secondary"
+              disabled={!condition}
               onClick={() => {
+                if (!condition) return;
                 const isFirst = editorElseOperations.length === 0;
                 const defaultOperator = isFirst ? 'S' : '+';
                 addElseOperation(defaultOperator, buCostCodes[0]?.buCostCd ?? '', 'G');

@@ -96,11 +96,7 @@ export class CalcDisplayController {
     } else {
       userId = '00000000-0000-0000-0000-000000000000';
     }
-    try {
-      await this.calcDisplayService.updateCalcDatas(updateCalcDatasDto, userId);
-    } catch (error) {
-      throw error;
-    }
+    await this.calcDisplayService.updateCalcDatas(updateCalcDatasDto, userId);
   }
 
 }

@@ -68,7 +68,10 @@
       "elseOperationCostItemRequired": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Please select cost item and cost type",
       "elseOperationCostTypeInvalid": "{{ branchPath }} - ELSE Operation {{ operationIndex }}: Invalid cost type. Please select a valid cost type for cost item \"{{ costItemCode }}\"",
       "elseOperationParenthesisMissingClose": "{{ branchPath }} - ELSE Operation: Parentheses are not properly closed. Missing {{ count }} closing parenthesis \")\"",
-      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\""
+      "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\"",
+      "ifOperationRequired": "{{ branchPath }}: IF operation is required",
+      "elseOperationRequired": "{{ branchPath }}: ELSE operation is required when condition is set",
+      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: ELSE operation cannot be set without a condition. Please remove ELSE operation or add a condition"
     }
   }
 }

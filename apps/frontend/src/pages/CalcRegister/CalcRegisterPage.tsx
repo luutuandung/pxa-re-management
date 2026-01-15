@@ -146,6 +146,56 @@ const CalcRegisterPage = () => {
     return editorBranches.find((b) => b.id === 'root') ?? editorBranches.find((b) => !b.parentId) ?? null;
   }, [editorBranches]);
 
+  // バリデーション: 計算式のロジックをチェック（条件式とIF/ELSE演算の整合性）
+  const validateFormulaLogic = (): boolean => {
+    let hasErrors = false;
+    
+    const validateBranchLogic = (node: EditorBranchNode, branchPath: string = '') => {
+      const currentPath = branchPath || node.label;
+      
+      // 条件式の有無をチェック
+      const hasCondition = !!(node.condition?.leftConBuCostCd && node.condition?.rightConBuCostCd);
+      const hasIfOps = node.ifOps.length > 0;
+      const hasElseOps = node.elseOps.length > 0;
+      const hasIfChildren = editorBranches.some((b) => b.parentId === node.id && b.side === 'IF');
+      const hasElseChildren = editorBranches.some((b) => b.parentId === node.id && b.side === 'ELSE');
+      
+      if (hasCondition) {
+        // 条件式がある場合 => IF演算とELSE演算は必須
+        if (!hasIfOps && !hasIfChildren) {
+          addErrorMessage(t('errors.validation.ifOperationRequired', { branchPath: currentPath }));
+          hasErrors = true;
+        }
+        if (!hasElseOps && !hasElseChildren) {
+          addErrorMessage(t('errors.validation.elseOperationRequired', { branchPath: currentPath }));
+          hasErrors = true;
+        }
+      } else {
+        // 条件式がない場合 => IF演算のみ必須、ELSE演算は設定不可
+        if (!hasIfOps && !hasIfChildren) {
+          addErrorMessage(t('errors.validation.ifOperationRequired', { branchPath: currentPath }));
+          hasErrors = true;
+        }
+        if (hasElseOps || hasElseChildren) {
+          addErrorMessage(t('errors.validation.elseOperationNotAllowedWithoutCondition', { branchPath: currentPath }));
+          hasErrors = true;
+        }
+      }
+      
+      // 子分岐の再帰チェック
+      const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
+      const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
+      ifChildren.forEach((child) => validateBranchLogic(child, `${currentPath} - IF分岐`));
+      elseChildren.forEach((child) => validateBranchLogic(child, `${currentPath} - ELSE分岐`));
+    };
+    
+    if (rootBranch) {
+      validateBranchLogic(rootBranch);
+    }
+    
+    return !hasErrors;
+  };
+
   // バリデーション: 原価種別が選択されているかチェック
   const validateCostTypes = (): boolean => {
     let hasErrors = false;
@@ -535,6 +585,11 @@ const CalcRegisterPage = () => {
                 className="bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => {
                   persistSelectedBranchFromEditor();
+                  // バリデーション: 計算式のロジックチェック
+                  if (!validateFormulaLogic()) {
+                    return;
+                  }
+                  // バリデーション: 原価種別チェック
                   if (!validateCostTypes()) {
                     return;
                   }

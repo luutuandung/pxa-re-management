@@ -176,9 +176,46 @@ export class CalcDisplayService {
     };
   }
 
+  /**
+   * @description 計算式のバリデーション
+   * - 条件式が設定されている場合: IF演算、ELSE演算は必須
+   * - 条件式が設定されていない場合: IF演算のみ必須、ELSE演算は設定不可
+   */
+  private validateCalcFormulas(formulas: readonly CalcFormula[]): void {
+    for (const formula of formulas) {
+      if (formula.calcConditionId && formula.calcConditionId !== '') {
+        // 条件式がある場合 => IF演算とELSE演算は必須
+        if (!formula.calcOperationId || formula.calcOperationId === '') {
+          throw new ValidationException(
+            '条件式が設定されている場合、IF演算は必須です (IF operation is required when condition is set)'
+          );
+        }
+        if (!formula.elseCalcOperationId || formula.elseCalcOperationId === '') {
+          throw new ValidationException(
+            '条件式が設定されている場合、ELSE演算は必須です (ELSE operation is required when condition is set)'
+          );
+        }
+      } else {
+        // 条件式がない場合 => IF演算のみ必須、ELSE演算は設定不可
+        if (!formula.calcOperationId || formula.calcOperationId === '') {
+          throw new ValidationException(
+            '演算は必須です (Operation is required)'
+          );
+        }
+        if (formula.elseCalcOperationId && formula.elseCalcOperationId !== '') {
+          throw new ValidationException(
+            '条件式がない場合、ELSE演算は設定できません (ELSE operation cannot be set without condition)'
+          );
+        }
+      }
+    }
+  }
 
   /** @description 保存入口: calcDisplayId が無ければ (calcTypeId, buCostItemId) で表示を検索/作成してから完全置換 */
   public async updateCalcDatas(updateCalcDatasDto: UpdateCalcDatasDto, userId: string | null = null): Promise<void> {
+
+    // バリデーション: 計算式のロジックチェック
+    this.validateCalcFormulas(updateCalcDatasDto.calcFormulas);
 
     /* 【 意図 】 渡されたcalcDisplayIDに該当している項目がDBに存在しない場合は、(calcTypeId, buCostItemId) で検索し、なければ新規作成 */
     let calcDisplayId: string = updateCalcDatasDto.calcDisplayId;

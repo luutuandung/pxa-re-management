@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 
 interface StickyMessageProps {
   id: string;
@@ -9,9 +9,27 @@ interface StickyMessageProps {
 }
 
 const StickyMessage: React.FC<StickyMessageProps> = ({ id, message, type, onClose, className = '' }) => {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
   const handleClose = () => {
     onClose(id);
   };
+
+  React.useEffect(() => {
+    const button = buttonRef.current;
+    if (!button) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      event.stopPropagation();
+      onClose(id);
+    };
+
+    button.addEventListener('pointerdown', handlePointerDown, true);
+
+    return () => {
+      button.removeEventListener('pointerdown', handlePointerDown, true);
+    };
+  }, [id, onClose]);
 
   const getTypeStyles = () => {
     switch (type) {
@@ -27,10 +45,12 @@ const StickyMessage: React.FC<StickyMessageProps> = ({ id, message, type, onClos
   return (
     <div
       className={`relative p-4 rounded-lg border shadow-md transition-all duration-300 ${getTypeStyles()} ${className}`}
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium flex-1 pr-4">{message}</p>
         <button
+          ref={buttonRef}
           onClick={handleClose}
           className="flex-shrink-0 p-1 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
           aria-label="メッセージを閉じる"

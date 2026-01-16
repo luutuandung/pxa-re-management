@@ -143,8 +143,10 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
           map(({ ID, name }: Readonly<Pick<Prisma.ModelCategory, "ID" | "name">>): [ string, string ] => [ ID, name ])
     );
 
-    actualModelsCategoriesIDs = actualModelsCategoriesIDs.
-        difference(new Set(actualModelsCategoriesNamesByIDs.keys()));
+    const keysToRemove = new Set(actualModelsCategoriesNamesByIDs.keys());
+    actualModelsCategoriesIDs = new Set(
+    [...actualModelsCategoriesIDs].filter(id => !keysToRemove.has(id))
+    );
 
     for (
       const { ID, name } of

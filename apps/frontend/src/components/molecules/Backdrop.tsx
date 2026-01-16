@@ -64,9 +64,9 @@ export default class Backdrop extends React.Component {
   public render(): React.ReactNode {
     return this.state.isDisplaying ?
          (
-          <div className="flex justify-center items-center fixed inset-0 bg-black/50 z-50">
+          <div className="flex justify-center items-center fixed inset-0 bg-black/50 z-50 pointer-events-none">
             <div className="sr-only">{ this.state.accessibilityGuidance }</div>
-            <div role="status">
+            <div role="status" className="pointer-events-auto">
               <svg
                 aria-hidden="true"
                 className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"

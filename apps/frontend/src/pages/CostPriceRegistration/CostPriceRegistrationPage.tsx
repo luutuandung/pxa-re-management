@@ -155,7 +155,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   }
 
-  /* 【 パフォーマンス最適化 】 可能な時、拠点IDを直接渡すべき。（不可能な時もあるので、引数を任意化。） */
+  /* 【 パフォーマンス最適化 】 可能な時、事業部IDを直接渡すべき。（不可能な時もあるので、引数を任意化。） */
   private async costPriceVersionsDropDownListItems(
     selectedBusinessUnitID: string | null = this.state.selectedBusinessUnitID
   ): Promise<void> {
@@ -261,7 +261,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   }
 
-  /* 【 パフォーマンス最適化 】 可能な時、拠点ID・テーブルデータを直接渡すべき。（不可能な時もあるので、引数を任意化。） */
+  /* 【 パフォーマンス最適化 】 可能な時、事業部ID・テーブルデータを直接渡すべき。（不可能な時もあるので、引数を任意化。） */
   private async retrieveCostPricePatternsDropDownListItems(
     selectedCostPriceVersionID: string | null = this.state.selectedCostPriceVersionID,
     tableData: CostPriceRegistrationPageBFF.TableData | null = this.state.tableData

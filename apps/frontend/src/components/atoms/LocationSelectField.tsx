@@ -9,7 +9,7 @@ const LocationSelectField: React.FC<LocationSelectField.Props> = ({
   value,
   onValueChange,
   locations,
-  placeholder = '拠点を選択',
+  placeholder = '事業部を選択',
   className,
   disabled = false,
 }: LocationSelectField.Props): React.ReactNode => {

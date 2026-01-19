@@ -69,7 +69,7 @@ const CalcRegisterPage = () => {
     }
   }, [selectedBusinessUnitId, fetchCalcType]);
 
-  // 拠点変更
+  // 事業部変更
   const handleChangeBusinessUnit = (buId: string) => {
     console.log('[page] change BU:', buId);
     initForBusinessUnit(buId);

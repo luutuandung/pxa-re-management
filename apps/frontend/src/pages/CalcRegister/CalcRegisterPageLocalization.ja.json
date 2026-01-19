@@ -1,7 +1,7 @@
 {
   "title": "計算式登録",
   "labels": {
-    "location": "拠点",
+    "location": "事業部",
     "calcType": "計算種類",
     "keyword": "キーワード",
     "unset": "未設定",

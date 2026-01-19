@@ -52,7 +52,7 @@ export class CalcTypeService {
   async create(createDto: CreateCalcTypeDto, userId: string): Promise<CalcType> {
     const { defaultFlg = false, ...data } = createDto;
 
-    // デフォルトフラグがtrueの場合、同じ拠点の他の計算種類のデフォルトフラグをfalseにする
+    // デフォルトフラグがtrueの場合、同じ事業部の他の計算種類のデフォルトフラグをfalseにする
     if (defaultFlg) {
       await this.prisma.calcType.updateMany({
         where: {
@@ -81,7 +81,7 @@ export class CalcTypeService {
   async update(calcTypeId: string, updateDto: UpdateCalcTypeDto, userId: string): Promise<CalcType> {
     const { defaultFlg, ...data } = updateDto;
 
-    // デフォルトフラグがtrueの場合、同じ拠点の他の計算種類のデフォルトフラグをfalseにする
+    // デフォルトフラグがtrueの場合、同じ事業部の他の計算種類のデフォルトフラグをfalseにする
     if (defaultFlg) {
       const currentCalcType = await this.findOne(calcTypeId);
       if (currentCalcType) {

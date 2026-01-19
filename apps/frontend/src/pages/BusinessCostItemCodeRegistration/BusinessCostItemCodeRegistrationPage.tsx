@@ -43,7 +43,7 @@ interface BusinessCostItem {
   generalCostCode?: GeneralCostCode | null;
   isNew?: boolean;
   isChanged?: boolean; // 変更フラグを追加
-  businessunitId?: string; // 拠点コード追加
+  businessunitId?: string; // 事業部コード追加
 }
 
 const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
@@ -405,7 +405,7 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
     try {
       setIsLoading(true);
 
-      // 全拠点のデータを並行取得
+      // 全事業部のデータを並行取得
       const allResponses = await fetchLocationItems(buCd);
 
       setLocationItems([...allResponses]);
@@ -418,7 +418,7 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
     }
   };
 
-  // 初回データ取得（全拠点のデータを取得）
+  // 初回データ取得（全事業部のデータを取得）
   React.useEffect(() => {
     if (!locationFilter.length) return;
     fetchAllBusinessCostData(locationFilter);
@@ -644,7 +644,7 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
 
       const businessCostItems = changedItems.map((item) => ({
         ...(item.isNew ? {} : { buCostCodeId: item.id }),
-        businessunitId: item.businessunitId || locations[0]?.buCd || '', // アイテム自体の拠点コードを使用
+        businessunitId: item.businessunitId || locations[0]?.buCd || '', // アイテム自体の事業部コードを使用
         generalCostCd: item.generalCostCd,
         buCostCd: item.buCostCd,
         buCostNameJa: item.buCostNameJa,
@@ -661,7 +661,7 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
       setShowSaveDialog(false);
       setIsChanged(false);
 
-      // データ再取得（全拠点）
+      // データ再取得（全事業部）
       const allItems = await fetchLocationItems(locationFilter);
       setLocationItems([...allItems]);
       setOriginalLocationItems([...allItems]); // 元データも更新
@@ -692,7 +692,7 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
 
               <div className="flex items-center space-x-6">
 
-                {/* 拠点絞り込み */}
+                {/* 事業部絞り込み */}
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-700">{t('controls.locationFilter')}</span>
                   <LocationSelectField

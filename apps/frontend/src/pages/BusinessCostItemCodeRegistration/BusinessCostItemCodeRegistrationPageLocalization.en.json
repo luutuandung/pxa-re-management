@@ -5,7 +5,7 @@
     "businessCostItems": "Business Cost Items"
   },
   "controls": {
-    "locationFilter": "Location Filter:",
+    "locationFilter": "Business Unit Filter:",
     "showAllLocations": "Please select",
     "showInvalid": "Show Invalid",
     "add": "Add",
@@ -41,7 +41,7 @@
     "page": "Page"
   },
   "validation": {
-    "selectLocation": "Please select a location",
+    "selectLocation": "Please select a business unit",
     "buCostCd": "Please enter a code",
     "codeHalfWidthOnly": "Code must contain only half-width characters",
     "commonEnglishNamingInvalidCharacters": "English name contains invalid characters: {{commaSeparatedFoundInvalidCharacters}}",

@@ -118,7 +118,7 @@ export default class CostPricePatternsManagementPagePrismaService implements Cos
                   }
 
                   /* 【 仕様書 】
-                   * 実際のデータ上、一件の拠点と関連している原価種類で一致している原価登録が一件しかあり得ないが、テスト専用のデータだと、複数存在する事がある。
+                   * 実際のデータ上、一件の事業部と関連している原価種類で一致している原価登録が一件しかあり得ないが、テスト専用のデータだと、複数存在する事がある。
                    * その時、一件目だけ良い。 */
                   const costPricePattern:
                       CostPricePatternsManagementPagePrismaService.TableDataRetrieving.DataSelectin.Item.CostPricePattern |

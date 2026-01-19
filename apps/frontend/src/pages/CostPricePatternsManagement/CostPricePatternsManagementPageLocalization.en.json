@@ -1,7 +1,7 @@
 {
   "topHeading": "Cost Registration - Cost Item Pattern",
   "guidances": {
-    "tableDataDisplaying": "To display cost price patterns data table or manager the cost prices categories types, please select the location then select the cost price version.",
+    "tableDataDisplaying": "To display cost price patterns data table or manager the cost prices categories types, please select the business unit then select the cost price version.",
     "noBusinessUnits": "No data to display because no business units available.",
     "noDataToDisplay": "No data satisfying to current filtering.",
     "costPricesPatternSetupSucceeded": "Cost price registration complete.",
@@ -13,10 +13,10 @@
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "Location",
+        "label": "Business Unit",
         "placeholders": {
-          "normal": "Select the location",
-          "noData": "No locations"
+          "normal": "Select the business unit",
+          "noData": "No business units"
         }
       },
       "costPriceVersions": {

@@ -1,7 +1,7 @@
 {
   "topHeading": "Cost Register",
   "guidances": {
-    "tableDataDisplaying": "To display cost prices data table, please select the location, then the cost price version. After that, it is possible additionally to filter by cost price pattern.",
+    "tableDataDisplaying": "To display cost prices data table, please select the business unit, then the cost price version. After that, it is possible additionally to filter by cost price pattern.",
     "noBusinessUnits": "No data cost price registration data to display because no business units available.",
     "noCostPriceVersions": "No cost prices version data available for selected business usit. Please select another business unit.",
     "noDataToDisplay": "No data satisfying to current filtering.",
@@ -14,10 +14,10 @@
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "Location",
+        "label": "Business Unit",
         "placeholders": {
-          "normal": "Select the location",
-          "noData": "No locations"
+          "normal": "Select the business unit",
+          "noData": "No business units"
         }
       },
       "costPriceVersions": {

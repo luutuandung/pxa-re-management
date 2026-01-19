@@ -1,8 +1,8 @@
 {
   "topHeading": "事業部原価項目設定",
   "guidances": {
-    "tableDataDisplaying": "事業部原価項目データを表示させるには、拠点を選んで下さい。なお、任意で事業部原価項目名でで絞りめます。",
-    "noBusinessUnits": "拠点データがないので、表示可能な関連原価登録データはありません。",
+    "tableDataDisplaying": "事業部原価項目データを表示させるには、事業部を選んで下さい。なお、任意で事業部原価項目名でで絞りめます。",
+    "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
     "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
     "dataSavingSucceeded": "事業部原価項目データの保存が完了しました。",
     "screenReaderOnly": {
@@ -15,10 +15,10 @@
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "拠点",
+        "label": "事業部",
         "placeholders": {
-          "normal": "拠点を選択",
-          "noData": "拠点がありません"
+          "normal": "事業部を選択",
+          "noData": "事業部がありません"
         }
       },
       "yearOfActualityStarting": { "accessibilityGuidance": "適用開始年" },
@@ -69,7 +69,7 @@
     }
   },
   "errors": {
-    "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中に不具合が発生しました。",
+    "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中に不具合が発生しました。",
     "codesOfAvailableCurrenciesRetrievingFailed": "利用可能な通貨コードの取得中に不具合が発生しました。エクセルファイルからデータをアプロードする場合、再取得してみ下さい。",
     "tableDataRetrievingFailed": "表示データの取得中に不具合が発生しました。",
     "excelDataParsingFailed": "エクセルファイルの読み込み中に不具合が発生しました。",

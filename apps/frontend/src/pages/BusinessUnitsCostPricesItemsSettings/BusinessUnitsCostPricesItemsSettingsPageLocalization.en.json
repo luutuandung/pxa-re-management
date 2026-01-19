@@ -1,7 +1,7 @@
 {
   "topHeading": "Business Cost Item Settings",
   "guidances": {
-    "tableDataDisplaying": "To display business units cost prices data table, please select the location. Also, it is possible additionally to search by business unit cost price item name.",
+    "tableDataDisplaying": "To display business units cost prices data table, please select the business unit. Also, it is possible additionally to search by business unit cost price item name.",
     "noBusinessUnits": "No data cost price registration data to display because no business units available.",
     "noDataToDisplay": "No data satisfying to current filtering.",
     "dataSavingSucceeded": "The business cost prices items table data saving complete.",
@@ -15,10 +15,10 @@
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "Location",
+        "label": "Business Unit",
         "placeholders": {
-          "normal": "Select the location",
-          "noData": "No locations"
+          "normal": "Select the business unit",
+          "noData": "No business units"
         }
       },
       "yearOfActualityStarting": { "accessibilityGuidance": "Year of starting of actuality" },

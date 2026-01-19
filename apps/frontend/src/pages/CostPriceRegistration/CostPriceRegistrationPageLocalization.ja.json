@@ -32,7 +32,8 @@
         "placeholders": {
           "normal": "原価パターン種類を選択",
           "noData": "原価パターン種類はありません"
-        }
+        },
+        "selectAll": "全選択"
       }
     },
     "buttons": {

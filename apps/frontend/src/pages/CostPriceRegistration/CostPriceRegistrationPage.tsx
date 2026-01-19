@@ -369,15 +369,18 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   private onCostPricePatternSelected(selectedCostPricePatternID: string): void {
 
+    const actualSelectedCostPricePatternID: string | null = 
+        selectedCostPricePatternID === "__ALL__" ? null : selectedCostPricePatternID;
+
     this.setState({
-      selectedCostPricePatternID,
+      selectedCostPricePatternID: actualSelectedCostPricePatternID,
       tableData: null,
       hasTableDataRetrievingForCurrentFilteringNotStartedYet: true
     });
 
     // selectedBusinessUnitID
     /* 【 理論：React 】 ステートの更新が非同期なので、this.state.selectedBusinessUnitIDを直接渡すと、エラーが発生する。 */
-    this.retrieveTableData({ selectedCostPricePatternID }).
+    this.retrieveTableData({ selectedCostPricePatternID: actualSelectedCostPricePatternID }).
         catch((error: unknown): void => { console.error(error); });
 
   }
@@ -671,21 +674,28 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
             )
           }
           itemsData={
-            this.state.costPricePatternsDropDownListItems.map(
-              (
-                {
-                  costPricePatternID,
-                  costPricePatternName
-                }: CostPriceRegistrationPageBFF.CostPricePatternsDropDownListItemsRetrieving.ResponseData.Item
-              ): DropDownList.ItemData =>
-                  ({
-                    key: costPricePatternID,
-                    value: costPricePatternID,
-                    displayingNode: costPricePatternName
-                  })
-            )
+            [
+              {
+                key: "__ALL__",
+                value: "__ALL__",
+                displayingNode: this.getLocalizedString("controls.dropDownLists.constPricePatterns.selectAll")
+              },
+              ...this.state.costPricePatternsDropDownListItems.map(
+                (
+                  {
+                    costPricePatternID,
+                    costPricePatternName
+                  }: CostPriceRegistrationPageBFF.CostPricePatternsDropDownListItemsRetrieving.ResponseData.Item
+                ): DropDownList.ItemData =>
+                    ({
+                      key: costPricePatternID,
+                      value: costPricePatternID,
+                      displayingNode: costPricePatternName
+                    })
+              )
+            ]
           }
-          value={ this.state.selectedCostPricePatternID }
+          value={ this.state.selectedCostPricePatternID === null ? "__ALL__" : this.state.selectedCostPricePatternID }
           onValueChange={ this.onCostPricePatternSelected.bind(this) }
           isVerticalOrientation={ true }
           disabled={ this.state.costPricePatternsDropDownListItems.length === 0 }

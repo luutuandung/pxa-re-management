@@ -32,7 +32,8 @@
         "placeholders": {
           "normal": "Please select cost price pattern",
           "noData": "No cost price patterns"
-        }
+        },
+        "selectAll": "Select All"
       }
     },
     "buttons": {

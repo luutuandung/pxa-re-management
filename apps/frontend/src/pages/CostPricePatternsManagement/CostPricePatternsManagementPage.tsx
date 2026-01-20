@@ -466,8 +466,6 @@ class CostPricePatternsManagementPage extends React.Component<
 
         { this.upperErrorMessageBox }
 
-        { this.tableSearchBox }
-
         <div className={ CSS_Classes["table-decorativeWrapper"] }>
           { this.tableView }
         </div>
@@ -482,9 +480,18 @@ class CostPricePatternsManagementPage extends React.Component<
 
 
   /* ┅┅┅ Action Bar ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+  private get isTableSearchBoxVisible(): boolean {
+    return !(
+      this.state.hasTableDataRetrievingForCurrentFilteringNotStartedYet ||
+      this.state.isTableDataRetrievingInProgress ||
+      this.state.hasTableDataRetrievingErrorOccurred ||
+      this.state.tableData.length === 0
+    );
+  }
+
   private get actionBar(): React.ReactNode {
     return (
-      <div className={ CSS_Classes.actionBar }>
+      <div className={ `${ CSS_Classes.actionBar } ${ this.isTableSearchBoxVisible ? CSS_Classes["actionBar--withTableSearchBox"] : "" }` }>
 
         <BusinessUnitsDropDownList
           label={ this.getLocalizedString("controls.dropDownLists.businessUnits.label") }
@@ -502,7 +509,7 @@ class CostPricePatternsManagementPage extends React.Component<
           className={ CSS_Classes["actionBar-dropDownList"] }
         />
 
-         <DropDownList
+        <DropDownList
           label={ this.getLocalizedString("controls.dropDownLists.costPriceVersions.label") }
           placeholder={
             this.getLocalizedString(
@@ -532,6 +539,8 @@ class CostPricePatternsManagementPage extends React.Component<
           loading={ this.state.isCostsPriceVersionsDropDownListItemsRetrievingInProgress }
           className={ CSS_Classes["actionBar-dropDownList"] }
         />
+
+        { this.tableSearchBox }
 
         <Button
           onClick={ (): void => { this.setState({ isCostPricePatternsManagementDialogOpened: true }); } }
@@ -661,7 +670,7 @@ class CostPricePatternsManagementPage extends React.Component<
     }
 
     return (
-      <div className="mt-6 mb-6 max-w-2xs">
+      <div className={ `${ CSS_Classes["actionBar-tableSearchBox"] } max-w-2xs` }>
         <TextBox
           value={ this.state.tableSearchQuery }
           onChangeEventHandler={ (value: string): void => {

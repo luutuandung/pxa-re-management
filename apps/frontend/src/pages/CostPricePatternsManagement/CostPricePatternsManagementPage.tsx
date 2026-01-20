@@ -30,6 +30,7 @@ import DropDownList from "@/components/molecules/DropDownList/DropDownList.tsx";
 import BusinessUnitsDropDownList from "@/components/molecules/DropDownList/Specials/BusinessUnits/BusinessUnitsDropDownList.tsx";
 import Alert from "@/components/molecules/Alert.tsx";
 import Button from "@/components/atoms/Button"
+import TextBox from "@/components/molecules/TextBox/TextBox.tsx";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { Table, TableCaption, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CostPricePatternsManagementDialog from
@@ -94,6 +95,7 @@ class CostPricePatternsManagementPage extends React.Component<
     isTableDataRetrievingInProgress: false,
     hasTableDataRetrievingErrorOccurred: false,
     selectedTableRowsData: new Map(),
+    tableSearchQuery: "",
 
     /* ┅┅┅ Other Data ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     /* ╍╍╍ Cost Prices Patterns Types List Items ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ */
@@ -464,6 +466,8 @@ class CostPricePatternsManagementPage extends React.Component<
 
         { this.upperErrorMessageBox }
 
+        { this.tableSearchBox }
+
         <div className={ CSS_Classes["table-decorativeWrapper"] }>
           { this.tableView }
         </div>
@@ -645,6 +649,31 @@ class CostPricePatternsManagementPage extends React.Component<
 
   }
 
+  private get tableSearchBox(): React.ReactNode {
+    
+    if (
+      this.state.hasTableDataRetrievingForCurrentFilteringNotStartedYet ||
+      this.state.isTableDataRetrievingInProgress ||
+      this.state.hasTableDataRetrievingErrorOccurred ||
+      this.state.tableData.length === 0
+    ) {
+      return null;
+    }
+
+    return (
+      <div className="mt-6 mb-6 max-w-2xs">
+        <TextBox
+          value={ this.state.tableSearchQuery }
+          onChangeEventHandler={ (value: string): void => {
+            this.setState({ tableSearchQuery: value });
+          }}
+          nativeInputElementAttributes={{
+            placeholder: this.getLocalizedString("controls.tableSearchBox.placeholder")
+          }}
+        />
+      </div>
+    );
+  }
 
   /* ┅┅┅ Table View ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   private get tableView(): React.ReactNode {
@@ -834,52 +863,74 @@ class CostPricePatternsManagementPage extends React.Component<
   }
 
   private get tableWithData(): React.ReactNode {
+    
+    /* 【 検索機能 】 検索クエリに基づいてテーブルデータをフィルタリング */
+    const filteredTableData = this.state.tableSearchQuery.trim() === "" ?
+      this.state.tableData :
+      this.state.tableData.filter(
+        (rowData: CostPricePatternsManagementPageBFF.TableData.Row): boolean => {
+          const searchQuery = this.state.tableSearchQuery.toLowerCase();
+          return (
+            rowData.businessUnitCode.toLowerCase().includes(searchQuery) ||
+            rowData.businessUnitLocalizedName.toLowerCase().includes(searchQuery)
+          );
+        }
+      );
+
     return (
       <Table>
         { this.tableHeader }
         <TableBody className="bg-white">
           {
-            this.state.tableData.map(
-              (rowData: CostPricePatternsManagementPageBFF.TableData.Row): React.ReactNode => {
+            filteredTableData.length > 0 ? (
+              filteredTableData.map(
+                (rowData: CostPricePatternsManagementPageBFF.TableData.Row): React.ReactNode => {
 
-                const reusableKey: string = CostPricePatternsManagementPage.State.SelectedTableRowsData.CompoundKey.
-                    generate(rowData);
+                  const reusableKey: string = CostPricePatternsManagementPage.State.SelectedTableRowsData.CompoundKey.
+                      generate(rowData);
 
-                return (
-                  <TableRow
-                    key={ reusableKey }
-                    className="border-b border-gray-200"
-                  >
-                    <TableCell className={CSS_Classes["table-bodyCell"]}>
-                      <Checkbox
-                        checked={ this.state.selectedTableRowsData.has(reusableKey) }
-                        onCheckedChange={ (): void => { this.onToggleTableRowSelecting(reusableKey, rowData); } }
-                      />
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      { rowData.businessUnitCode }
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      { rowData.businessUnitLocalizedName }
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      {
+                  return (
+                    <TableRow
+                      key={ reusableKey }
+                      className="border-b border-gray-200"
+                    >
+                      <TableCell className={CSS_Classes["table-bodyCell"]}>
+                        <Checkbox
+                          checked={ this.state.selectedTableRowsData.has(reusableKey) }
+                          onCheckedChange={ (): void => { this.onToggleTableRowSelecting(reusableKey, rowData); } }
+                        />
+                      </TableCell>
+                      <TableCell className={ CSS_Classes["table-bodyCell"] }>
+                        { rowData.businessUnitCode }
+                      </TableCell>
+                      <TableCell className={ CSS_Classes["table-bodyCell"] }>
+                        { rowData.businessUnitLocalizedName }
+                      </TableCell>
+                      <TableCell className={ CSS_Classes["table-bodyCell"] }>
                         {
-                          [CostPriceRegistration.CostPriceTypes.amount]: this.getLocalizedString("table.bodyCells.costPriceType.amount"),
-                          [CostPriceRegistration.CostPriceTypes.rate]: this.getLocalizedString("table.bodyCells.costPriceType.rate")
-                        }[rowData.costPriceType]
-                      }
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      { rowData.currencyCode }
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      { rowData.costPricePatternLocalizedName }
-                    </TableCell>
-                  </TableRow>
-                );
+                          {
+                            [CostPriceRegistration.CostPriceTypes.amount]: this.getLocalizedString("table.bodyCells.costPriceType.amount"),
+                            [CostPriceRegistration.CostPriceTypes.rate]: this.getLocalizedString("table.bodyCells.costPriceType.rate")
+                          }[rowData.costPriceType]
+                        }
+                      </TableCell>
+                      <TableCell className={ CSS_Classes["table-bodyCell"] }>
+                        { rowData.currencyCode }
+                      </TableCell>
+                      <TableCell className={ CSS_Classes["table-bodyCell"] }>
+                        { rowData.costPricePatternLocalizedName }
+                      </TableCell>
+                    </TableRow>
+                  );
 
-              }
+                }
+              )
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  { this.getLocalizedString("table.noSearchResults") }
+                </TableCell>
+              </TableRow>
             )
           }
         </TableBody>
@@ -960,6 +1011,7 @@ namespace CostPricePatternsManagementPage {
     isTableDataRetrievingInProgress: boolean;
     hasTableDataRetrievingErrorOccurred: boolean;
     selectedTableRowsData: CostPricePatternsManagementPage.State.SelectedTableRowsData;
+    tableSearchQuery: string;
 
     /* ┅┅┅ Other Data ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     /* ╍╍╍ Cost Prices Patterns Types List Items ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ */

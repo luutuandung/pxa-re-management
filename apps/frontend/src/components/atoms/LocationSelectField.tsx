@@ -1,5 +1,6 @@
 import type { BusinessUnit } from '@pxa-re-management/shared';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/store/languageSettings';
 
@@ -9,12 +10,14 @@ const LocationSelectField: React.FC<LocationSelectField.Props> = ({
   value,
   onValueChange,
   locations,
-  placeholder = '事業部を選択',
+  placeholder,
   className,
   disabled = false,
 }: LocationSelectField.Props): React.ReactNode => {
 
+  const { t } = useTranslation('common');
   const { currentLanguage } = useLanguage();
+  const defaultPlaceholder = placeholder ?? t('locationSelect.placeholder');
   const _getLocationName = (businessUnit: BusinessUnit) => {
     const l = businessUnit as unknown as Record<string, any>;
     const joinSpace = (a?: string, b?: string) => [a, b].filter((x) => Boolean(x && x.trim())).join(' ');
@@ -52,7 +55,7 @@ const LocationSelectField: React.FC<LocationSelectField.Props> = ({
         disabled={ disabled}
       >
         <SelectTrigger className="cursor-pointer">
-          <SelectValue placeholder={ placeholder } />
+          <SelectValue placeholder={ defaultPlaceholder } />
         </SelectTrigger>
         <SelectContent className="bg-white border border-gray-200 rounded-md shadow-lg">
           {

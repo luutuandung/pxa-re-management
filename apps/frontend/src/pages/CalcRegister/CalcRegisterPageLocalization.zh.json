@@ -3,13 +3,13 @@
   "labels": {
     "location": "事业部",
     "calcType": "计算种类",
-    "keyword": "关键词",
+    "keyword": "成本项目搜索",
     "unset": "未设定",
     "conditionUnset": "条件未设定"
   },
   "placeholders": {
     "calcType": "请选择计算种类",
-    "keyword": "关键词（未实现）",
+    "keyword": "成本项目搜索",
     "selectOperator": "选择运算符"
   },
   "buttons": {

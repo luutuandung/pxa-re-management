@@ -31,7 +31,7 @@ export class CalcTypeController {
     name: 'businessunitId',
     required: false,
     type: String,
-    description: '拠点ID（指定しない場合は全拠点）',
+    description: '事業部ID（指定しない場合は全事業部）',
   })
   @ApiResponse({
     status: HttpStatus.OK,

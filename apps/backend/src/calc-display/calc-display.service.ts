@@ -465,6 +465,7 @@ export class CalcDisplayService {
     // 現在スキーマでは原価種類はフラグで表現されているため展開する
     const expanded = items
       .filter((i) => i.curCd === curCode || !i.curCd)
+      .filter((i) => i.amountValidFlg || i.rateValidFlg || i.calcValidFlg)
       .flatMap((i) => {
         const result: { buCostItemId: string; buCostCodeId: string; costType: 'G' | 'R' | 'K' }[] = [];
         if (i.amountValidFlg)

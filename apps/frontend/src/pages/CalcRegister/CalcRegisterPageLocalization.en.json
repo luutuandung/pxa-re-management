@@ -1,15 +1,15 @@
 {
   "title": "Calculation Register",
   "labels": {
-    "location": "Location",
+    "location": "Business Unit",
     "calcType": "Calculation Type",
-    "keyword": "Keyword",
+    "keyword": "Cost Item Search",
     "unset": "Unset",
     "conditionUnset": "Condition not set"
   },
   "placeholders": {
     "calcType": "Select calculation type",
-    "keyword": "Keyword (not implemented)",
+    "keyword": "Cost Item Search",
     "selectOperator": "Select operator"
   },
   "buttons": {

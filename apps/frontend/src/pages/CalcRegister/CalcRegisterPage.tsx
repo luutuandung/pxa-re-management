@@ -69,7 +69,7 @@ const CalcRegisterPage = () => {
     }
   }, [selectedBusinessUnitId, fetchCalcType]);
 
-  // 拠点変更
+  // 事業部変更
   const handleChangeBusinessUnit = (buId: string) => {
     console.log('[page] change BU:', buId);
     initForBusinessUnit(buId);
@@ -81,7 +81,6 @@ const CalcRegisterPage = () => {
     updateSelectedCalcType(ctId);
   };
 
-  // 検索（キーワードは現時点ダミー）
   const handleSearch = () => {
     fetchBusinessCostForCalculation(selectedBusinessUnitId, selectedCalcTypeId);
     console.log('[page] search clicked:', { selectedBusinessUnitId, selectedCalcTypeId, keyword });
@@ -92,9 +91,26 @@ const CalcRegisterPage = () => {
       // calcDisplay がnull想定だった箇所をガード
       const d = c.calcDisplay as CalcDisplay | null;
       if (!d) return true; // 未設定は一覧残す
-      return d.businessunitId === selectedBusinessUnitId && d.calcTypeId === selectedCalcTypeId;
+      
+      const matchesBusinessUnitAndCalcType = d.businessunitId === selectedBusinessUnitId && d.calcTypeId === selectedCalcTypeId;
+      if (!matchesBusinessUnitAndCalcType) return false;
+      
+      if (!keyword.trim()) return true;
+      console.log('buItemIdToCodeMap', buItemIdToCodeMap)
+      const baseId = d.buCostItemId;
+      const mapped = buItemIdToCodeMap[baseId];
+      const fallbackKey = Object.keys(buItemIdToCodeMap).find((k) => k.startsWith(`${baseId}-`));
+      const costItemInfo = mapped || (fallbackKey ? buItemIdToCodeMap[fallbackKey] : null);
+      
+      if (!costItemInfo) return true;
+      
+      const costItemCode = costItemInfo.buCostCd?.toLowerCase() || '';
+      const costItemName = costItemInfo.buCostNameJa?.toLowerCase() || '';
+      const searchKeyword = keyword.toLowerCase().trim();
+      
+      return costItemCode.includes(searchKeyword) || costItemName.includes(searchKeyword);
     });
-  }, [calculations, selectedBusinessUnitId, selectedCalcTypeId]);
+  }, [calculations, selectedBusinessUnitId, selectedCalcTypeId, keyword, buItemIdToCodeMap]);
 
   const CostItemLabel = ({ buCostCd, costType }: { buCostCd: string; costType: 'G' | 'R' | 'K' }) => {
     const code = buCostCodes.find((b) => b.buCostCd === buCostCd);

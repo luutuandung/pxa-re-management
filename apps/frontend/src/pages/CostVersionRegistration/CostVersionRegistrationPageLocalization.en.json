@@ -49,10 +49,10 @@
     "allBusinessUnits": "All",
     "dropDownLists": {
       "businessUnits": {
-        "label": "Location",
+        "label": "Business Unit",
         "placeholders": {
-          "normal": "Select the location",
-          "noData": "No locations"
+          "normal": "Select the business unit",
+          "noData": "No business units"
         }
       }
     }

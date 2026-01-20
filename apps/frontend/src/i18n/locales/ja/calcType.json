@@ -6,7 +6,7 @@
     "saving": "保存中...",
     "cancel": "キャンセル",
     "showInvalid": "無効を表示",
-    "selectBusinessUnit": "拠点",
+    "selectBusinessUnit": "事業部",
     "placeholderName": "計算種類名"
   },
   "table": {
@@ -46,7 +46,7 @@
     "validationNameRequired": "名称は必須です"
   },
   "validation": {
-    "selectBusinessUnit": "拠点を選択してください",
+    "selectBusinessUnit": "事業部を選択してください",
     "nameJaRequired": "計算種類名（日本語）を入力してください",
     "nameEnRequired": "計算種類名（英語）を入力してください",
     "nameZhRequired": "計算種類名（中国語）を入力してください",

@@ -245,7 +245,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
   /* ━━━ Data Retrieving ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   /* 【整備性】 この群のメソッドの順番を呼び出される順番通り保つ事。 */
 
-  /** @description ドロップダウン専用拠点（事実上「事業部」）を取得。拠点及び原価バージョンを選ばないと、データ表示・管理不可能。 */
+  /** @description ドロップダウン専用事業部を取得。事業部及び原価バージョンを選ばないと、データ表示・管理不可能。 */
   private async retrieveBusinessUnits(): Promise<void> {
 
     let businessUnits: ReadonlyArray<BusinessUnit>;

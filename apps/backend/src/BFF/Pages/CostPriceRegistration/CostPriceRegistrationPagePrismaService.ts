@@ -145,7 +145,7 @@ export default class CostPriceRegistrationPagePrismaService implements CostPrice
 
     const keysToRemove = new Set(actualModelsCategoriesNamesByIDs.keys());
     actualModelsCategoriesIDs = new Set(
-      [...actualModelsCategoriesIDs].filter(id => !keysToRemove.has(id))
+    [...actualModelsCategoriesIDs].filter(id => !keysToRemove.has(id))
     );
 
     for (

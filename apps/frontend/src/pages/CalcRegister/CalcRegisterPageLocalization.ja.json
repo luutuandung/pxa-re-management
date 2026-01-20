@@ -1,15 +1,15 @@
 {
   "title": "計算式登録",
   "labels": {
-    "location": "拠点",
+    "location": "事業部",
     "calcType": "計算種類",
-    "keyword": "キーワード",
+    "keyword": "原価項目検索",
     "unset": "未設定",
     "conditionUnset": "条件未設定"
   },
   "placeholders": {
     "calcType": "計算種類を選択してください",
-    "keyword": "キーワード（未実装）",
+    "keyword": "原価項目検索",
     "selectOperator": "演算子を選択"
   },
   "buttons": {

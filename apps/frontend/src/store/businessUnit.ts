@@ -15,7 +15,7 @@ export const useBusinessUnitActions = () => {
       setBusinessUnit(await api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json());
     } catch (error) {
       console.error('fetchBusinessUnit error:', error);
-      addErrorMessage('拠点情報の取得に失敗しました');
+      addErrorMessage('事業部情報の取得に失敗しました');
     }
   }, [setBusinessUnit]);
 

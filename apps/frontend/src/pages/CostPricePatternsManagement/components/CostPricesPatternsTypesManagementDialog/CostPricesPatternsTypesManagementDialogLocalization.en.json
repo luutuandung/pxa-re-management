@@ -24,7 +24,7 @@
     }
   },
   "guidances": {
-    "noCostPricesPatternsListItems": "No cost price patterns types data for selected location.",
+    "noCostPricesPatternsListItems": "No cost price patterns types data for selected business unit.",
     "newCostPricePatternDataSubmittingSuccess": "Cost price pattern type has been added.",
     "existingCostPricePatternDataSubmittingSuccess": "Cost price pattern type has been updated.",
     "screenReaderOnly": {

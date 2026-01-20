@@ -163,7 +163,7 @@ const CalcTypePage: FC = () => {
     }
   }, [selectedBusinessUnitId, fetchCalcType]);
 
-  // 拠点変更時の処理
+  // 事業部変更時の処理
   const handleChangeBusinessUnit = (buId: string) => {
     console.log('[page] change BU:', buId);
     // initForBusinessUnit(buId);

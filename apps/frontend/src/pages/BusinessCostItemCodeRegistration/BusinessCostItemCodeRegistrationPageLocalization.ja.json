@@ -5,7 +5,7 @@
     "businessCostItems": "事業部原価項目"
   },
   "controls": {
-    "locationFilter": "拠点絞り込み:",
+    "locationFilter": "事業部絞り込み:",
     "showAllLocations": "選択してください",
     "showInvalid": "無効表示",
     "add": "追加",
@@ -41,7 +41,7 @@
     "page": "ページ"
   },
   "validation": {
-    "selectLocation": "拠点を選択してください",
+    "selectLocation": "事業部を選択してください",
     "buCostCd": "コードを入力してください",
     "codeHalfWidthOnly": "コードは半角文字のみ入力できます",
     "commonEnglishNamingInvalidCharacters": "英語名称に不正な文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",

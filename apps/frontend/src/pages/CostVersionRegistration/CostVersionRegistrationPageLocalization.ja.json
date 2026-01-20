@@ -49,10 +49,10 @@
     "allBusinessUnits": "すべて",
     "dropDownLists": {
       "businessUnits": {
-        "label": "拠点",
+        "label": "事業部",
         "placeholders": {
-          "normal": "拠点を選択",
-          "noData": "拠点がありません"
+          "normal": "事業部を選択",
+          "noData": "事業部がありません"
         }
       }
     }

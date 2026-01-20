@@ -1,9 +1,9 @@
 {
   "topHeading": "原価登録",
   "guidances": {
-    "tableDataDisplaying": "原価登録データを表示させるには、拠点を選んでから原価バージョンを選んで下さい。その後、任意で原価パターン種類で絞りめます。",
-    "noBusinessUnits": "拠点データがないので、表示可能な関連原価登録データはありません。",
-    "noCostPriceVersions": "選択された拠点と関連している原価登録バージョンデータはありません。",
+    "tableDataDisplaying": "原価登録データを表示させるには、事業部を選んでから原価バージョンを選んで下さい。その後、任意で原価パターン種類で絞りめます。",
+    "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
+    "noCostPriceVersions": "選択された事業部と関連している原価登録バージョンデータはありません。",
     "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
     "importedFromExcelDataSubmittingSucceeded": "エクセルファイルを元に原価登録データが更新されました。",
     "screenReaderOnly": {
@@ -14,10 +14,10 @@
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "拠点",
+        "label": "事業部",
         "placeholders": {
-          "normal": "拠点を選択",
-          "noData": "拠点がありません"
+          "normal": "事業部を選択",
+          "noData": "事業部がありません"
         }
       },
       "costPriceVersions": {
@@ -32,7 +32,8 @@
         "placeholders": {
           "normal": "原価パターン種類を選択",
           "noData": "原価パターン種類はありません"
-        }
+        },
+        "selectAll": "全選択"
       }
     },
     "buttons": {
@@ -64,7 +65,7 @@
     }
   },
   "errors": {
-    "businessUnitsDataRetrievingFailed": "絞り込みに必要な拠点データの取得中不具合が発生しました。",
+    "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中不具合が発生しました。",
     "hasCostPriceVersionsDropDownListItemsFailed": "原価バージョン絞り込みに必要なデータの取得中不具合が発生しました。",
     "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
     "excelDataParsingFailed": "エクセルファイルの読み込み中不具合が発生しました。",

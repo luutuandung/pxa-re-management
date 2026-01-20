@@ -24,7 +24,7 @@
     }
   },
   "guidances": {
-    "noCostPricesPatternsListItems": "選択された拠点に該当している原価パターン種類はありません。",
+    "noCostPricesPatternsListItems": "選択された事業部に該当している原価パターン種類はありません。",
     "newCostPricePatternDataSubmittingSuccess": "原価パターン種類が追加されました。",
     "existingCostPricePatternDataSubmittingSuccess": "原価パターン種類が更新されました。",
     "screenReaderOnly": {

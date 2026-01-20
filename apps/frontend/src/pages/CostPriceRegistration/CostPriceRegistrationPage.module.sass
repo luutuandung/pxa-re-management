@@ -52,7 +52,8 @@
 
     border-width: 1px
     border-radius: var(--radius-lg)
-    overflow-x: auto
+    max-height: calc(100vh - 320px)
+    overflow: auto
 
     border-style: var(--tw-border-style)
     border-color: var(--color-gray-200)
@@ -73,11 +74,24 @@
 
       margin: calc(var(--spacing) * 2)
 
+    
+    // Override Table component's built-in container to remove its overflow
+    [data-slot="table-container"]
+      overflow: visible !important
+      
+    table
+      min-width: max-content
+      width: 100%
+
 
   &-headerCell
 
     @include CellCommonStyles
     text-align: left
+    position: sticky !important
+    top: 0 !important
+    z-index: 1 !important
+    background-color: #00388E !important
 
 
     &__small

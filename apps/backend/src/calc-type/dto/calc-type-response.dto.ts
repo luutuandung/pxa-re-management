@@ -62,7 +62,7 @@ export class CalcTypeResponseDto {
   modifiedOn: string;
 
   @ApiProperty({
-    description: '拠点ID',
+    description: '事業部ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   businessunitId: string;

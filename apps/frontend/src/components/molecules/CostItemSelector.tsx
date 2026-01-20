@@ -8,14 +8,23 @@ type Props = {
   value?: { buCostCd: string; costType: 'G' | 'R' | 'K' };
   onChange: (v: { buCostCd: string; costType: 'G' | 'R' | 'K' }) => void;
   label?: string;
+  excludeZero?: boolean;
 };
 
-const CostItemSelector = ({ buCostCodes, buCostItems, value, onChange, label }: Props) => {
-  const current = buCostCodes.find((b) => b.buCostCd === value?.buCostCd) ?? buCostCodes[0];
+const CostItemSelector = ({ buCostCodes, buCostItems, value, onChange, label, excludeZero = false }: Props) => {
+  const validBuCostCodes = buCostCodes.filter((code) => {
+    return buCostItems.some((item) => item.buCostCodeId === code.buCostCodeId);
+  });
+  
+  const filteredCostCodes = excludeZero 
+    ? validBuCostCodes.filter((b) => b.buCostCd !== 'ZERO')
+    : validBuCostCodes;
+  
+  const current = filteredCostCodes.find((b) => b.buCostCd === value?.buCostCd) ?? filteredCostCodes[0];
   const currentTypes = buCostItems.filter((i) => i.buCostCodeId === current?.buCostCodeId).map((i) => i.costType);
   const types = currentTypes.length > 0 ? currentTypes : (['G'] as Array<'G' | 'R' | 'K'>);
 
-  const costCdOptions = buCostCodes.map((b) => {
+  const costCdOptions = filteredCostCodes.map((b) => {
     return { value: b.buCostCd, label: `[${b.buCostCd}] ${b.buCostNameJa}` }
   });
   

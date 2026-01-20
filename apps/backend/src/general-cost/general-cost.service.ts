@@ -328,7 +328,7 @@ export class GeneralCostService {
       return await this.prisma.$transaction(async (transaction) => {
         const results: GeneralCostCode[] = [];
 
-        // 全拠点データを取得（一度だけ）
+        // 全事業部データを取得（一度だけ）
         const businessUnits = await transaction.businessUnit.findMany();
         const businessUnitsIDs = businessUnits.map((item) => item.businessunitId);
 

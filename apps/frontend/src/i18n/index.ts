@@ -24,8 +24,6 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     const homeModule = await import(`./locales/${language}/home.json`);
     resources.home = homeModule.default;
 
-    const uniformCostModule = await import(`./locales/${language}/uniformCostItemCodeRegistration.json`);
-    resources.uniformCostItemCodeRegistration = uniformCostModule.default;
 
     const costAggregationScenarioModule = await import(`./locales/${language}/costAggregationScenario.json`);
     resources.costAggregationScenario = costAggregationScenarioModule.default;
@@ -59,6 +57,11 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
       import(`./../pages/BusinessCostItemCodeRegistration/BusinessCostItemCodeRegistrationPageLocalization.${ language }.json`).then(
         (translations: { [key: string]: string | object }): void => {
           resources.businessCostItemCodeRegistration = translations;
+        }
+      ),
+      import(`./../pages/UniformCostItemCodeRegistration/UniformCostItemCodeRegistrationPageLocalization.${ language }.json`).then(
+        (translations: { [key: string]: string | object }): void => {
+          resources.uniformCostItemCodeRegistration = translations;
         }
       ),
       import(`./../pages/CalcRegister/CalcRegisterPageLocalization.${ language }.json`).then(

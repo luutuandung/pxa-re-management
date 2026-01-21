@@ -6,7 +6,7 @@ import CalcRegisterPage from '@/pages/CalcRegister/CalcRegisterPage';
 import CalcTypePage from './pages/calcType';
 import CostVersionRegistrationPage from '@/pages/CostVersionRegistration/CostVersionRegistrationPage';
 import Home from './pages/Home';
-import UniformCostItemCodeRegistration from './pages/uniformCostItemCodeRegistration';
+import UniformCostItemCodeRegistrationPage from '@/pages/UniformCostItemCodeRegistration/UniformCostItemCodeRegistrationPage';
 import BusinessUnitsCostPricesItemsSettingsPage from
     '@/pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsPage.tsx';
 import CostPriceRegistrationPage from "@/pages/CostPriceRegistration/CostPriceRegistrationPage.tsx";
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'uniformCostItemCodeRegistration',
-        element: <UniformCostItemCodeRegistration />,
+        element: <UniformCostItemCodeRegistrationPage />,
         errorElement: <PageLoadFailed />,
       },
       {

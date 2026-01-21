@@ -14,9 +14,9 @@ import {
 } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Backdrop from '@/components/molecules/Backdrop.tsx';
-import deleteIcon from '../assets/btn_delete.svg';
-import { useGeneralCostCodeActions, useGeneralCostCodeSelectors } from '../store/generalCostCode';
-import { useStickyMessageActions } from '../store/stickyMessage';
+import deleteIcon from '@/assets/btn_delete.svg';
+import { useGeneralCostCodeActions, useGeneralCostCodeSelectors } from '@/store/generalCostCode';
+import { useStickyMessageActions } from '@/store/stickyMessage';
 import {
   CommonEnglishNamingValidator,
   CommonJapaneseNamingValidator,
@@ -48,6 +48,7 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   const [isSaving, setIsSaving] = React.useState(false);
   const [isDeletingSelectedItem, setIsDeletingSelectedItem] = React.useState(false);
   const [selectedDeleteItem, setSelectedDeleteItem] = React.useState<UnifiedCostItem | null>(null);
+  const [isReactivating, setIsReactivating] = React.useState(false);
   const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc' | null>(null);
   const [highlightedItemID, setHighlightedItemID] = React.useState<string | null>(null);
 
@@ -484,12 +485,22 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
   // 有効化処理
   const handleReactivate = React.useCallback(
     async (item: UnifiedCostItem) => {
+      // 既に処理中の場合は何もしない
+      if (isReactivating) {
+        return;
+      }
+
       try {
+        setIsReactivating(true);
+        Backdrop.display();
+
         if (item.isNew) {
           // 新規項目の場合：作成処理
           // バリデーション
           if (!item.generalCostCd || !item.generalCostNameJa || !item.generalCostNameEn || !item.generalCostNameZh) {
             addErrorMessage(t('validation.generalCostCd'));
+            setIsReactivating(false);
+            Backdrop.dismiss();
             return;
           }
 
@@ -510,9 +521,12 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
         }
       } catch (error) {
         console.error('有効化/作成に失敗しました:', error);
+      } finally {
+        setIsReactivating(false);
+        Backdrop.dismiss();
       }
     },
-    [ reactivateGeneralCostCode, bulkCreateGeneralCostCodes, removeItem, addErrorMessage, t ]
+    [ reactivateGeneralCostCode, bulkCreateGeneralCostCodes, removeItem, addErrorMessage, t, isReactivating ]
   );
 
   // ソート機能
@@ -683,9 +697,10 @@ const UniformCostItemCodeRegistration: React.FC = (): React.ReactNode => {
                 <button
                   type="button"
                   onClick={() => handleReactivate(unifiedCostItem)}
-                  className="text-blue-600 hover:text-blue-800 underline hover:no-underline text-sm"
+                  className="text-blue-600 hover:text-blue-800 underline hover:no-underline text-sm disabled:text-gray-400 disabled:cursor-not-allowed"
+                  disabled={isReactivating}
                 >
-                  {t('controls.activate')}
+                  {isReactivating ? t('controls.saving') : t('controls.activate')}
                 </button>
               ) : (
                 // 既存項目で有効：削除ボタン

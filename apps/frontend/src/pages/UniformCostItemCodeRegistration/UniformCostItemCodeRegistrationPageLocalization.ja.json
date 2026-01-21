@@ -32,15 +32,19 @@
   },
   "validation": {
     "generalCostCd": "コードを入力してください",
-    "japaneseName": "日本語名称を入力してください",
-    "chineseName": "中国語名称を入力してください",
-    "englishName": "英語名称を入力してください",
     "codeHalfWidthOnly": "コードは半角文字のみ入力できます",
-    "englishNameHalfWidthOnly": "英語名称は半角文字のみ入力できます",
-    "noEnvironmentDependentChars": "環境依存文字は入力できません",
     "commonEnglishNamingInvalidCharacters": "英語名称に不正な文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonEnglishNamingNotExists": "英語名称を入力してください",
+    "commonEnglishNamingExistsButNotString": "英語名称は文字列である必要があります",
+    "commonEnglishNamingStringButEmpty": "英語名称を入力してください",
     "commonJapaneseNamingInvalidCharacters": "日本語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
-    "commonChineseNamingInvalidCharacters": "中国語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}"
+    "commonJapaneseNamingNotExists": "日本語名称を入力してください",
+    "commonJapaneseNamingExistsButNotString": "日本語名称は文字列である必要があります",
+    "commonJapaneseNamingStringButEmpty": "日本語名称を入力してください",
+    "commonChineseNamingInvalidCharacters": "中国語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingNotExists": "中国語名称を入力してください",
+    "commonChineseNamingExistsButNotString": "中国語名称は文字列である必要があります",
+    "commonChineseNamingStringButEmpty": "中国語名称を入力してください"
   },
   "modals": {
     "save": {

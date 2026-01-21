@@ -107,11 +107,11 @@ export class CalcDisplayService {
     }));
 
     return businessCostCodesWithFiltered.map((businessUnitCode) => {
-
       const targetBusinessCostItem =
-          businessUnitCode.buCostItems.length > 1 ?
-              businessUnitCode.buCostItems.find((item) => item.curCd === currencyCode) :
-              businessUnitCode.buCostItems[0];
+        businessUnitCode.buCostItems.length > 1 ?
+            businessUnitCode.buCostItems.find((item) => item.curCd === currencyCode) 
+            ?? businessUnitCode.buCostItems[0]
+            : businessUnitCode.buCostItems[0];
 
       if (!targetBusinessCostItem) {
         throw new BusinessException(

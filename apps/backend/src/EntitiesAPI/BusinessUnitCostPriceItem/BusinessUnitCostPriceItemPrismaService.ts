@@ -154,6 +154,44 @@ export default class BusinessUnitCostPriceItemPrismaService implements BusinessU
 
 
   /* ━━━ Auxiliaries ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  public async retrieveExistingDatesByItemIDs(
+    itemIDs: ReadonlyArray<string>
+  ): Promise<ReadonlyMap<string, Readonly<{
+    startingYearAndMonth__YYYYMM: string;
+    endingYearAndMonth__YYYYMM: string | null;
+  }>>> {
+    if (itemIDs.length === 0) {
+      return new Map();
+    }
+
+    const existingItems = await this.prismaService.buCostItem.findMany({
+      where: {
+        buCostItemId: {
+          in: Array.from(itemIDs)
+        }
+      },
+      select: {
+        buCostItemId: true,
+        startDate: true,
+        endDate: true
+      }
+    });
+
+    const result = new Map<string, Readonly<{
+      startingYearAndMonth__YYYYMM: string;
+      endingYearAndMonth__YYYYMM: string | null;
+    }>>();
+
+    for (const item of existingItems) {
+      result.set(item.buCostItemId, {
+        startingYearAndMonth__YYYYMM: item.startDate,
+        endingYearAndMonth__YYYYMM: item.endDate === "" ? null : item.endDate
+      });
+    }
+
+    return result;
+  }
+
   private async checkBusinessUnitCostPriceItemsForDuplicationsBeforeUpdate(
     requestData: ReadonlyArray<BusinessUnitCostPriceItemGateway.UpdatingOfOne.RequestData>
   ): Promise<void> {

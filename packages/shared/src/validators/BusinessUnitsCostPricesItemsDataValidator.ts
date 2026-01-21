@@ -10,6 +10,10 @@ export abstract class BusinessUnitsCostPricesItemsDataValidator {
       codesOfAvailableCurrencies: ReadonlySet<string>;
       referenceYear: number;
       dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating;
+      existingDatesByItemID?: ReadonlyMap<string, Readonly<{
+        startingYearAndMonth__YYYYMM: string;
+        endingYearAndMonth__YYYYMM: string | null;
+      }>>;
     }>
   ): BusinessUnitsCostPricesItemsDataValidator.ValidationResult<
     BusinessUnitCostPriceItemGateway.UpdatingOfMultipleOnes.RequestData.Item
@@ -34,11 +38,16 @@ export abstract class BusinessUnitsCostPricesItemsDataValidator {
     {
       codesOfAvailableCurrencies,
       referenceYear,
-      dataPurpose
+      dataPurpose,
+      existingDatesByItemID
     }: Readonly<{
       codesOfAvailableCurrencies: ReadonlySet<string>;
       referenceYear: number;
       dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes,
+      existingDatesByItemID?: ReadonlyMap<string, Readonly<{
+        startingYearAndMonth__YYYYMM: string;
+        endingYearAndMonth__YYYYMM: string | null;
+      }>>;
     }>
   ): BusinessUnitsCostPricesItemsDataValidator.ValidationResult<ValidItem> {
 
@@ -153,20 +162,38 @@ export abstract class BusinessUnitsCostPricesItemsDataValidator {
       } else {
 
         const yearOfActualityStarting: number = Number(item.startingYearAndMonth__YYYYMM.slice(0, 4));
+        
+        let shouldValidateYear = true;
+        if (
+          dataPurpose === BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating &&
+          typeof item.businessUnitCostPriceItemID === "string" &&
+          existingDatesByItemID !== undefined
+        ) {
+          const existingDates = existingDatesByItemID.get(item.businessUnitCostPriceItemID);
+          if (existingDates !== undefined && existingDates.startingYearAndMonth__YYYYMM === item.startingYearAndMonth__YYYYMM) {
+            // 日付が変更されていない場合は年バリデーションをスキップ
+            shouldValidateYear = false;
+          }
+        }
 
-        if (yearOfActualityStarting < earliestYearOfActualityStarting) {
-          validationErrorsDataForCurrentItem.push({
-            code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.StartingYearMonth.Codes.
-              yearIsEarlierThanEarliestOne,
-            earliestYear: earliestYearOfActualityStarting
-          });
-        } else if (yearOfActualityStarting > latestYearOfActualityStarting) {
-          validationErrorsDataForCurrentItem.push({
-            code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.StartingYearMonth.Codes.
-              yearIsLaterThanLatestOne,
-            latestYear: latestYearOfActualityStarting
-          });
+        if (shouldValidateYear) {
+          if (yearOfActualityStarting < earliestYearOfActualityStarting) {
+            validationErrorsDataForCurrentItem.push({
+              code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.StartingYearMonth.Codes.
+                yearIsEarlierThanEarliestOne,
+              earliestYear: earliestYearOfActualityStarting
+            });
+          } else if (yearOfActualityStarting > latestYearOfActualityStarting) {
+            validationErrorsDataForCurrentItem.push({
+              code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.StartingYearMonth.Codes.
+                yearIsLaterThanLatestOne,
+              latestYear: latestYearOfActualityStarting
+            });
+          } else {
+            contextIndependentlyValidYearOfActualityStarting = yearOfActualityStarting;
+          }
         } else {
+          // バリデーションをスキップする場合でも、年は有効として扱う
           contextIndependentlyValidYearOfActualityStarting = yearOfActualityStarting;
         }
 
@@ -211,19 +238,45 @@ export abstract class BusinessUnitsCostPricesItemsDataValidator {
 
           const yearOfActualityEnding: number = Number(item.endingYearAndMonth__YYYYMM.slice(0, 4));
 
-          if (yearOfActualityEnding < earliestYearOfActualityEnding) {
-            validationErrorsDataForCurrentItem.push({
-              code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.EndingYearMonth.Codes.
-                  yearIsEarlierThanEarliestOne,
-              earliestYear: earliestYearOfActualityEnding
-            });
-          } else if (yearOfActualityEnding > latestYearOfActualityEnding) {
-            validationErrorsDataForCurrentItem.push({
-              code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.EndingYearMonth.Codes.
-                  yearIsLaterThanLatestOne,
-              latestYear: latestYearOfActualityEnding
-            });
+          let shouldValidateEndingYear = true;
+          if (
+            dataPurpose === BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating &&
+            typeof item.businessUnitCostPriceItemID === "string" &&
+            existingDatesByItemID !== undefined
+          ) {
+            const existingDates = existingDatesByItemID.get(item.businessUnitCostPriceItemID);
+            if (existingDates !== undefined) {
+              // nullとnull、または同じ文字列の場合は変更なしとみなす
+              const existingEnding = existingDates.endingYearAndMonth__YYYYMM;
+              const newEnding = item.endingYearAndMonth__YYYYMM;
+              if (
+                (existingEnding === null && newEnding === null) ||
+                (existingEnding !== null && newEnding !== null && existingEnding === newEnding)
+              ) {
+                // 日付が変更されていない場合は年バリデーションをスキップ
+                shouldValidateEndingYear = false;
+              }
+            }
+          }
+
+          if (shouldValidateEndingYear) {
+            if (yearOfActualityEnding < earliestYearOfActualityEnding) {
+              validationErrorsDataForCurrentItem.push({
+                code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.EndingYearMonth.Codes.
+                    yearIsEarlierThanEarliestOne,
+                earliestYear: earliestYearOfActualityEnding
+              });
+            } else if (yearOfActualityEnding > latestYearOfActualityEnding) {
+              validationErrorsDataForCurrentItem.push({
+                code: BusinessUnitsCostPricesItemsDataValidator.ValidationErrorsData.EndingYearMonth.Codes.
+                    yearIsLaterThanLatestOne,
+                latestYear: latestYearOfActualityEnding
+              });
+            } else {
+              contextIndependentlyValidYearOfActualityEnding = yearOfActualityEnding;
+            }
           } else {
+            // バリデーションをスキップする場合でも、年は有効として扱う
             contextIndependentlyValidYearOfActualityEnding = yearOfActualityEnding;
           }
 

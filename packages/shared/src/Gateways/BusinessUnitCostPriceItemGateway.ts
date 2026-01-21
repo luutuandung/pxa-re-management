@@ -4,6 +4,13 @@ export interface BusinessUnitCostPriceItemGateway {
 
   manageMultiple: (requestData: BusinessUnitCostPriceItemGateway.ManagementOfMultipleOnes.RequestData) => Promise<void>;
 
+  retrieveExistingDatesByItemIDs: (
+    itemIDs: ReadonlyArray<string>
+  ) => Promise<ReadonlyMap<string, Readonly<{
+    startingYearAndMonth__YYYYMM: string;
+    endingYearAndMonth__YYYYMM: string | null;
+  }>>>;
+
 }
 
 

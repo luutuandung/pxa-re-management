@@ -25,4 +25,13 @@ export default class BusinessUnitCostPriceItemKyGateway implements BusinessUnitC
     );
   }
 
+  public async retrieveExistingDatesByItemIDs(
+    _itemIDs: ReadonlyArray<string>
+  ): Promise<ReadonlyMap<string, Readonly<{
+    startingYearAndMonth__YYYYMM: string;
+    endingYearAndMonth__YYYYMM: string | null;
+  }>>> {
+    throw new Error("retrieveExistingDatesByItemIDsはフロントエンドから呼び出してはいけません");
+  }
+
 }

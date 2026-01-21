@@ -43,6 +43,19 @@ export default class BusinessUnitCostPriceItemController {
       throw new NestJS.BadRequestException("事業部原価項目配列の中に非オブジェクトの要素かnullの要素が存在");
     }
 
+    // 既存の日付を取得（更新時のみ、日付が変更された場合のみバリデーションを行うため）
+    const itemIDs: Array<string> = [];
+    for (const item of rawData) {
+      if (
+        typeof item === "object" &&
+        item !== null &&
+        "businessUnitCostPriceItemID" in item &&
+        typeof item.businessUnitCostPriceItemID === "string"
+      ) {
+        itemIDs.push(item.businessUnitCostPriceItemID);
+      }
+    }
+    const existingDatesByItemID = await this.businessUnitCostPriceItemGateway.retrieveExistingDatesByItemIDs(itemIDs);
 
     const rawRequestDataValidationResult:
         BusinessUnitsCostPricesItemsDataValidator.
@@ -52,7 +65,8 @@ export default class BusinessUnitCostPriceItemController {
                   {
                     codesOfAvailableCurrencies: new Set(await this.currencyGateway.retrieveCodesOfAvailableOnes()),
                     referenceYear: new Date().getFullYear(),
-                    dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating
+                    dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating,
+                    existingDatesByItemID
                   }
                 );
 
@@ -76,6 +90,20 @@ export default class BusinessUnitCostPriceItemController {
     }: BusinessUnitCostPriceItemManagementRequestDTO
   ): Promise<void> {
 
+    // 既存の日付を取得（更新時のみ、日付が変更された場合のみバリデーションを行うため）
+    const updatedItemIDs: Array<string> = [];
+    for (const item of updatedItems) {
+      if (
+        typeof item === "object" &&
+        item !== null &&
+        "businessUnitCostPriceItemID" in item &&
+        typeof item.businessUnitCostPriceItemID === "string"
+      ) {
+        updatedItemIDs.push(item.businessUnitCostPriceItemID);
+      }
+    }
+    const existingDatesByItemID = await this.businessUnitCostPriceItemGateway.retrieveExistingDatesByItemIDs(updatedItemIDs);
+
     const updatedItemsValidationResult:
         BusinessUnitsCostPricesItemsDataValidator.
             ValidationResult<BusinessUnitCostPriceItemGateway.UpdatingOfMultipleOnes.RequestData.Item> =
@@ -84,7 +112,8 @@ export default class BusinessUnitCostPriceItemController {
                   {
                     codesOfAvailableCurrencies: new Set(await this.currencyGateway.retrieveCodesOfAvailableOnes()),
                     referenceYear: new Date().getFullYear(),
-                    dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating
+                    dataPurpose: BusinessUnitsCostPricesItemsDataValidator.DataPurposes.updating,
+                    existingDatesByItemID
                   }
                 );
 

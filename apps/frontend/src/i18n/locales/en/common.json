@@ -38,5 +38,8 @@
   },
   "buttons": {
     "save": "Save"
+  },
+  "messages": {
+    "businessUnitFetchError": "Failed to fetch business unit information"
   }
 }

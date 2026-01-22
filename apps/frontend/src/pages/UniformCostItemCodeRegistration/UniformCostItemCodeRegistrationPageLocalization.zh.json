@@ -1,0 +1,84 @@
+{
+  "title": "统一成本项目代码注册",
+  "description": "注册和编辑统一成本项目代码",
+  "sections": {
+    "uniformCostItems": "统一成本项目"
+  },
+  "controls": {
+    "showInvalid": "显示无效",
+    "add": "添加",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "保存中...",
+    "activate": "激活",
+    "delete": "删除"
+  },
+  "table": {
+    "headers": {
+      "code": "代码",
+      "japaneseName": "日语名称",
+      "chineseName": "中文名称",
+      "englishName": "英语名称",
+      "modifiedDate": "修改日期"
+    },
+    "placeholders": {
+      "inputCode": "输入代码",
+      "inputJapaneseName": "输入日语名称",
+      "inputChineseName": "输入中文名称",
+      "inputEnglishName": "输入英语名称"
+    },
+    "deleteAlt": "删除",
+    "noResults": "没有数据"
+  },
+  "validation": {
+    "generalCostCd": "请输入代码",
+    "codeHalfWidthOnly": "代码只能包含半角字符",
+    "commonEnglishNamingInvalidCharacters": "英语名称包含无效字符: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonEnglishNamingNotExists": "请输入英语名称",
+    "commonEnglishNamingExistsButNotString": "英语名称必须是字符串",
+    "commonEnglishNamingStringButEmpty": "请输入英语名称",
+    "commonJapaneseNamingInvalidCharacters": "日语名称包含环境依赖字符: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonJapaneseNamingNotExists": "请输入日语名称",
+    "commonJapaneseNamingExistsButNotString": "日语名称必须是字符串",
+    "commonJapaneseNamingStringButEmpty": "请输入日语名称",
+    "commonChineseNamingInvalidCharacters": "中文名称包含环境依赖字符: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingNotExists": "请输入中文名称",
+    "commonChineseNamingExistsButNotString": "中文名称必须是字符串",
+    "commonChineseNamingStringButEmpty": "请输入中文名称"
+  },
+  "modals": {
+    "save": {
+      "title": "保存确认",
+      "message": "是否保存更改？",
+      "cancel": "取消",
+      "confirm": "保存"
+    },
+    "cancel": {
+      "title": "取消确认",
+      "message": "有未保存的更改。是否要丢弃？",
+      "continue": "继续",
+      "discard": "丢弃"
+    },
+    "delete": {
+      "title": "删除确认",
+      "message": "是否要删除此项目？",
+      "warning": "※ 删除后，与此代码关联的所有语言项目名称将全部无效。",
+      "code": "代码:",
+      "cancel": "取消",
+      "confirm": "删除"
+    }
+  },
+  "messages": {
+    "saveSuccess": "保存完成",
+    "saveError": "保存失败",
+    "deleteSuccess": "成本项目代码删除成功",
+    "deleteError": "删除成本项目代码失败",
+    "activateSuccess": "成本项目代码激活成功",
+    "activateError": "激活成本项目代码失败",
+    "bulkCreateSuccess": "统一成本项目批量创建成功",
+    "bulkCreateError": "批量创建统一成本项目失败",
+    "updateSuccess": "统一成本项目更新成功",
+    "updateError": "更新统一成本项目失败",
+    "fetchError": "获取成本项目代码失败"
+  }
+}

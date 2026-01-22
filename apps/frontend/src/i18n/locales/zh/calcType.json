@@ -1,0 +1,58 @@
+{
+  "title": "计算种类",
+  "controls": {
+    "add": "添加",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "showInvalid": "显示无效",
+    "selectBusinessUnit": "事业部",
+    "placeholderName": "计算种类名称"
+  },
+  "table": {
+    "headers": {
+      "selection": "选择",
+      "name": "计算种类",
+      "nameEn": "计算种类（英语）",
+      "nameZh": "计算种类（中文）",
+      "modifiedDate": "更新日期",
+      "actions": "操作"
+    }
+  },
+  "modals": {
+    "save": {
+      "title": "确认",
+      "messageNew": "是否保存 {{count}} 个新项目？",
+      "messageUpdate": "是否保存 {{count}} 个更新项目？",
+      "messageBoth": "是否保存 {{newCount}} 个新项目和 {{updateCount}} 个更新项目？",
+      "confirm": "确定",
+      "cancel": "取消"
+    },
+    "delete": {
+      "title": "确认",
+      "message": "确定要删除吗？",
+      "confirm": "确定",
+      "cancel": "取消"
+    }
+  },
+  "messages": {
+    "fetchError": "获取计算种类失败",
+    "saveSuccess": "保存成功",
+    "saveError": "保存失败",
+    "deleteSuccess": "删除成功",
+    "deleteError": "删除失败",
+    "activateSuccess": "激活成功",
+    "activateError": "激活失败",
+    "validationNameRequired": "名称为必填项"
+  },
+  "validation": {
+    "selectBusinessUnit": "请选择事业部",
+    "nameJaRequired": "请输入计算种类名称（日语）",
+    "nameEnRequired": "请输入计算种类名称（英语）",
+    "nameZhRequired": "请输入计算种类名称（中文）",
+    "nameJaInvalidCharacters": "计算种类名称（日语）包含无效字符: {{characters}}",
+    "nameEnInvalidCharacters": "计算种类名称（英语）包含无效字符: {{characters}}",
+    "nameZhInvalidCharacters": "计算种类名称（中文）包含无效字符: {{characters}}",
+    "newItemLabel": "新项目{{number}}"
+  }
+}

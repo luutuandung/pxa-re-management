@@ -3,6 +3,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '@/utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
+import i18n from '../i18n';
 
 const businessUnitAtom = atom<BusinessUnit[]>([]);
 
@@ -15,7 +16,7 @@ export const useBusinessUnitActions = () => {
       setBusinessUnit(await api.get<Array<BusinessUnit>>(BusinessUnitTransactions.RetrievingOfAll.URI_PATH).json());
     } catch (error) {
       console.error('fetchBusinessUnit error:', error);
-      addErrorMessage('事業部情報の取得に失敗しました');
+      addErrorMessage(i18n.t('messages.businessUnitFetchError', { ns: 'common' }));
     }
   }, [setBusinessUnit]);
 

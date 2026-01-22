@@ -1,0 +1,91 @@
+{
+  "title": "成本汇总场景画面",
+  "description": "进行成本汇总场景的设置和执行",
+  "form": {
+    "classification": "分类",
+    "aggregationMonth": "汇总月",
+    "thereafter": "之后",
+    "scenarioType": "场景种类",
+    "aggregationCurrency": "汇总货币",
+    "aggregationAxis": "汇总轴",
+    "consolidationTarget": "合并对象",
+    "child": "子",
+    "parent": "父",
+    "aggregationBusiness": "汇总事业",
+    "finalAggregation": "最终汇总"
+  },
+  "table": {
+    "headers": {
+      "base": "据点",
+      "classification": "分类",
+      "salesVersion": "销售版本（结算）",
+      "costType": "成本种类"
+    },
+    "classification": {
+      "axis": "汇总轴",
+      "parent": "父",
+      "child": "子"
+    }
+  },
+  "buttons": {
+    "search": "搜索",
+    "apply": "应用",
+    "execute": "执行",
+    "cancel": "取消"
+  },
+  "modals": {
+    "apply": {
+      "title": "应用确认",
+      "message": "是否应用？",
+      "confirm": "确定",
+      "cancel": "取消"
+    },
+    "execute": {
+      "title": "执行确认",
+      "message": "是否执行？",
+      "confirm": "确定",
+      "cancel": "取消"
+    }
+  },
+  "options": {
+    "classification": {
+      "plan": "计划",
+      "actual": "实际",
+      "forecast": "预测"
+    },
+    "month": {
+      "1": "1月",
+      "2": "2月",
+      "3": "3月",
+      "4": "4月",
+      "5": "5月",
+      "6": "6月",
+      "7": "7月",
+      "8": "8月",
+      "9": "9月",
+      "10": "10月",
+      "11": "11月",
+      "12": "12月"
+    },
+    "scenarioType": {
+      "shizuoka2025": "25年静冈制版合并",
+      "type2": "汇总种类2",
+      "shizuoka2025_3": "25年静冈制版连3"
+    },
+    "currency": {
+      "JPY": "JPY",
+      "USD": "USD",
+      "CNY": "CNY"
+    },
+    "axis": {
+      "shizuokaWashing": "静冈洗衣机",
+      "axis1": "汇总值1",
+      "axis2": "汇总值2"
+    },
+    "business": {
+      "business1": "汇总事业1",
+      "business2": "汇总事业2",
+      "business3": "汇总事业3"
+    }
+  }
+}

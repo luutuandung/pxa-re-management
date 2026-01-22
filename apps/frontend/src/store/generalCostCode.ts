@@ -3,6 +3,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
 import { api } from '../utils/api-client';
 import { useStickyMessageActions } from './stickyMessage';
+import i18n from '../i18n';
 
 const generalCostCodeAtom = atom<GeneralCostCode[]>([]);
 
@@ -18,7 +19,7 @@ export const useGeneralCostCodeActions = () => {
     } catch (error) {
       console.error('fetchGeneralCostCode error:', error);
       // エラー時のみ呼び出し（無限ループを防ぐため依存配列から除外）
-      addErrorMessage('原価項目コードの取得に失敗しました');
+      addErrorMessage(i18n.t('messages.fetchError', { ns: 'uniformCostItemCodeRegistration' }));
     }
   }, [setGeneralCostCode]);
 
@@ -28,12 +29,12 @@ export const useGeneralCostCodeActions = () => {
       try {
         await api.delete(`generalCost/${generalCostCodeId}`);
         // メッセージ表示関数は無限ループを防ぐため依存配列から除外
-        addSuccessMessage('原価項目コードを削除しました');
+        addSuccessMessage(i18n.t('messages.deleteSuccess', { ns: 'uniformCostItemCodeRegistration' }));
         // 削除成功後にデータを再取得
         await fetchGeneralCostCode();
       } catch (error) {
         console.error('deleteGeneralCostCode error:', error);
-        addErrorMessage('原価項目コードの削除に失敗しました');
+        addErrorMessage(i18n.t('messages.deleteError', { ns: 'uniformCostItemCodeRegistration' }));
         throw error;
       }
     },
@@ -46,12 +47,12 @@ export const useGeneralCostCodeActions = () => {
       try {
         await api.put(`generalCost/${generalCostCodeId}/reactivate`);
         // メッセージ表示関数は無限ループを防ぐため依存配列から除外
-        addSuccessMessage('原価項目コードを有効化しました');
+        addSuccessMessage(i18n.t('messages.activateSuccess', { ns: 'uniformCostItemCodeRegistration' }));
         // 有効化成功後にデータを再取得
         await fetchGeneralCostCode();
       } catch (error) {
         console.error('reactivateGeneralCostCode error:', error);
-        addErrorMessage('原価項目コードの有効化に失敗しました');
+        addErrorMessage(i18n.t('messages.activateError', { ns: 'uniformCostItemCodeRegistration' }));
         throw error;
       }
     },
@@ -72,12 +73,12 @@ export const useGeneralCostCodeActions = () => {
         await api.post('generalCost/bulk', {
           json: { generalCosts },
         });
-        addSuccessMessage('統一原価項目を一括作成しました');
+        addSuccessMessage(i18n.t('messages.bulkCreateSuccess', { ns: 'uniformCostItemCodeRegistration' }));
         // 作成成功後にデータを再取得
         await fetchGeneralCostCode();
       } catch (error) {
         console.error('bulkCreateGeneralCostCodes error:', error);
-        addErrorMessage('統一原価項目の一括作成に失敗しました');
+        addErrorMessage(i18n.t('messages.bulkCreateError', { ns: 'uniformCostItemCodeRegistration' }));
         throw error;
       }
     },
@@ -98,12 +99,12 @@ export const useGeneralCostCodeActions = () => {
         await api.put(`generalCost/${generalCostCodeId}`, {
           json: updateData,
         });
-        addSuccessMessage('統一原価項目を更新しました');
+        addSuccessMessage(i18n.t('messages.updateSuccess', { ns: 'uniformCostItemCodeRegistration' }));
         // 更新成功後にデータを再取得
         await fetchGeneralCostCode();
       } catch (error) {
         console.error('updateGeneralCostCode error:', error);
-        addErrorMessage('統一原価項目の更新に失敗しました');
+        addErrorMessage(i18n.t('messages.updateError', { ns: 'uniformCostItemCodeRegistration' }));
         throw error;
       }
     },

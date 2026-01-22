@@ -1,0 +1,46 @@
+{
+  "title": "首页",
+  "welcome": "欢迎",
+  "description": "欢迎使用PXA RE管理系统",
+  "menu": {
+    "title": "管理菜单",
+    "items": {
+      "uniformCostItemCodeRegistration": {
+        "title": "统一成本项目代码注册",
+        "description": "成本项目代码的注册和管理"
+      },
+      "businessCostItemCodeRegistration": {
+        "title": "事业部成本项目代码注册",
+        "description": "事业部成本项目代码的注册和管理"
+      },
+      "businessCostItemSettings": {
+        "title": "事业部成本项目设置",
+        "description": "事业部成本项目的设置和管理"
+      },
+      "costAggregationScenario": {
+        "title": "成本汇总场景",
+        "description": "汇总场景的创建和管理"
+      },
+      "calcType": {
+        "title": "计算种类",
+        "description": "计算种类的注册和管理"
+      },
+      "calcRegister": {
+        "title": "计算公式注册",
+        "description": "计算公式的注册和管理"
+      },
+      "costVersionRegistration": {
+        "title": "成本版本",
+        "description": "成本版本的注册和管理"
+      },
+      "costPattern": {
+        "title": "成本模式",
+        "description": "成本模式的注册和管理"
+      },
+      "costRegister": {
+        "title": "成本注册",
+        "description": "成本值的注册和管理"
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import type { CalcCondition, CalcDisplay, CalcOperation, Calculation } from '@pxa-re-management/shared';
+import { TagsOfSupportedLanguages } from '@pxa-re-management/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormulaSectionEditor from '@/components/molecules/FormulaSectionEditor';
@@ -13,10 +14,12 @@ import type { EditorBranchNode } from '@/store/calcRegister';
 import { useCalcRegisterActions, useCalcRegisterSelectors } from '@/store/calcRegister';
 import { useCalcTypeActions, useCalcTypeSelectors } from '@/store/calcType';
 import { useStickyMessageActions } from '@/store/stickyMessage';
+import { useLanguage } from '@/store/languageSettings';
 import LocationSelectField from "@/components/atoms/LocationSelectField.tsx";
 
 const CalcRegisterPage = () => {
   const { t } = useTranslation('calcRegister');
+  const { currentLanguage } = useLanguage();
   const { businessUnits } = useBusinessUnitSelectors();
   const { fetchBusinessUnit } = useBusinessUnitActions();
   const { fetchCalcType, clearCalcType } = useCalcTypeActions();
@@ -477,11 +480,17 @@ const CalcRegisterPage = () => {
                     <SelectValue placeholder={t('placeholders.calcType')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {calcTypes.map((ct) => (
-                      <SelectItem key={ct.calcTypeId} value={ct.calcTypeId}>
-                        {ct.calcTypeNameJa}
-                      </SelectItem>
-                    ))}
+                    {calcTypes.map((ct) => {
+                      const calcTypeName = 
+                        currentLanguage === TagsOfSupportedLanguages.english ? ct.calcTypeNameEn :
+                        currentLanguage === TagsOfSupportedLanguages.chinese ? ct.calcTypeNameZh :
+                        ct.calcTypeNameJa;
+                      return (
+                        <SelectItem key={ct.calcTypeId} value={ct.calcTypeId}>
+                          {calcTypeName}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>

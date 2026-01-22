@@ -1,0 +1,45 @@
+{
+  "navigation": {
+    "calculation": "计算公式",
+    "costRegistration": "成本注册",
+    "quantity": "台数",
+    "master": "主数据"
+  },
+  "userMenu": {
+    "userSettings": "用户设置",
+    "passwordChange": "更改密码",
+    "logout": "登出"
+  },
+  "system": {
+    "home": "首页"
+  },
+  "errors": {
+    "applicationError": "发生应用程序错误",
+    "pageNotFound": "找不到页面",
+    "pageLoadFailed": "页面加载失败",
+    "notFound": "404 - 找不到页面"
+  },
+  "language": {
+    "japanese": "日本語",
+    "chinese": "中文",
+    "english": "English"
+  },
+  "dataTablePagination": {
+    "itemsPerPage": "每页显示",
+    "page": "页码",
+    "of": "/",
+    "goToFirstPage": "转到第一页",
+    "goToPreviousPage": "转到上一页",
+    "goToNextPage": "转到下一页",
+    "goToLastPage": "转到最后一页"
+  },
+  "locationSelect": {
+    "placeholder": "选择事业部"
+  },
+  "buttons": {
+    "save": "保存"
+  },
+  "messages": {
+    "businessUnitFetchError": "获取事业部信息失败"
+  }
+}

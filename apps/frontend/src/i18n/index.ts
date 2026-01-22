@@ -116,7 +116,7 @@ const initializeLanguageResources = async (language: TagsOfSupportedLanguages): 
 const getInitialLanguage = (): string => {
   try {
     const stored = sessionStorage.getItem('pxa-re-management-language');
-    if (stored && (stored === 'ja' || stored === 'en')) {
+    if (stored && (stored === 'ja' || stored === 'en' || stored === 'zh')) {
       return stored;
     }
   } catch (error) {
@@ -125,7 +125,7 @@ const getInitialLanguage = (): string => {
 
   // ブラウザの言語設定を取得
   const browserLang = navigator.language.split('-')[0];
-  if (browserLang === 'ja' || browserLang === 'en') {
+  if (browserLang === 'ja' || browserLang === 'en' || browserLang === 'zh') {
     return browserLang;
   }
 

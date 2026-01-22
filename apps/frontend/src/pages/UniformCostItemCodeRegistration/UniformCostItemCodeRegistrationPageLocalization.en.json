@@ -71,8 +71,14 @@
   "messages": {
     "saveSuccess": "Save completed successfully",
     "saveError": "Save failed",
-    "deleteError": "Delete failed",
-    "activateError": "Activation failed",
-    "fetchError": "Failed to fetch data"
+    "deleteSuccess": "Cost item code deleted successfully",
+    "deleteError": "Failed to delete cost item code",
+    "activateSuccess": "Cost item code activated successfully",
+    "activateError": "Failed to activate cost item code",
+    "bulkCreateSuccess": "Uniform cost items created in bulk successfully",
+    "bulkCreateError": "Failed to create uniform cost items in bulk",
+    "updateSuccess": "Uniform cost item updated successfully",
+    "updateError": "Failed to update uniform cost item",
+    "fetchError": "Failed to fetch cost item codes"
   }
 }

@@ -71,8 +71,14 @@
   "messages": {
     "saveSuccess": "保存が完了しました",
     "saveError": "保存に失敗しました",
-    "deleteError": "削除に失敗しました",
-    "activateError": "有効化に失敗しました",
-    "fetchError": "データの取得に失敗しました"
+    "deleteSuccess": "原価項目コードを削除しました",
+    "deleteError": "原価項目コードの削除に失敗しました",
+    "activateSuccess": "原価項目コードを有効化しました",
+    "activateError": "原価項目コードの有効化に失敗しました",
+    "bulkCreateSuccess": "統一原価項目を一括作成しました",
+    "bulkCreateError": "統一原価項目の一括作成に失敗しました",
+    "updateSuccess": "統一原価項目を更新しました",
+    "updateError": "統一原価項目の更新に失敗しました",
+    "fetchError": "原価項目コードの取得に失敗しました"
   }
 }

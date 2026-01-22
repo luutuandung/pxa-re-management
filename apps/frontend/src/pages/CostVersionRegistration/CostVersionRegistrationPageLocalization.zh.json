@@ -1,0 +1,89 @@
+{
+  "title": "成本注册-成本版本",
+  "table": {
+    "headers": {
+      "select": "选择",
+      "version": "成本版本",
+      "start": "适用开始",
+      "end": "适用结束",
+      "registeredAt": "注册日期",
+      "description": "说明",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "default": "默认"
+  },
+  "modals": {
+    "create": { "title": "创建成本版本" },
+    "edit": { "title": "编辑成本版本" },
+    "delete": { "title": "删除确认", "message": "确定要删除吗？", "ok": "确定", "cancel": "取消" },
+    "duplicate": { 
+      "title": "复制成本版本",
+      "idHint": "可输入UUID格式。空白时自动生成"
+    }
+  },
+  "messages": {
+    "fetchError": "获取失败",
+    "createSuccess": "创建成功",
+    "createError": "创建失败",
+    "updateSuccess": "更新成功",
+    "updateError": "更新失败",
+    "deleteSuccess": "删除成功",
+    "deleteError": "删除失败",
+    "duplicateSuccess": "复制成功",
+    "duplicateError": "复制失败",
+    "updateDefaultSuccess": "默认标志更新成功",
+    "updateDefaultError": "默认标志更新失败",
+    "validationError": "请检查输入内容",
+    "selectBeforeDuplicate": "请选择要复制的成本版本",
+    "startDateAfterEndDate": "适用开始必须在适用结束之前",
+    "periodExceeds36Months": "期间必须在36个月以内",
+    "invalidDate": "日期格式不正确"
+  },
+  "controls": {
+    "add": "添加",
+    "duplicate": "复制",
+    "reportType": "报表种类",
+    "costCopy": "成本复制",
+    "saving": "保存中...",
+    "allBusinessUnits": "全部",
+    "dropDownLists": {
+      "businessUnits": {
+        "label": "事业部",
+        "placeholders": {
+          "normal": "选择事业部",
+          "noData": "没有事业部"
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": "成本版本ID",
+    "systemCode": "系统代码",
+    "name": "成本版本名称",
+    "start": "适用开始",
+    "end": "适用结束",
+    "desc": "说明",
+    "default": "默认设置",
+    "defaultHint": "将此成本版本设置为默认"
+  },
+  "reportType": {
+    "manufacturing": "制造成本",
+    "individual": "个别成本",
+    "consolidated": "制版合并收支"
+  },
+  "placeholders": {
+    "costVersionId": "CV_2024_001",
+    "costVersionName": "2024年度成本",
+    "startDate": "202404",
+    "endDate": "202503",
+    "description": "请输入成本版本的说明",
+    "duplicateName": "2024年度成本(复制)",
+    "duplicateId": "UUID格式，或空白自动生成"
+  },
+  "buttons": {
+    "ok": "确定",
+    "save": "保存",
+    "deleteAlt": "删除"
+  }
+}

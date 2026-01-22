@@ -38,5 +38,8 @@
   },
   "buttons": {
     "save": "保存"
+  },
+  "messages": {
+    "businessUnitFetchError": "事業部情報の取得に失敗しました"
   }
 }

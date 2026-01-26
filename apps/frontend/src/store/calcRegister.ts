@@ -24,6 +24,8 @@ export type BuCostCodeMock = {
   buCostCodeId: string;
   buCostCd: string;
   buCostNameJa: string;
+  buCostNameEn: string;
+  buCostNameZh: string;
 };
 
 // モック: 事業部原価項目設定（原価種類）
@@ -56,8 +58,8 @@ const calcTypesAtom = atom(
 const buCostCodesAtom = atom<BuCostCodeMock[]>([]);
 const buCostItemsAtom = atom<BuCostItemMock[]>([]);
 const calculationListAtom = atom<Calculation[]>([]);
-// buCostItemId → { buCostCd, buCostNameJa } のマップ（一覧表示用）
-const buItemIdToCodeMapAtom = atom<Record<string, { buCostCd: string; buCostNameJa: string }>>({});
+// buCostItemId → { buCostCd, buCostNameJa, buCostNameEn, buCostNameZh } のマップ（一覧表示用）
+const buItemIdToCodeMapAtom = atom<Record<string, { buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string }>>({});
 // CostCode → CostItem → Calculations のグルーピング
 export type GroupedCalculations = Record<
   string,
@@ -65,6 +67,8 @@ export type GroupedCalculations = Record<
     buCostCodeId: string;
     buCostCd: string;
     buCostNameJa: string;
+    buCostNameEn: string;
+    buCostNameZh: string;
     items: Record<string, { buCostItemId: string; calculations: Calculation[] }>;
   }
 >;
@@ -250,14 +254,21 @@ export const useCalcRegisterActions = () => {
     setCalculations(calculations);
     // 一覧表示用マップも calc-display 応答から直接補完しておく（キー不一致時のフォールバック）
     try {
-      const directMap: Record<string, { buCostCd: string; buCostNameJa: string }> = {};
+      const directMap: Record<string, { buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string }> = {};
       const list: any[] = (response as any)?.buCostCodes ?? [];
       for (const r of list) {
         const itemId = r?.buCostItem?.buCostItemId as string | undefined;
         const cd = r?.buCostCd as string | undefined;
-        const name = r?.buCostNameJa as string | undefined;
+        const nameJa = r?.buCostNameJa as string | undefined;
+        const nameEn = r?.buCostNameEn as string | undefined;
+        const nameZh = r?.buCostNameZh as string | undefined;
         if (itemId && cd) {
-          directMap[itemId] = { buCostCd: cd, buCostNameJa: name ?? cd };
+          directMap[itemId] = { 
+            buCostCd: cd, 
+            buCostNameJa: nameJa ?? cd,
+            buCostNameEn: nameEn ?? cd,
+            buCostNameZh: nameZh ?? cd,
+          };
         }
       }
       if (Object.keys(directMap).length > 0) {
@@ -287,6 +298,8 @@ export const useCalcRegisterActions = () => {
           buCostCodeId: code.buCostCodeId,
           buCostCd: code.buCostCd,
           buCostNameJa: code.buCostNameJa,
+          buCostNameEn: code.buCostNameEn,
+          buCostNameZh: code.buCostNameZh,
           items: {},
         };
       }
@@ -307,11 +320,16 @@ export const useCalcRegisterActions = () => {
     setBuCostCodes(response.buCostCodes as any);
     setBuCostItems(response.buCostItems as any);
     // 一覧表示用に buCostItemId → buCostCode 情報の逆引きを保持
-    const map: Record<string, { buCostCd: string; buCostNameJa: string }> = {};
+    const map: Record<string, { buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string }> = {};
     for (const item of response.buCostItems) {
       const code = response.buCostCodes.find((c) => c.buCostCodeId === item.buCostCodeId);
       if (code) {
-        map[item.buCostItemId] = { buCostCd: code.buCostCd, buCostNameJa: code.buCostNameJa };
+        map[item.buCostItemId] = { 
+          buCostCd: code.buCostCd, 
+          buCostNameJa: code.buCostNameJa,
+          buCostNameEn: code.buCostNameEn,
+          buCostNameZh: code.buCostNameZh,
+        };
       }
     }
     setBuItemIdToCodeMap(map as any);
@@ -327,9 +345,9 @@ export const useCalcRegisterActions = () => {
     ];
 
     const mockBuCostCodes: BuCostCodeMock[] = [
-      { buCostCodeId: 'code-1', buCostCd: 'MAT', buCostNameJa: '材料費' },
-      { buCostCodeId: 'code-2', buCostCd: 'LAB', buCostNameJa: '労務費' },
-      { buCostCodeId: 'code-3', buCostCd: 'OPR', buCostNameJa: '製造経費' },
+      { buCostCodeId: 'code-1', buCostCd: 'MAT', buCostNameJa: '材料費', buCostNameEn: 'Material Cost', buCostNameZh: '材料费' },
+      { buCostCodeId: 'code-2', buCostCd: 'LAB', buCostNameJa: '労務費', buCostNameEn: 'Labor Cost', buCostNameZh: '劳务费' },
+      { buCostCodeId: 'code-3', buCostCd: 'OPR', buCostNameJa: '製造経費', buCostNameEn: 'Manufacturing Overhead', buCostNameZh: '制造经费' },
     ];
 
     const mockBuCostItems: BuCostItemMock[] = [

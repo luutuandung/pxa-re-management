@@ -1,4 +1,5 @@
 import type { CalcCondition } from '@pxa-re-management/shared';
+import { useTranslation } from 'react-i18next';
 import ConditionEditor from '@/components/molecules/ConditionEditor';
 import OperationEditor from '@/components/molecules/OperationEditor';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ type Props = {
   condition?: CalcCondition;
   onChangeCondition: (partial: Partial<CalcCondition> | null) => void;
   // 選択肢
-  buCostCodes: Array<{ buCostCodeId: string; buCostCd: string; buCostNameJa: string }>;
+  buCostCodes: Array<{ buCostCodeId: string; buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string }>;
   buCostItems: Array<{ buCostItemId: string; buCostCodeId: string; costType: 'G' | 'R' | 'K' }>;
   // 子分岐があるかどうか
   hasElseChildren?: boolean;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCostItems, hasElseChildren = false, hasIfChildren = false }: Props) => {
+  const { t } = useTranslation('calcRegister');
   const { editorIfOperations, editorElseOperations } = useCalcRegisterSelectors();
   const {
     addIfOperation,
@@ -29,7 +31,7 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
 
   return (
     <div className="space-y-2">
-      <div className="font-medium">条件</div>
+      <div className="font-medium">{t('labels.condition')}</div>
 
       {/* 条件式 */}
       <div className="flex items-center justify-between gap-2">
@@ -53,7 +55,7 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
               persistSelectedBranchFromEditor();
             }}
           >
-            削除
+            {t('buttons.delete')}
           </Button>
         )}
       </div>
@@ -62,14 +64,14 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
       {!hasIfChildren && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-600">IF 演算</div>
+            <div className="text-sm text-600">{t('labels.ifOperation')}</div>
           </div>
           <div className="space-y-2">
             {editorIfOperations.map((o, index) => (
               <div key={o.calcOperationId} className="flex justify-between">
                 <OperationEditor
                   key={o.calcOperationId}
-                  label="IF 要素"
+                  label={t('labels.ifElement')}
                   buCostCodes={buCostCodes}
                   buCostItems={buCostItems}
                   value={o}
@@ -88,7 +90,7 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
                       persistSelectedBranchFromEditor();
                     }}
                   >
-                    削除
+                    {t('buttons.delete')}
                   </Button>
                 </div>
               </div>
@@ -104,9 +106,9 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
                 addIfOperation(defaultOperator, buCostCodes[0]?.buCostCd ?? '', 'G');
                 persistSelectedBranchFromEditor();
               }}
-            >
-              + 式を追加
-            </Button>
+              >
+              {t('buttons.addExpression')}
+              </Button>
           </div>
         </div>
       )}
@@ -115,14 +117,14 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
       {!hasElseChildren && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-600">ELSE 演算</div>
+            <div className="text-sm text-600">{t('labels.elseOperation')}</div>
           </div>
           <div className="space-y-2">
             {editorElseOperations.map((o) => (
               <div key={o.calcOperationId} className="flex justify-between">
                 <OperationEditor
                   key={o.calcOperationId}
-                  label="ELSE 要素"
+                  label={t('labels.elseElement')}
                   buCostCodes={buCostCodes}
                   buCostItems={buCostItems}
                   value={o}
@@ -140,7 +142,7 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
                       persistSelectedBranchFromEditor();
                     }}
                   >
-                    削除
+                    {t('buttons.delete')}
                   </Button>
                 </div>
               </div>
@@ -158,9 +160,9 @@ const FormulaSectionEditor = ({ condition, onChangeCondition, buCostCodes, buCos
                 addElseOperation(defaultOperator, buCostCodes[0]?.buCostCd ?? '', 'G');
                 persistSelectedBranchFromEditor();
               }}
-            >
-              + 式を追加
-            </Button>
+              >
+              {t('buttons.addExpression')}
+              </Button>
           </div>
         </div>
       )}

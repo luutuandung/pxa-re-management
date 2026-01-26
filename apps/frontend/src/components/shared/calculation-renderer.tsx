@@ -1,7 +1,10 @@
 import type { CalcCondition, CalcOperation, Calculation } from '@pxa-re-management/shared';
+import { TagsOfSupportedLanguages } from '@pxa-re-management/shared';
+import { useTranslation } from 'react-i18next';
 import type { EditorBranchNode } from '@/store/calcRegister';
+import { useLanguage } from '@/store/languageSettings';
 
-export type BuCostCodeLike = { buCostCd: string; buCostNameJa: string };
+export type BuCostCodeLike = { buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string };
 
 export const CostItemLabel = ({
   buCostCd,
@@ -12,10 +15,16 @@ export const CostItemLabel = ({
   costType: 'G' | 'R' | 'K';
   buCostCodes: BuCostCodeLike[];
 }) => {
+  const { t } = useTranslation('calcRegister');
+  const { currentLanguage } = useLanguage();
   const code = buCostCodes.find((b) => b.buCostCd === buCostCd);
   // 特別コードは見た目の表記を置換
   const special = buCostCd === 'ZERO' ? '0' : buCostCd === 'MINUS' ? '-1' : buCostCd === 'RATE' ? '100' : null;
-  const name = special ?? code?.buCostNameJa ?? buCostCd;
+  const name = special ?? (
+    currentLanguage === TagsOfSupportedLanguages.english ? code?.buCostNameEn :
+    currentLanguage === TagsOfSupportedLanguages.chinese ? code?.buCostNameZh :
+    code?.buCostNameJa
+  ) ?? buCostCd;
   // 種別の色分け: 特別コードはK扱い（緑）で統一
   const typeForColor = special ? 'K' : costType;
   const color =
@@ -24,7 +33,7 @@ export const CostItemLabel = ({
       : typeForColor === 'R'
         ? 'bg-pink-100 text-pink-900'
         : 'bg-green-100 text-green-900';
-  const typeLabel = typeForColor === 'G' ? '額' : typeForColor === 'R' ? 'レート' : '計算式';
+  const typeLabel = typeForColor === 'G' ? t('labels.costTypeAmount') : typeForColor === 'R' ? t('labels.costTypeRate') : t('labels.costTypeFormula');
   return (
     <span className={`px-1 rounded ${color}`}>
       {name}
@@ -33,8 +42,8 @@ export const CostItemLabel = ({
   );
 };
 
-export const renderCondition = (cond: CalcCondition | undefined, buCostCodes: BuCostCodeLike[]) => {
-  if (!cond) return <span className="text-gray-500">条件未設定</span>;
+export const renderCondition = (cond: CalcCondition | undefined, buCostCodes: BuCostCodeLike[], t: (key: string) => string) => {
+  if (!cond) return <span className="text-gray-500">{t('labels.conditionUnset')}</span>;
   return (
     <span className="space-x-1">
       <CostItemLabel
@@ -52,8 +61,8 @@ export const renderCondition = (cond: CalcCondition | undefined, buCostCodes: Bu
   );
 };
 
-export const renderOpsExpr = (ops: CalcOperation[], buCostCodes: BuCostCodeLike[]) => {
-  if (ops.length === 0) return <span className="text-gray-500">未設定</span>;
+export const renderOpsExpr = (ops: CalcOperation[], buCostCodes: BuCostCodeLike[], t: (key: string) => string) => {
+  if (ops.length === 0) return <span className="text-gray-500">{t('labels.unset')}</span>;
   
   // Calculate depth for each operation at runtime
   const sorted = [...ops].sort((a, b) => a.opeSeq - b.opeSeq);
@@ -120,39 +129,39 @@ export const splitIfElseOps = (
   return { ifOps, elseOps };
 };
 
-export const renderTreeInline = (node: EditorBranchNode, tree: EditorBranchNode[], buCostCodes: BuCostCodeLike[]) => {
+export const renderTreeInline = (node: EditorBranchNode, tree: EditorBranchNode[], buCostCodes: BuCostCodeLike[], t: (key: string) => string): React.ReactNode => {
   const ifChildren = tree.filter((b) => b.parentId === node.id && b.side === 'IF');
   const elseChildren = tree.filter((b) => b.parentId === node.id && b.side === 'ELSE');
   // 条件なし・ELSEなしの場合は演算式のみ
   if (!node.condition && (node.elseOps?.length ?? 0) === 0 && ifChildren.length === 0 && elseChildren.length === 0) {
-    return <>{renderOpsExpr(node.ifOps, buCostCodes)}</>;
+    return <>{renderOpsExpr(node.ifOps, buCostCodes, t)}</>;
   }
   return (
     <>
       <span>IF(</span>
-      {renderCondition(node.condition ?? undefined, buCostCodes)}
+      {renderCondition(node.condition ?? undefined, buCostCodes, t)}
       <span>)</span>
       <span>{'{'} </span>
-      {renderOpsExpr(node.ifOps, buCostCodes)}
+      {renderOpsExpr(node.ifOps, buCostCodes, t)}
       <span> {'}'} </span>
       {ifChildren.length > 0
         ? ifChildren.map((ch) => (
             <span key={ch.id}>
               <span> </span>
-              {renderTreeInline(ch, tree, buCostCodes)}
+              {renderTreeInline(ch, tree, buCostCodes, t)}
             </span>
           ))
         : null}
       <span> ELSE </span>
       <span>{'{'}</span>
       <span> </span>
-      {renderOpsExpr(node.elseOps, buCostCodes)}
+      {renderOpsExpr(node.elseOps, buCostCodes, t)}
       <span> {'}'}</span>
       {elseChildren.length > 0
         ? elseChildren.map((ch) => (
             <span key={ch.id}>
               <span> </span>
-              {renderTreeInline(ch, tree, buCostCodes)}
+              {renderTreeInline(ch, tree, buCostCodes, t)}
             </span>
           ))
         : null}
@@ -163,16 +172,17 @@ export const renderTreeInline = (node: EditorBranchNode, tree: EditorBranchNode[
 export const renderCalculationInline = (
   calculation: Calculation,
   treeForDisplay: EditorBranchNode[] | undefined,
-  buCostCodes: BuCostCodeLike[]
+  buCostCodes: BuCostCodeLike[],
+  t: (key: string) => string
 ) => {
   if (treeForDisplay && treeForDisplay.length > 0) {
     const root = treeForDisplay.find((b) => b.id === 'root') ?? treeForDisplay.find((b) => !b.parentId);
-    if (root) return <span className="whitespace-nowrap">{renderTreeInline(root, treeForDisplay, buCostCodes)}</span>;
+    if (root) return <span className="whitespace-nowrap">{renderTreeInline(root, treeForDisplay, buCostCodes, t)}</span>;
   }
   // ツリーが無い場合: CalcFormula のネスト構造から再帰的に全体式を描画
   const formulas = calculation.calcFormulas ?? [];
   if (formulas.length === 0) {
-    return <span className="whitespace-nowrap">{renderOpsExpr(calculation.calcOperations ?? [], buCostCodes)}</span>;
+    return <span className="whitespace-nowrap">{renderOpsExpr(calculation.calcOperations ?? [], buCostCodes, t)}</span>;
   }
   const byId = new Map(formulas.map((f) => [f.calcFormulaId, f]));
   const referenced = new Set<string>();
@@ -203,10 +213,10 @@ export const renderCalculationInline = (
     return (
       <>
         <span>IF(</span>
-        {renderCondition(cond, buCostCodes)}
+        {renderCondition(cond, buCostCodes, t)}
         <span>)</span>
         <span>{'{'} </span>
-        {renderOpsExpr(ifOps, buCostCodes)}
+        {renderOpsExpr(ifOps, buCostCodes, t)}
         {f.nestCalcFormulaId && byId.get(f.nestCalcFormulaId) ? (
           <>
             <span> </span>
@@ -216,7 +226,7 @@ export const renderCalculationInline = (
         <span> {'}'} </span>
         <span>ELSE</span>
         <span>{' {'} </span>
-        {renderOpsExpr(elseOps, buCostCodes)}
+        {renderOpsExpr(elseOps, buCostCodes, t)}
         {f.elseNestCalcFormulaId && byId.get(f.elseNestCalcFormulaId) ? (
           <>
             <span> </span>

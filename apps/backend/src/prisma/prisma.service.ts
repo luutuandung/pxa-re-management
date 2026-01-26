@@ -30,31 +30,33 @@ export class PrismaService extends PrismaClient implements NestJS.OnModuleInit, 
       const duration__milliseconds: number =
           timeMomentDirectoryAfterRequest__millisecondsSiceEpoch - timeMomentDirectoryBeforeRequest__millisecondsSiceEpoch;
 
-      if (duration__milliseconds > PrismaService.SLOW_QUERY_THRESHOLD__MILLISECONDS) {
-        this.logger.warn(
-          "SLOW QUERY DETECTED",
-          {
-            model: middlewareParams.model,
-            action: middlewareParams.action,
-            duration: `${ duration__milliseconds } ms`,
-            args: JSON.stringify(middlewareParams.args, null, 2),
-            timestamp: new Date().toISOString()
-          }
-        );
-      }
+      // SLOW QUERY logging disabled for cleaner console output
+      // if (duration__milliseconds > PrismaService.SLOW_QUERY_THRESHOLD__MILLISECONDS) {
+      //   this.logger.warn(
+      //     "SLOW QUERY DETECTED",
+      //     {
+      //       model: middlewareParams.model,
+      //       action: middlewareParams.action,
+      //       duration: `${ duration__milliseconds } ms`,
+      //       args: JSON.stringify(middlewareParams.args, null, 2),
+      //       timestamp: new Date().toISOString()
+      //     }
+      //   );
+      // }
 
-      if (duration__milliseconds > PrismaService.VERY_SLOW_QUERY_THRESHOLD__MILLISECONDS) {
-        this.logger.error(
-          "VERY SLOW QUERY DETECTED",
-          {
-            model: middlewareParams.model,
-            action: middlewareParams.action,
-            duration: `${ duration__milliseconds } ms`,
-            args: middlewareParams.args,
-            stack: new Error().stack
-          }
-        );
-      }
+      // VERY SLOW QUERY logging disabled for cleaner console output
+      // if (duration__milliseconds > PrismaService.VERY_SLOW_QUERY_THRESHOLD__MILLISECONDS) {
+      //   this.logger.error(
+      //     "VERY SLOW QUERY DETECTED",
+      //     {
+      //       model: middlewareParams.model,
+      //       action: middlewareParams.action,
+      //       duration: `${ duration__milliseconds } ms`,
+      //       args: middlewareParams.args,
+      //       stack: new Error().stack
+      //     }
+      //   );
+      // }
 
       return queryResult;
 

@@ -5,12 +5,25 @@
     "calcType": "计算种类",
     "keyword": "成本项目搜索",
     "unset": "未设定",
-    "conditionUnset": "条件未设定"
+    "conditionUnset": "条件未设定",
+    "condition": "条件",
+    "ifOperation": "IF 运算",
+    "elseOperation": "ELSE 运算",
+    "ifElement": "IF 要素",
+    "elseElement": "ELSE 要素",
+    "costTypeAmount": "额",
+    "costTypeRate": "费率",
+    "costTypeFormula": "计算公式",
+    "branch": "条件分支",
+    "ifBranch": "IF分支",
+    "elseBranch": "ELSE分支"
   },
   "placeholders": {
     "calcType": "请选择计算种类",
     "keyword": "成本项目搜索",
-    "selectOperator": "选择运算符"
+    "selectOperator": "选择运算符",
+    "costItem": "成本项目",
+    "costType": "类型"
   },
   "buttons": {
     "search": "搜索",
@@ -18,7 +31,8 @@
     "cancel": "取消",
     "edit": "编辑",
     "delete": "删除",
-    "addBranch": "+ 添加条件分支"
+    "addBranch": "+ 添加条件分支",
+    "addExpression": "+ 添加表达式"
   },
   "table": {
     "headers": {
@@ -71,7 +85,8 @@
       "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE运算: 括号未正确打开。缺少 {{ count }} 个开括号 \"(\"",
       "ifOperationRequired": "{{ branchPath }}: IF运算是必须的",
       "elseOperationRequired": "{{ branchPath }}: 设定条件式时，ELSE运算是必须的",
-      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: 没有条件式时不能设定ELSE运算。请删除ELSE运算或添加条件式"
+      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: 没有条件式时不能设定ELSE运算。请删除ELSE运算或添加条件式",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - {{#if operationIndex}}运算{{ operationIndex }}{{else}}运算{{/if}}: 不允许除以零"
     }
   }
 }

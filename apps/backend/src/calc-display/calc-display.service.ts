@@ -443,7 +443,7 @@ export class CalcDisplayService {
         businessunitId,
         deleteFlg: false,
       },
-      select: { buCostCodeId: true, buCostCd: true, buCostNameJa: true },
+      select: { buCostCodeId: true, buCostCd: true, buCostNameJa: true, buCostNameEn: true, buCostNameZh: true },
     });
     const items = await this.prisma.buCostItem.findMany({
       where: { 
@@ -478,9 +478,9 @@ export class CalcDisplayService {
       });
     // 定数（ZERO/MINUS/RATE）は全てKとして擬似項目を追加
     const sysCodes = [
-      { buCostCodeId: 'sys-zero', buCostCd: 'ZERO', buCostNameJa: '0' },
-      { buCostCodeId: 'sys-minus', buCostCd: 'MINUS', buCostNameJa: '-1' },
-      { buCostCodeId: 'sys-rate', buCostCd: 'RATE', buCostNameJa: '100' },
+      { buCostCodeId: 'sys-zero', buCostCd: 'ZERO', buCostNameJa: '0', buCostNameEn: '0', buCostNameZh: '0' },
+      { buCostCodeId: 'sys-minus', buCostCd: 'MINUS', buCostNameJa: '-1', buCostNameEn: '-1', buCostNameZh: '-1' },
+      { buCostCodeId: 'sys-rate', buCostCd: 'RATE', buCostNameJa: '100', buCostNameEn: '100', buCostNameZh: '100' },
     ];
     const sysItems = [
       { buCostItemId: 'sys-zero-K', buCostCodeId: 'sys-zero', costType: 'K' as const },

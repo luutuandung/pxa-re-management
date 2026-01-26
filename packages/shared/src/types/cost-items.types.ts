@@ -2,6 +2,8 @@ export type CostItemsBuCostCode = {
   buCostCodeId: string;
   buCostCd: string;
   buCostNameJa: string;
+  buCostNameEn: string;
+  buCostNameZh: string;
 };
 
 export type CostItemsBuCostItem = {

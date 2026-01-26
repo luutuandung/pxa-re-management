@@ -5,12 +5,25 @@
     "calcType": "Calculation Type",
     "keyword": "Cost Item Search",
     "unset": "Unset",
-    "conditionUnset": "Condition not set"
+    "conditionUnset": "Condition not set",
+    "condition": "Condition",
+    "ifOperation": "IF Operation",
+    "elseOperation": "ELSE Operation",
+    "ifElement": "IF Element",
+    "elseElement": "ELSE Element",
+    "costTypeAmount": "Amount",
+    "costTypeRate": "Rate",
+    "costTypeFormula": "Formula",
+    "branch": "Condition Branch",
+    "ifBranch": "IF Branch",
+    "elseBranch": "ELSE Branch"
   },
   "placeholders": {
     "calcType": "Select calculation type",
     "keyword": "Cost Item Search",
-    "selectOperator": "Select operator"
+    "selectOperator": "Select operator",
+    "costItem": "Cost Item",
+    "costType": "Type"
   },
   "buttons": {
     "search": "Search",
@@ -18,7 +31,8 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
-    "addBranch": "+ Add Condition Branch"
+    "addBranch": "+ Add Condition Branch",
+    "addExpression": "+ Add Expression"
   },
   "table": {
     "headers": {
@@ -71,7 +85,8 @@
       "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE Operation: Parentheses are not properly opened. Missing {{ count }} opening parenthesis \"(\"",
       "ifOperationRequired": "{{ branchPath }}: IF operation is required",
       "elseOperationRequired": "{{ branchPath }}: ELSE operation is required when condition is set",
-      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: ELSE operation cannot be set without a condition. Please remove ELSE operation or add a condition"
+      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: ELSE operation cannot be set without a condition. Please remove ELSE operation or add a condition",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - {{#if operationIndex}}Operation {{ operationIndex }}{{else}}Operation{{/if}}: Division by zero is not allowed"
     }
   }
 }

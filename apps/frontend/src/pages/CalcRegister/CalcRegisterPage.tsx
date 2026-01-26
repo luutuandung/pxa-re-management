@@ -84,6 +84,7 @@ const CalcRegisterPage = () => {
     updateSelectedCalcType(ctId);
   };
 
+  // 検索（キーワードは現時点ダミー）
   const handleSearch = () => {
     fetchBusinessCostForCalculation(selectedBusinessUnitId, selectedCalcTypeId);
     console.log('[page] search clicked:', { selectedBusinessUnitId, selectedCalcTypeId, keyword });
@@ -99,7 +100,7 @@ const CalcRegisterPage = () => {
       if (!matchesBusinessUnitAndCalcType) return false;
       
       if (!keyword.trim()) return true;
-      console.log('buItemIdToCodeMap', buItemIdToCodeMap)
+      
       const baseId = d.buCostItemId;
       const mapped = buItemIdToCodeMap[baseId];
       const fallbackKey = Object.keys(buItemIdToCodeMap).find((k) => k.startsWith(`${baseId}-`));
@@ -108,16 +109,24 @@ const CalcRegisterPage = () => {
       if (!costItemInfo) return true;
       
       const costItemCode = costItemInfo.buCostCd?.toLowerCase() || '';
-      const costItemName = costItemInfo.buCostNameJa?.toLowerCase() || '';
+      const costItemName = (
+        currentLanguage === TagsOfSupportedLanguages.english ? costItemInfo.buCostNameEn :
+        currentLanguage === TagsOfSupportedLanguages.chinese ? costItemInfo.buCostNameZh :
+        costItemInfo.buCostNameJa
+      )?.toLowerCase() || '';
       const searchKeyword = keyword.toLowerCase().trim();
       
       return costItemCode.includes(searchKeyword) || costItemName.includes(searchKeyword);
     });
-  }, [calculations, selectedBusinessUnitId, selectedCalcTypeId, keyword, buItemIdToCodeMap]);
+  }, [calculations, selectedBusinessUnitId, selectedCalcTypeId, keyword, buItemIdToCodeMap, currentLanguage]);
 
   const CostItemLabel = ({ buCostCd, costType }: { buCostCd: string; costType: 'G' | 'R' | 'K' }) => {
     const code = buCostCodes.find((b) => b.buCostCd === buCostCd);
-    const name = code?.buCostNameJa ?? buCostCd;
+    const name = (
+      currentLanguage === TagsOfSupportedLanguages.english ? code?.buCostNameEn :
+      currentLanguage === TagsOfSupportedLanguages.chinese ? code?.buCostNameZh :
+      code?.buCostNameJa
+    ) ?? buCostCd;
     const color =
       costType === 'G'
         ? 'bg-yellow-100 text-yellow-900'
@@ -156,7 +165,7 @@ const CalcRegisterPage = () => {
 
   const CalculationExpression = ({ calculation }: { calculation: Calculation }) => {
     const tree = editorTreesByDisplay[calculation.calcDisplay.calcDisplayId] as EditorBranchNode[] | undefined;
-    return renderCalculationInline(calculation, tree, buCostCodes);
+    return renderCalculationInline(calculation, tree, buCostCodes, t);
   };
 
   // モーダル左カラム用: 現在編集中の計算式データ
@@ -165,54 +174,13 @@ const CalcRegisterPage = () => {
     return editorBranches.find((b) => b.id === 'root') ?? editorBranches.find((b) => !b.parentId) ?? null;
   }, [editorBranches]);
 
-  // バリデーション: 計算式のロジックをチェック（条件式とIF/ELSE演算の整合性）
-  const validateFormulaLogic = (): boolean => {
-    let hasErrors = false;
-    
-    const validateBranchLogic = (node: EditorBranchNode, branchPath: string = '') => {
-      const currentPath = branchPath || node.label;
-      
-      // 条件式の有無をチェック
-      const hasCondition = !!(node.condition?.leftConBuCostCd && node.condition?.rightConBuCostCd);
-      const hasIfOps = node.ifOps.length > 0;
-      const hasElseOps = node.elseOps.length > 0;
-      const hasIfChildren = editorBranches.some((b) => b.parentId === node.id && b.side === 'IF');
-      const hasElseChildren = editorBranches.some((b) => b.parentId === node.id && b.side === 'ELSE');
-      
-      if (hasCondition) {
-        // 条件式がある場合 => IF演算とELSE演算は必須
-        if (!hasIfOps && !hasIfChildren) {
-          addErrorMessage(t('errors.validation.ifOperationRequired', { branchPath: currentPath }));
-          hasErrors = true;
-        }
-        if (!hasElseOps && !hasElseChildren) {
-          addErrorMessage(t('errors.validation.elseOperationRequired', { branchPath: currentPath }));
-          hasErrors = true;
-        }
-      } else {
-        // 条件式がない場合 => IF演算のみ必須、ELSE演算は設定不可
-        if (!hasIfOps && !hasIfChildren) {
-          addErrorMessage(t('errors.validation.ifOperationRequired', { branchPath: currentPath }));
-          hasErrors = true;
-        }
-        if (hasElseOps || hasElseChildren) {
-          addErrorMessage(t('errors.validation.elseOperationNotAllowedWithoutCondition', { branchPath: currentPath }));
-          hasErrors = true;
-        }
-      }
-      
-      // 子分岐の再帰チェック
-      const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
-      const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
-      ifChildren.forEach((child) => validateBranchLogic(child, `${currentPath} - IF分岐`));
-      elseChildren.forEach((child) => validateBranchLogic(child, `${currentPath} - ELSE分岐`));
-    };
-    
-    if (rootBranch) {
-      validateBranchLogic(rootBranch);
+  const formatBranchLabel = (node: EditorBranchNode, index: number): string => {
+    if (node.id === 'root') {
+      return `${t('labels.branch')}1`;
     }
-    
-    return !hasErrors;
+    const match = node.label.match(/\d+/);
+    const num = match ? parseInt(match[0], 10) : index + 1;
+    return `${t('labels.branch')}${num}`;
   };
 
   // バリデーション: 原価種別が選択されているかチェック
@@ -234,9 +202,16 @@ const CalcRegisterPage = () => {
       const validTypes = getValidCostTypes(buCostCd);
       return validTypes.includes(costType as 'G' | 'R' | 'K');
     };
+
+    // ゼロ除算チェックのヘルパー関数
+    const isZeroDivision = (operator: string, buCostCd: string): boolean => {
+      return operator === '/' && buCostCd === 'ZERO';
+    };
     
     const validateBranch = (node: EditorBranchNode, branchPath: string = '') => {
-      const currentPath = branchPath || node.label;
+      const nodeIndex = editorBranches.findIndex((b) => b.id === node.id);
+      const nodeLabel = formatBranchLabel(node, nodeIndex >= 0 ? nodeIndex : 0);
+      const currentPath = branchPath || nodeLabel;
       
       // 条件式のバリデーション
       if (node.condition) {
@@ -265,26 +240,30 @@ const CalcRegisterPage = () => {
       // IF演算のバリデーション
       node.ifOps.forEach((op, idx) => {
         const opeSeq = idx + 1;
-        
-        // 閉じ括弧以外は原価項目と原価種別のバリデーションが必要
-        if (op.opeOperator !== ')') {
-          if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
-            addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
-              branchPath: currentPath,
-              operationIndex: idx + 1
-            }));
-            hasErrors = true;
-          } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
-            addErrorMessage(t('errors.validation.ifOperationCostTypeInvalid', { 
-              branchPath: currentPath,
-              operationIndex: idx + 1,
-              costItemCode: op.opeBuCostCd
-            }));
-            hasErrors = true;
-          }
+        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+          addErrorMessage(t('errors.validation.ifOperationCostItemRequired', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
+        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+          addErrorMessage(t('errors.validation.ifOperationCostTypeInvalid', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1,
+            costItemCode: op.opeBuCostCd
+          }));
+          hasErrors = true;
         }
-        
-        // 演算子のバリデーション
+
+        // ゼロ除算のチェック
+        if (isZeroDivision(op.opeOperator, op.opeBuCostCd)) {
+          addErrorMessage(t('errors.validation.divisionByZeroNotAllowed', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
+        }
+
         if (opeSeq === 1 && op.opeOperator !== 'S') {
           addErrorMessage(t('errors.validation.ifOperationFirstOperatorMustBeS', { 
             branchPath: currentPath
@@ -299,70 +278,38 @@ const CalcRegisterPage = () => {
         }
       });
       
-      // IF演算の括弧バリデーション
-      const ifOpenCount = node.ifOps.filter(op => op.opeOperator === '(').length;
-      const ifCloseCount = node.ifOps.filter(op => op.opeOperator === ')').length;
-      if (ifOpenCount !== ifCloseCount) {
-        const diff = ifOpenCount - ifCloseCount;
-        if (diff > 0) {
-          addErrorMessage(t('errors.validation.ifOperationParenthesisMissingClose', { 
-            branchPath: currentPath,
-            count: diff
-          }));
-        } else {
-          addErrorMessage(t('errors.validation.ifOperationParenthesisMissingOpen', { 
-            branchPath: currentPath,
-            count: Math.abs(diff)
-          }));
-        }
-        hasErrors = true;
-      }
-      
       // ELSE演算のバリデーション
       node.elseOps.forEach((op, idx) => {
-        // 閉じ括弧以外は原価項目と原価種別のバリデーションが必要
-        if (op.opeOperator !== ')') {
-          if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
-            addErrorMessage(t('errors.validation.elseOperationCostItemRequired', { 
-              branchPath: currentPath,
-              operationIndex: idx + 1
-            }));
-            hasErrors = true;
-          } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
-            addErrorMessage(t('errors.validation.elseOperationCostTypeInvalid', { 
-              branchPath: currentPath,
-              operationIndex: idx + 1,
-              costItemCode: op.opeBuCostCd
-            }));
-            hasErrors = true;
-          }
+        if (!op.opeBuCostCd?.trim() || !op.opeCostType) {
+          addErrorMessage(t('errors.validation.elseOperationCostItemRequired', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
+        } else if (!isValidCostType(op.opeBuCostCd, op.opeCostType)) {
+          addErrorMessage(t('errors.validation.elseOperationCostTypeInvalid', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1,
+            costItemCode: op.opeBuCostCd
+          }));
+          hasErrors = true;
+        }
+
+        // ゼロ除算のチェック
+        if (isZeroDivision(op.opeOperator, op.opeBuCostCd)) {
+          addErrorMessage(t('errors.validation.divisionByZeroNotAllowed', { 
+            branchPath: currentPath,
+            operationIndex: idx + 1
+          }));
+          hasErrors = true;
         }
       });
-      
-      // ELSE演算の括弧バリデーション
-      const elseOpenCount = node.elseOps.filter(op => op.opeOperator === '(').length;
-      const elseCloseCount = node.elseOps.filter(op => op.opeOperator === ')').length;
-      if (elseOpenCount !== elseCloseCount) {
-        const diff = elseOpenCount - elseCloseCount;
-        if (diff > 0) {
-          addErrorMessage(t('errors.validation.elseOperationParenthesisMissingClose', { 
-            branchPath: currentPath,
-            count: diff
-          }));
-        } else {
-          addErrorMessage(t('errors.validation.elseOperationParenthesisMissingOpen', { 
-            branchPath: currentPath,
-            count: Math.abs(diff)
-          }));
-        }
-        hasErrors = true;
-      }
       
       // 子分岐のバリデーション
       const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
       const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
-      ifChildren.forEach((child) => validateBranch(child, `${currentPath} - IF分岐`));
-      elseChildren.forEach((child) => validateBranch(child, `${currentPath} - ELSE分岐`));
+      ifChildren.forEach((child) => validateBranch(child, `${currentPath} - ${t('labels.ifBranch')}`));
+      elseChildren.forEach((child) => validateBranch(child, `${currentPath} - ${t('labels.elseBranch')}`));
     };
     
     if (rootBranch) {
@@ -376,13 +323,15 @@ const CalcRegisterPage = () => {
     const ifChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'IF');
     const elseChildren = editorBranches.filter((b) => b.parentId === node.id && b.side === 'ELSE');
     const isSelected = selectedBranchId === node.id;
+    const nodeIndex = editorBranches.findIndex((b) => b.id === node.id);
+    const displayLabel = formatBranchLabel(node, nodeIndex >= 0 ? nodeIndex : 0);
     return (
       <div
         className={`rounded border p-2 bg-white ${isSelected ? 'border-blue-400' : ''}`}
         style={{ marginLeft: depth * 12 }}
       >
         <div className="flex items-center justify-between">
-          <div className="text-sm font-medium">{node.label}</div>
+          <div className="text-sm font-medium">{displayLabel}</div>
           <div className="flex gap-2">
             <Button size="sm" variant="secondary" onClick={() => selectBranch(node.id)}>
               {t('buttons.edit')}
@@ -536,9 +485,19 @@ const CalcRegisterPage = () => {
                     const baseId = c.calcDisplay?.buCostItemId;
                     if (!baseId) return '';
                     const mapped = buItemIdToCodeMap[baseId];
-                    if (mapped) return mapped.buCostNameJa;
+                    if (mapped) {
+                      return currentLanguage === TagsOfSupportedLanguages.english ? mapped.buCostNameEn :
+                        currentLanguage === TagsOfSupportedLanguages.chinese ? mapped.buCostNameZh :
+                        mapped.buCostNameJa;
+                    }
                     const fallbackKey = Object.keys(buItemIdToCodeMap).find((k) => k.startsWith(`${baseId}-`));
-                    return fallbackKey ? buItemIdToCodeMap[fallbackKey].buCostNameJa : '';
+                    if (fallbackKey) {
+                      const fallback = buItemIdToCodeMap[fallbackKey];
+                      return currentLanguage === TagsOfSupportedLanguages.english ? fallback.buCostNameEn :
+                        currentLanguage === TagsOfSupportedLanguages.chinese ? fallback.buCostNameZh :
+                        fallback.buCostNameJa;
+                    }
+                    return '';
                   })()}
                 </TableCell>
                 <TableCell
@@ -610,11 +569,6 @@ const CalcRegisterPage = () => {
                 className="bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => {
                   persistSelectedBranchFromEditor();
-                  // バリデーション: 計算式のロジックチェック
-                  if (!validateFormulaLogic()) {
-                    return;
-                  }
-                  // バリデーション: 原価種別チェック
                   if (!validateCostTypes()) {
                     return;
                   }
@@ -659,4 +613,3 @@ const CalcRegisterPage = () => {
 };
 
 export default CalcRegisterPage;
-

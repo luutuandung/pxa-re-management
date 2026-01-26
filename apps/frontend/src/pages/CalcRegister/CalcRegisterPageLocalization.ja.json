@@ -5,12 +5,25 @@
     "calcType": "計算種類",
     "keyword": "原価項目検索",
     "unset": "未設定",
-    "conditionUnset": "条件未設定"
+    "conditionUnset": "条件未設定",
+    "condition": "条件",
+    "ifOperation": "IF 演算",
+    "elseOperation": "ELSE 演算",
+    "ifElement": "IF 要素",
+    "elseElement": "ELSE 要素",
+    "costTypeAmount": "額",
+    "costTypeRate": "レート",
+    "costTypeFormula": "計算式",
+    "branch": "条件分岐",
+    "ifBranch": "IF分岐",
+    "elseBranch": "ELSE分岐"
   },
   "placeholders": {
     "calcType": "計算種類を選択してください",
     "keyword": "原価項目検索",
-    "selectOperator": "演算子を選択"
+    "selectOperator": "演算子を選択",
+    "costItem": "原価項目",
+    "costType": "種別"
   },
   "buttons": {
     "search": "検索",
@@ -18,7 +31,8 @@
     "cancel": "キャンセル",
     "edit": "編集",
     "delete": "削除",
-    "addBranch": "+ 条件分岐を追加"
+    "addBranch": "+ 条件分岐を追加",
+    "addExpression": "+ 式を追加"
   },
   "table": {
     "headers": {
@@ -71,7 +85,8 @@
       "elseOperationParenthesisMissingOpen": "{{ branchPath }} - ELSE演算: 括弧が正しく開かれていません。開き括弧 \"(\" が {{ count }} 個不足しています",
       "ifOperationRequired": "{{ branchPath }}: IF演算は必須です",
       "elseOperationRequired": "{{ branchPath }}: 条件式が設定されている場合、ELSE演算は必須です",
-      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: 条件式がない場合、ELSE演算は設定できません。ELSE演算を削除するか、条件式を追加してください"
+      "elseOperationNotAllowedWithoutCondition": "{{ branchPath }}: 条件式がない場合、ELSE演算は設定できません。ELSE演算を削除するか、条件式を追加してください",
+      "divisionByZeroNotAllowed": "{{ branchPath }} - {{#if operationIndex}}演算{{ operationIndex }}{{else}}演算{{/if}}: ゼロ除算は許可されていません"
     }
   }
 }

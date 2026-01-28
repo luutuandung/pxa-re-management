@@ -918,7 +918,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
             ...targetItem.yearAndMonthOfActualityStarting,
             monthNumber__numerationFrom1: newMonthNumberOfActualityStarting__numerationFrom1,
             monthNumber__numerationFrom1__always2Digits:
-                String(newMonthNumberOfActualityStarting__numerationFrom1).padEnd(2, "0")
+                String(newMonthNumberOfActualityStarting__numerationFrom1).padStart(2, "0")
           }
         }
       ),
@@ -1004,7 +1004,7 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
                       targetItem.yearAndMonthOfActualityStarting.year + 1 :
                       targetItem.yearAndMonthOfActualityEnding.year,
                   monthNumber__numerationFrom1: Number.parseInt(selectedOptionValue, 10),
-                  monthNumber__numerationFrom1__always2Digits: selectedOptionValue.padEnd(2, "0")
+                  monthNumber__numerationFrom1__always2Digits: selectedOptionValue.padStart(2, "0")
                 };
 
     if (

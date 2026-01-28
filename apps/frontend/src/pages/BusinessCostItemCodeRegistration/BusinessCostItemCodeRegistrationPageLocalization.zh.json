@@ -45,8 +45,20 @@
     "buCostCd": "请输入代码",
     "codeHalfWidthOnly": "代码只能包含半角字符",
     "commonEnglishNamingInvalidCharacters": "英语名称包含无效字符: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonEnglishNamingNotExists": "请输入英语名称",
+    "commonEnglishNamingExistsButNotString": "英语名称必须是字符串",
+    "commonEnglishNamingStringButEmpty": "请输入英语名称",
     "commonJapaneseNamingInvalidCharacters": "日语名称包含环境依赖字符: {{commaSeparatedFoundInvalidCharacters}}",
-    "commonChineseNamingInvalidCharacters": "中文名称包含环境依赖字符: {{commaSeparatedFoundInvalidCharacters}}"
+    "commonJapaneseNamingNotExists": "请输入日语名称",
+    "commonJapaneseNamingExistsButNotString": "日语名称必须是字符串",
+    "commonJapaneseNamingStringButEmpty": "请输入日语名称",
+    "commonChineseNamingInvalidCharacters": "中文名称包含环境依赖字符: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingNotExists": "请输入中文名称",
+    "commonChineseNamingExistsButNotString": "中文名称必须是字符串",
+    "commonChineseNamingStringButEmpty": "请输入中文名称",
+    "duplicateInChangedItems": "在要保存的项目中发现重复记录。代码: {{codes}}",
+    "duplicateWithExisting": "已存在相同代码和名称的记录。代码: {{code}}、日语名称: {{nameJa}}、英语名称: {{nameEn}}、中文名称: {{nameZh}}",
+    "duplicateWithDeletedItem": "已存在相同代码和名称的记录，但已被删除。请激活现有记录。代码: {{code}}、日语名称: {{nameJa}}、英语名称: {{nameEn}}、中文名称: {{nameZh}}"
   },
   "modals": {
     "save": {

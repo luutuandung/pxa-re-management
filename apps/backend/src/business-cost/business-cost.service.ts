@@ -15,6 +15,52 @@ import { Prisma } from '@prisma/client';
 export class BusinessCostService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // 重複チェック用のユニークキーを作成するヘルパー関数
+  private createDuplicateKey(item: {
+    businessunitId: string;
+    buCostCd: string;
+    buCostNameJa: string;
+    buCostNameEn: string;
+    buCostNameZh: string;
+  }): string {
+    return `${item.businessunitId}|${item.buCostCd.trim()}|${item.buCostNameJa.trim()}|${item.buCostNameEn.trim()}|${item.buCostNameZh.trim()}`;
+  }
+
+  // 重複エラーメッセージを作成するヘルパー関数
+  private createDuplicateErrorMessage(
+    item: {
+      buCostCd: string;
+      buCostNameJa: string;
+      buCostNameEn: string;
+      buCostNameZh: string;
+    },
+    isDeleted: boolean
+  ): { message: string; errorCode: string; errorData: Record<string, unknown> } {
+    if (isDeleted) {
+      return {
+        message: `A record with the same code and names already exists but is deleted. Please reactivate the existing record instead. Code: ${item.buCostCd}, Japanese Name: ${item.buCostNameJa}, English Name: ${item.buCostNameEn}, Chinese Name: ${item.buCostNameZh}`,
+        errorCode: 'DUPLICATE_WITH_DELETED_ITEM',
+        errorData: {
+          buCostCd: item.buCostCd,
+          buCostNameJa: item.buCostNameJa,
+          buCostNameEn: item.buCostNameEn,
+          buCostNameZh: item.buCostNameZh,
+        },
+      };
+    } else {
+      return {
+        message: `A record with the same code and names already exists. Code: ${item.buCostCd}, Japanese Name: ${item.buCostNameJa}, English Name: ${item.buCostNameEn}, Chinese Name: ${item.buCostNameZh}`,
+        errorCode: 'DUPLICATE_CODE',
+        errorData: {
+          buCostCd: item.buCostCd,
+          buCostNameJa: item.buCostNameJa,
+          buCostNameEn: item.buCostNameEn,
+          buCostNameZh: item.buCostNameZh,
+        },
+      };
+    }
+  }
+
   // 事業部原価項目一覧取得
   async getBusinessCostNames(businessUnitID: string): Promise<BuCostCode[]> {
     try {
@@ -262,6 +308,35 @@ export class BusinessCostService {
       throw new NotFoundException(`Business cost with ID ${buCostCodeId} not found`);
     }
 
+    // 重複チェック: 有効化前に、同じコード・名称の有効なレコードが既に存在するかチェック
+    const itemKey = this.createDuplicateKey(existing);
+    const duplicateRecord = await this.prisma.buCostCode.findFirst({
+      where: {
+        businessunitId: existing.businessunitId,
+        deleteFlg: false, // 有効なレコードのみチェック
+        buCostCodeId: { not: buCostCodeId }, // 自分自身は除外
+      },
+      select: {
+        buCostCodeId: true,
+        businessunitId: true,
+        buCostCd: true,
+        buCostNameJa: true,
+        buCostNameEn: true,
+        buCostNameZh: true,
+      },
+    });
+
+    if (duplicateRecord) {
+      const duplicateKey = this.createDuplicateKey(duplicateRecord);
+      if (itemKey === duplicateKey) {
+        const errorInfo = this.createDuplicateErrorMessage(existing, false);
+        throw new BusinessException(`Cannot reactivate: ${errorInfo.message}`, errorInfo.errorCode, {
+          businessunitId: existing.businessunitId,
+          ...errorInfo.errorData,
+        });
+      }
+    }
+
     try {
       return await this.prisma.buCostCode.update({
         where: { buCostCodeId },
@@ -287,6 +362,68 @@ export class BusinessCostService {
   async saveBusinessCostItems(request: BusinessCostSaveRequest, _userId: string): Promise<void> {
     if (!request.businessCostItems || request.businessCostItems.length === 0) {
       throw new ValidationException('Business cost items are required');
+    }
+
+    // リクエスト内の重複チェック
+    const requestKeys = request.businessCostItems.map((item) => this.createDuplicateKey(item));
+    const duplicateKeysInRequest = requestKeys.filter((key, index) => requestKeys.indexOf(key) !== index);
+    if (duplicateKeysInRequest.length > 0) {
+      const duplicateCodes = duplicateKeysInRequest
+        .map((key) => key.split('|')[1])
+        .filter((code, index, arr) => arr.indexOf(code) === index);
+      throw new BusinessException(
+        `Duplicate records found in request. Codes: ${duplicateCodes.join(', ')}`,
+        'DUPLICATE_CODE',
+        { codes: duplicateCodes }
+      );
+    }
+
+    // データベースとの重複チェック
+    // リクエスト内の事業部の既存レコードを全て取得（削除済みも含む）
+    const businessUnitIds = [...new Set(request.businessCostItems.map((item) => item.businessunitId))];
+    const allExistingRecords = await this.prisma.buCostCode.findMany({
+      where: {
+        businessunitId: { in: businessUnitIds },
+      },
+      select: {
+        buCostCodeId: true,
+        businessunitId: true,
+        buCostCd: true,
+        buCostNameJa: true,
+        buCostNameEn: true,
+        buCostNameZh: true,
+        deleteFlg: true,
+      },
+    });
+
+    // リクエスト内の各アイテムを既存レコードと照合
+    for (const item of request.businessCostItems) {
+      const itemKey = this.createDuplicateKey(item);
+      const isNewItem = !item.buCostCodeId;
+
+      for (const existing of allExistingRecords) {
+        // 更新中の同一アイテムはスキップ（同じ値への更新を許可）
+        if (item.buCostCodeId && existing.buCostCodeId === item.buCostCodeId) {
+          continue;
+        }
+
+        // 新規アイテムの場合: 削除済みアイテムも含めてチェック（重複を防ぐため）
+        // 既存アイテムの更新の場合: 削除済みアイテムはスキップ（有効なアイテムとの重複のみチェック）
+        if (!isNewItem && existing.deleteFlg) {
+          continue;
+        }
+
+        // 他の既存レコードとの重複チェック
+        const existingKey = this.createDuplicateKey(existing);
+        if (itemKey === existingKey) {
+          const errorInfo = this.createDuplicateErrorMessage(item, isNewItem && existing.deleteFlg);
+          throw new BusinessException(errorInfo.message, errorInfo.errorCode, {
+            businessunitId: item.businessunitId,
+            ...errorInfo.errorData,
+            ...(isNewItem && existing.deleteFlg ? { deletedItemId: existing.buCostCodeId } : {}),
+          });
+        }
+      }
     }
 
     try {

@@ -179,6 +179,13 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
 
         // ローカル状態更新
         handleBusinessItemChange(item.id, 'deleteFlg', true);
+        
+        // originalLocationItemsも更新（重複チェックのため）
+        setOriginalLocationItems((items) =>
+          items.map((origItem) =>
+            origItem.id === item.id ? { ...origItem, deleteFlg: true } : origItem
+          )
+        );
       } catch (_error) {
         addErrorMessage(t('messages.deleteError'));
       } finally {
@@ -197,6 +204,13 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
 
         // ローカル状態更新
         handleBusinessItemChange(item.id, 'deleteFlg', false);
+        
+        // originalLocationItemsも更新（重複チェックのため）
+        setOriginalLocationItems((items) =>
+          items.map((origItem) =>
+            origItem.id === item.id ? { ...origItem, deleteFlg: false } : origItem
+          )
+        );
       } catch (_error) {
         addErrorMessage(t('messages.activateError'));
       } finally {
@@ -595,12 +609,55 @@ const BusinessCostItemCodeRegistrationPage: React.FC = (): React.ReactNode => {
       }
     }
 
-    // 重複チェック
-    const codes = changedItems.map((item) => item.buCostCd);
-    const duplicates = codes.filter((code, index) => codes.indexOf(code) !== index);
-    if (duplicates.length > 0) {
-      addErrorMessage(`${t('messages.saveError')}: ${duplicates.join(', ')}`);
+    // 重複チェック: businessunitId + buCostCd + buCostNameJa + buCostNameEn + buCostNameZh の完全一致
+    // 重複チェック用のユニークキーを作成するヘルパー関数
+    const createDuplicateKey = (item: BusinessCostItem): string => {
+      const businessunitId = item.businessunitId || locationFilter || '';
+      return `${businessunitId}|${item.buCostCd.trim()}|${item.buCostNameJa.trim()}|${item.buCostNameEn.trim()}|${item.buCostNameZh.trim()}`;
+    };
+
+    // 1. changedItems内の重複チェック
+    const changedItemsKeys = changedItems.map(createDuplicateKey);
+    const duplicateKeysInChanged = changedItemsKeys.filter((key, index) => changedItemsKeys.indexOf(key) !== index);
+    if (duplicateKeysInChanged.length > 0) {
+      const duplicateCodes = duplicateKeysInChanged.map((key) => key.split('|')[1]).filter((code, index, arr) => arr.indexOf(code) === index);
+      addErrorMessage(t('validation.duplicateInChangedItems', { codes: duplicateCodes.join(', ') }));
       return;
+    }
+
+    // originalLocationItemsとの重複チェック
+    for (const changedItem of changedItems) {
+      const changedItemKey = createDuplicateKey(changedItem);
+      
+      for (const originalItem of originalLocationItems) {
+        // 更新中の同一アイテムはスキップ（同じ値への更新を許可）
+        if (!changedItem.isNew && originalItem.id === changedItem.id) continue;
+        
+        // 新規アイテムの場合: 削除済みアイテムも含めてチェック（重複を防ぐため）
+        // 既存アイテムの更新の場合: 削除済みアイテムはスキップ（有効なアイテムとの重複のみチェック）
+        if (!changedItem.isNew && originalItem.deleteFlg) continue;
+        
+        const originalItemKey = createDuplicateKey(originalItem);
+        if (changedItemKey === originalItemKey) {
+          // 削除済みアイテムとの重複の場合、reactivateを促すメッセージを表示
+          if (changedItem.isNew && originalItem.deleteFlg) {
+            addErrorMessage(t('validation.duplicateWithDeletedItem', { 
+              code: changedItem.buCostCd,
+              nameJa: changedItem.buCostNameJa,
+              nameEn: changedItem.buCostNameEn,
+              nameZh: changedItem.buCostNameZh,
+            }));
+          } else {
+            addErrorMessage(t('validation.duplicateWithExisting', { 
+              code: changedItem.buCostCd,
+              nameJa: changedItem.buCostNameJa,
+              nameEn: changedItem.buCostNameEn,
+              nameZh: changedItem.buCostNameZh,
+            }));
+          }
+          return;
+        }
+      }
     }
 
     if (changedItems.length === 0) {

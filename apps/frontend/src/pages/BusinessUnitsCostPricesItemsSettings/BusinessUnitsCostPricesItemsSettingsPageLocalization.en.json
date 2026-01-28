@@ -5,11 +5,11 @@
     "noBusinessUnits": "No data cost price registration data to display because no business units available.",
     "noDataToDisplay": "No data satisfying to current filtering.",
     "dataSavingSucceeded": "The business cost prices items table data saving complete.",
+    "importedFromExcelDataSubmittingSucceeded": "File upload completed successfully",
     "screenReaderOnly": {
       "tableDataLoadingInProgress": "The business cost prices items table data is loading now. Please wait.",
       "dataSavingInProgress": "The business cost prices items table data is being saving now. Please, wailt...",
-      "excelFileExportingInProgress": "The excel file exporting in progress. Please wait for a while",
-      "importedFromExcelDataSubmittingSucceeded": "File upload completed successfully"
+      "excelFileExportingInProgress": "The excel file exporting in progress. Please wait for a while"
     }
   },
   "controls": {
@@ -73,7 +73,7 @@
     "codesOfAvailableCurrenciesRetrievingFailed": "The malfunction has occurred during the retrieving of codes of available currencies. If you are going to upload the data from excel please try to retrieve this data again.",
     "tableDataRetrievingFailed": "The malfunction has occurred during the table data retrieving.",
     "excelDataParsingFailed": "The malfunction has occurred during the reading of Excel file.",
-    "importedFromExcelDataSubmittingError": "The malfunction has occurred during uploading of data import from the Excel file.",
+    "importedFromExcelDataSubmittingFailed": "The malfunction has occurred during uploading of data import from the Excel file.",
     "invalidDataInputtingPrevention": {
       "yearAndMonthOfActualityStartingIsLaterThanYearAndMonthOfActualityEnding": "Unable to update actuality staring year or month because specified value is later than year and month of actuality ending.",
       "yearAndMonthOfActualityEndingIsEarlierThanYearAndMonthOfActualityStarting": "Unable to update actuality ending year or month because specified value is earlier than year and month of actuality starting."

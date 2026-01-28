@@ -45,8 +45,20 @@
     "buCostCd": "コードを入力してください",
     "codeHalfWidthOnly": "コードは半角文字のみ入力できます",
     "commonEnglishNamingInvalidCharacters": "英語名称に不正な文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonEnglishNamingNotExists": "英語名称を入力してください",
+    "commonEnglishNamingExistsButNotString": "英語名称は文字列である必要があります",
+    "commonEnglishNamingStringButEmpty": "英語名称を入力してください",
     "commonJapaneseNamingInvalidCharacters": "日本語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
-    "commonChineseNamingInvalidCharacters": "中国語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}"
+    "commonJapaneseNamingNotExists": "日本語名称を入力してください",
+    "commonJapaneseNamingExistsButNotString": "日本語名称は文字列である必要があります",
+    "commonJapaneseNamingStringButEmpty": "日本語名称を入力してください",
+    "commonChineseNamingInvalidCharacters": "中国語名称に環境依存文字が含まれています: {{commaSeparatedFoundInvalidCharacters}}",
+    "commonChineseNamingNotExists": "中国語名称を入力してください",
+    "commonChineseNamingExistsButNotString": "中国語名称は文字列である必要があります",
+    "commonChineseNamingStringButEmpty": "中国語名称を入力してください",
+    "duplicateInChangedItems": "保存する項目内に重複レコードが見つかりました。コード: {{codes}}",
+    "duplicateWithExisting": "同じコード・名称のレコードが既に存在します。コード: {{code}}、日本語名称: {{nameJa}}、英語名称: {{nameEn}}、中国語名称: {{nameZh}}",
+    "duplicateWithDeletedItem": "同じコード・名称のレコードが既に存在しますが、削除済みです。既存のレコードを有効化してください。コード: {{code}}、日本語名称: {{nameJa}}、英語名称: {{nameEn}}、中国語名称: {{nameZh}}"
   },
   "modals": {
     "save": {

@@ -5,11 +5,11 @@
     "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
     "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
     "dataSavingSucceeded": "事業部原価項目データの保存が完了しました。",
+    "importedFromExcelDataSubmittingSucceeded": "ファイルのアップロードが完了しました",
     "screenReaderOnly": {
       "tableDataLoadingInProgress": "事業部原価項目データを取得中です。しばらくお待ちください。",
       "dataSavingInProgress": "事業部原価項目データを保存中です。しばらくお待ちください。",
-      "excelFileExportingInProgress": "ただいまExcelファイルを処理中です。しばらくお待ちください。",
-      "importedFromExcelDataSubmittingSucceeded": "ファイルのアップロードが完了しました"
+      "excelFileExportingInProgress": "ただいまExcelファイルを処理中です。しばらくお待ちください。"
     }
   },
   "controls": {

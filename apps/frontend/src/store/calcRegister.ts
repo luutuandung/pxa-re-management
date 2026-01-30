@@ -60,8 +60,6 @@ const buCostItemsAtom = atom<BuCostItemMock[]>([]);
 const calculationListAtom = atom<Calculation[]>([]);
 // buCostItemId → { buCostCd, buCostNameJa, buCostNameEn, buCostNameZh } のマップ（一覧表示用）
 const buItemIdToCodeMapAtom = atom<Record<string, { buCostCd: string; buCostNameJa: string; buCostNameEn: string; buCostNameZh: string }>>({});
-// buCostItemId → curCd のマップ（通貨情報）
-const buItemIdToCurrencyMapAtom = atom<Record<string, string>>({});
 // CostCode → CostItem → Calculations のグルーピング
 export type GroupedCalculations = Record<
   string,
@@ -112,7 +110,6 @@ export const useCalcRegisterSelectors = () => {
   const editorTreesByDisplay = useAtomValue(editorTreesByDisplayAtom);
   const buItemIdToCodeMap = useAtomValue(buItemIdToCodeMapAtom);
   const calculationsByCostCode = useAtomValue(calculationsByCostCodeAtom);
-  const buItemIdToCurrencyMap = useAtomValue(buItemIdToCurrencyMapAtom);
 
   return {
     selectedBusinessUnitId,
@@ -123,7 +120,6 @@ export const useCalcRegisterSelectors = () => {
     calculations,
     calculationsByCostCode,
     buItemIdToCodeMap,
-    buItemIdToCurrencyMap,
     editorOpen,
     editorTargetDisplay,
     editorConditions,
@@ -146,7 +142,6 @@ export const useCalcRegisterActions = () => {
   const setBuCostCodes = useSetAtom(buCostCodesAtom);
   const setBuCostItems = useSetAtom(buCostItemsAtom);
   const setBuItemIdToCodeMap = useSetAtom(buItemIdToCodeMapAtom);
-  const setBuItemIdToCurrencyMap = useSetAtom(buItemIdToCurrencyMapAtom);
   const setCalculationsByCostCode = useSetAtom(calculationsByCostCodeAtom);
   const setEditorOpen = useSetAtom(editorOpenAtom);
   const setEditorTargetDisplay = useSetAtom(editorTargetDisplayAtom);
@@ -220,40 +215,16 @@ export const useCalcRegisterActions = () => {
     return nodes;
   }, []);
 
-  const fetchBusinessCostForCalculation = async (buCd: string, calcTypeId?: string, curCode?: string) => {
-    // curCodeが指定されていない場合、APIに渡さない（JPYをデフォルトとしない）
-    // 将来的には、すべての通貨を取得するか、通貨選択UIを追加できる
-    const searchParams: Record<string, string> = {
-      calcTypeId: calcTypeId ?? '',
-      businessunitId: buCd,
-    };
-    if (curCode) {
-      searchParams.curCode = curCode;
-    }
+  const fetchBusinessCostForCalculation = async (buCd: string, calcTypeId?: string) => {
     const response = await api
       .get<GetCalcDisplayResponse>('calc-display', {
-        searchParams,
+        searchParams: {
+          calcTypeId: calcTypeId ?? '',
+          businessunitId: buCd,
+        },
       })
       .json();
     console.log('fetchBusinessCostForCalculation response:', response);
-    // buCostItemId → curCd のマップを構築（base IDとsuffix付きの両方）
-    const currencyMap: Record<string, string> = {};
-    for (const r of response.buCostCodes) {
-      const itemId = r.buCostItem.buCostItemId;
-      // curCdが存在する場合はそれを使用、存在しない場合はcurCodeパラメータを使用（JPYをデフォルトとしない）
-      const curCd = (r.buCostItem as any).curCd || curCode;
-      // curCdが存在する場合のみマップに保存
-      if (curCd) {
-        // base IDで保存
-        currencyMap[itemId] = curCd;
-        // suffix付きでも保存（-G, -R, -K）
-        currencyMap[`${itemId}-G`] = curCd;
-        currencyMap[`${itemId}-R`] = curCd;
-        currencyMap[`${itemId}-K`] = curCd;
-      }
-    }
-    setBuItemIdToCurrencyMap(currencyMap);
-    
     const calculations: Calculation[] = response.buCostCodes.map((r) => {
       const display =
         r.buCostItem.calcDisplay ??
@@ -338,14 +309,10 @@ export const useCalcRegisterActions = () => {
     setCalculationsByCostCode(grouped);
   };
 
-  const fetchCostItemsForBusinessUnit = async (businessunitId: string, curCode?: string) => {
-    const searchParams: Record<string, string> = { businessunitId };
-    if (curCode) {
-      searchParams.curCode = curCode;
-    }
+  const fetchCostItemsForBusinessUnit = async (businessunitId: string) => {
     const response = await api
       .get<GetCostItemsResponse>('calc-display/cost-items', {
-        searchParams,
+        searchParams: { businessunitId },
       })
       .json();
     console.log('[calcRegister] fetchCostItemsForBusinessUnit response:', response);
@@ -459,8 +426,8 @@ export const useCalcRegisterActions = () => {
       const { mockCalcTypes /*, mockBuCostCodes, mockBuCostItems, calculations*/ } = buildMockData(businessunitId);
       setCalcTypes(mockCalcTypes);
       setSelectedCalcTypeId(mockCalcTypes[0]?.calcTypeId ?? '');
-      // buCostCodes/items はAPIから取得（curCodeを指定しない）
-      fetchCostItemsForBusinessUnit(businessunitId, undefined);
+      // buCostCodes/items はAPIから取得
+      fetchCostItemsForBusinessUnit(businessunitId);
       setCalculations(calculations);
     },
     [
@@ -484,28 +451,12 @@ export const useCalcRegisterActions = () => {
   );
 
   const openEditor = useCallback(
-    async (calculation: Calculation) => {
+    (calculation: Calculation) => {
       console.log('[calcRegister] openEditor for calcDisplayId:', calculation.calcDisplay.calcDisplayId);
       setEditorTargetDisplay(calculation.calcDisplay);
       setEditorConditions(calculation.calcConditions);
       setEditorOperations(calculation.calcOperations);
       setEditorFormulas(calculation.calcFormulas ?? []);
-      
-      // 通貨を取得してcost itemsを再取得
-      const buCostItemId = calculation.calcDisplay.buCostItemId;
-      const baseItemId = buCostItemId.includes('-') && buCostItemId.match(/^[^-]+-[GRK]$/) 
-        ? buCostItemId.split('-').slice(0, -1).join('-') 
-        : buCostItemId; // suffix (-G, -R, -K) を除去
-      const currencyMap = store.get(buItemIdToCurrencyMapAtom);
-      let curCd = currencyMap[baseItemId] || currencyMap[buCostItemId];
-      console.log('currencyMap', currencyMap)
-      
-      // 通貨が見つからない場合、curCodeを指定せずに取得（JPYをデフォルトとしない）
-      // 将来的には、buCostItemIdから直接currencyを取得するAPIを追加できる
-      
-      const businessunitId = calculation.calcDisplay.businessunitId;
-      // 通貨が存在する場合のみ指定してcost itemsを取得
-      await fetchCostItemsForBusinessUnit(businessunitId, curCd || undefined);
       // 既存ツリーがあれば読み込み、なければcalcから初期化
       const trees = store.get(editorTreesByDisplayAtom);
       const saved = trees[calculation.calcDisplay.calcDisplayId];
@@ -552,8 +503,6 @@ export const useCalcRegisterActions = () => {
       setEditorIfOperations,
       setEditorElseOperations,
       buildEditorBranchesFromCalculation,
-      fetchCostItemsForBusinessUnit,
-      store,
     ]
   );
 
@@ -563,7 +512,7 @@ export const useCalcRegisterActions = () => {
   }, [setEditorOpen]);
 
   const addOperation = useCallback(
-    (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') => {
+    (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') => {
       setEditorOperations((prev) => {
         const seq = (prev?.length ?? 0) + 1;
         const newOp: CalcOperation = {
@@ -929,7 +878,7 @@ export const useCalcRegisterActions = () => {
     updateOperation,
     setCondition,
     // IF操作
-    addIfOperation: (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') =>
+    addIfOperation: (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') =>
       setEditorIfOperations((prev) => [
         ...prev,
         {
@@ -950,7 +899,7 @@ export const useCalcRegisterActions = () => {
     removeIfOperation: (calcOperationId: string) =>
       setEditorIfOperations((prev) => prev.filter((o) => o.calcOperationId !== calcOperationId)),
     // ELSE操作
-    addElseOperation: (operator: 'S' | '+' | '-' | '*' | '/' | '(' | ')', buCostCd: string, costType: 'G' | 'R' | 'K') =>
+    addElseOperation: (operator: 'S' | '+' | '-' | '*' | '/', buCostCd: string, costType: 'G' | 'R' | 'K') =>
       setEditorElseOperations((prev) => [
         ...prev,
         {

@@ -97,4 +97,12 @@ export default class CostPricePatternsManagementPageKyBFF implements CostPricePa
     );
   }
 
+  public async unregisterCostPricesForAllPairwiseCategoriesCombinations(
+    requestData: CostPricePatternsManagementPageBFF.UnregisteringOfCostPricesForAllPairwiseCategoriesCombinations.RequestData
+  ): Promise<void> {
+    await KyClient.post(
+      CostPricePatternsManagementPageTransactions.UnregisteringOfCostPricesForAllPairwiseCategoriesCombinations.URI_PATH,
+      { body: JSON.stringify(requestData) }
+    );
+  }
 }

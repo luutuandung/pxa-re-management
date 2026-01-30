@@ -1,9 +1,9 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { Provider } from 'jotai';
 import { RouterProvider } from 'react-router';
-import { AuthProvider } from "./auth/AuthContext";
+import { AuthProvider, AuthLoadingView } from "./auth/AuthContext";
 import LanguageInitializer from './components/LanguageInitializer';
 import { router } from './routes';
 import ClientDependenciesInjector from '@/dependencies-injection/ClientDependenciesInjector.ts';
@@ -15,8 +15,8 @@ import BusinessUnitsCostPricesItemsSettingsPageKyBFF from "@/BFF/Pages/BusinessU
 import CostPricePatternsManagementPageKyBFF from "@/BFF/Pages/CostPricePatternsManagementPageKyBFF.ts";
 import CostPriceRegistrationPageKyBFF from '@/BFF/Pages/CostPriceRegistrationPageKyBFF.ts';
 import CostPricesVersionsDropDownListKyBFF from '@/BFF/Components/CostPricesVersionsDropDownListKyBFF.ts';
-// i18nextの初期化
-import './i18n';
+// i18nextの初期化（リソース読み込み完了までアプリを描画しない）
+import { whenInitialResourcesLoaded } from './i18n';
 
 
 ClientDependenciesInjector.setDependencies({
@@ -38,9 +38,26 @@ ClientDependenciesInjector.setDependencies({
   }
 });
 
-const rootElement = document.getElementById('root');
-if (rootElement) {
-  createRoot(rootElement).render(
+function AppWithI18nReady() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    whenInitialResourcesLoaded.then(() => setReady(true));
+  }, []);
+
+  if (!ready) {
+    return (
+      <StrictMode>
+        <Provider>
+          <AuthProvider>
+            <AuthLoadingView />
+          </AuthProvider>
+        </Provider>
+      </StrictMode>
+    );
+  }
+
+  return (
     <StrictMode>
       <Provider>
         <AuthProvider>
@@ -51,6 +68,11 @@ if (rootElement) {
       </Provider>
     </StrictMode>
   );
+}
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  createRoot(rootElement).render(<AppWithI18nReady />);
 } else {
   console.error('Root element not found');
 }

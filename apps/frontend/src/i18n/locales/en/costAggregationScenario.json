@@ -7,19 +7,22 @@
     "thereafter": "Thereafter",
     "scenarioType": "Scenario Type",
     "aggregationCurrency": "Aggregation Currency",
+    "rateType": "Exchange Rate Type",
     "aggregationAxis": "Aggregation Axis",
     "consolidationTarget": "Consolidation Target",
     "child": "Child",
     "parent": "Parent",
     "aggregationBusiness": "Aggregation Business",
-    "finalAggregation": "Final Aggregation"
+    "finalAggregation": "Final Aggregation",
+    "selectPlaceholder": "Please select",
+    "selectShortPlaceholder": "Select"
   },
   "table": {
     "headers": {
-      "base": "Base",
+      "base": "Department",
       "classification": "Classification",
       "salesVersion": "Sales Version (Closing)",
-      "costType": "Cost Type"
+      "costType": "Cost Version"
     },
     "classification": {
       "axis": "Axis",
@@ -46,6 +49,13 @@
       "confirm": "OK",
       "cancel": "Cancel"
     }
+  },
+  "messages": {
+    "uploadSuccess": "Scenario executed successfully.",
+    "uploadError": "Failed to upload to Azure Blob Storage. Downloading locally instead.",
+    "noAggregationAxis": "Please select an Aggregation Axis before executing.",
+    "noScenarioDetails": "No scenario details found. Please select Parent or Child targets, or ensure Aggregation Axis is selected.",
+    "noScenarioType": "Please select a Scenario Type before executing."
   },
   "options": {
     "classification": {

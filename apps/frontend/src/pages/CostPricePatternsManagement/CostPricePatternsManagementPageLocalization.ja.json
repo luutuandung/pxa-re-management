@@ -1,13 +1,15 @@
 {
   "topHeading": "原価登録ー原価項目パターン",
   "guidances": {
-    "tableDataDisplaying": "原価項目一覧の表示、原価パターン種類の管理を行うには、事業部を選んでから原価バージョンを指定して下さい。",
+    "tableDataDisplaying": "原価項目一覧の表示、原価パターン種類の管理を行うには、事業部を選んでから原価バージョンを指定してください。",
     "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
     "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
     "costPricesPatternSetupSucceeded": "原価項目パターンの設定が完了しました。",
+    "costPricesPatternUnregisterSucceeded": "原価項目パターンを解除しました。",
     "screenReaderOnly": {
       "tableDataLoadingInProgress": "原価項目表データを取得中です。しばらくお待ちください。",
-      "costPricesPatternSetupInProgress": "原価項目パターンを設定中です。しばらくお待ちください。。"
+      "costPricesPatternSetupInProgress": "原価項目パターンを設定中です。しばらくお待ちください。",
+      "costPricesPatternUnregisterInProgress": "原価項目パターンの解除を実行中です。しばらくお待ちください。"
     }
   },
   "controls": {
@@ -43,7 +45,8 @@
       "retryingOfBusinessUnitsDataRetrieving": { "label": "再取得" },
       "retryingOfCostPricesVersionsDropDownListItemsRetrieving": { "label": "再取得" },
       "retryingOfCostPricesPatternsTypesListItemsRetrieving": { "label": "再取得" },
-      "retryingOfTableDataRetrieving": { "label": "再取得" }
+      "retryingOfTableDataRetrieving": { "label": "再取得" },
+      "unregister": { "label": "解除" }
     }
   },
   "table": {
@@ -68,6 +71,7 @@
     "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中不具合が発生しました。",
     "costPriceVersionsDropDownListItemsRetrievingFailed": "絞り込みに必要な原価バージョンデータの取得中不具合が発生しました。",
     "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
-    "costPricesPatternSetupFailed": "原価項目パターンの設定中不具合が発生しました。"
+    "costPricesPatternSetupFailed": "原価項目パターンの設定中不具合が発生しました。",
+    "costPricesPatternUnregisterFailed": "原価項目パターンの解除に失敗しました。"
   }
 }

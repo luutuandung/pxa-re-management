@@ -6,7 +6,7 @@ import CalcRegisterPage from '@/pages/CalcRegister/CalcRegisterPage';
 import CalcTypePage from './pages/calcType';
 import CostVersionRegistrationPage from '@/pages/CostVersionRegistration/CostVersionRegistrationPage';
 import Home from './pages/Home';
-import UniformCostItemCodeRegistrationPage from '@/pages/UniformCostItemCodeRegistration/UniformCostItemCodeRegistrationPage';
+import UniformCostItemCodeRegistrationPage from '@/pages/UniformCostItemCodeRegistration/UniformCostItemCodeRegistrationPage.tsx';
 import BusinessUnitsCostPricesItemsSettingsPage from
     '@/pages/BusinessUnitsCostPricesItemsSettings/BusinessUnitsCostPricesItemsSettingsPage.tsx';
 import CostPriceRegistrationPage from "@/pages/CostPriceRegistration/CostPriceRegistrationPage.tsx";

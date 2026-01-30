@@ -5,7 +5,7 @@ import type { ApiClientConfig } from './api-client.type';
 export const createApiClient = (config: ApiClientConfig = {}): KyInstance => {
   const defaultConfig = {
     baseUrl: config.baseUrl || import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
-    timeout: config.timeout || 30000,
+    timeout: config.timeout || 600000,
     retryCount: config.retryCount || 3,
   };
 
@@ -35,7 +35,7 @@ export const createApiClient = (config: ApiClientConfig = {}): KyInstance => {
 export const createMultipartApiClient = (config: ApiClientConfig = {}): KyInstance => {
   const defaultConfig = {
     baseUrl: config.baseUrl || import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
-    timeout: config.timeout || 30000,
+    timeout: config.timeout || 600000,
     retryCount: config.retryCount || 3,
   };
   return ky.create({

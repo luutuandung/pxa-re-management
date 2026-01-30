@@ -3,6 +3,8 @@
   display: flex
   align-items: center
   column-gap: calc(var(--spacing) * 3)
+  flex-wrap: wrap
+  row-gap: calc(var(--spacing) * 2)
 
   margin-top: calc(var(--spacing) * 3)
 
@@ -17,6 +19,81 @@
     &:first-of-type
 
       margin-left: auto
+
+
+.filterBar
+
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))
+  gap: calc(var(--spacing) * 2)
+  margin-top: calc(var(--spacing) * 2)
+  margin-bottom: 15px
+
+  &-title
+    grid-column: 1 / -1
+    font-weight: var(--font-weight-medium)
+    color: var(--color-gray-700)
+
+  &-dropDownList
+    width: 100%
+
+.filterRow
+  grid-column: 1 / -1
+  display: flex
+  align-items: flex-end
+  gap: calc(var(--spacing) * 3)
+
+  .filterItem
+    flex: 0 1 auto
+
+.filterItem
+
+  display: flex
+  flex-direction: column
+  gap: calc(var(--spacing) * 1)
+
+  &-label
+    font-size: var(--text-xs)
+    color: var(--color-gray-600)
+
+  &-input
+    border-width: 1px
+    border-style: var(--tw-border-style)
+    border-color: var(--color-gray-300)
+    border-radius: var(--radius-md)
+    padding: calc(var(--spacing) * 2)
+    background-color: white
+    font-size: var(--text-sm)
+    width: 100%
+
+    &:focus
+      outline: none
+      border-color: var(--color-blue-500)
+
+  &-inputGroup
+    display: flex
+    align-items: center
+    gap: calc(var(--spacing) * 1)
+
+  &-separator
+    font-size: var(--text-xs)
+    color: var(--color-gray-500)
+
+  &-select
+    border-width: 1px
+    border-style: var(--tw-border-style)
+    border-color: var(--color-gray-300)
+    border-radius: var(--radius-md)
+    padding: calc(var(--spacing) * 2)
+    background-color: white
+    font-size: var(--text-sm)
+    width: 100%
+    max-width: 160px
+
+    &:focus
+      outline: none
+      border-color: var(--color-blue-500)
+
 
 
 .alert
@@ -52,7 +129,7 @@
 
     border-width: 1px
     border-radius: var(--radius-lg)
-    max-height: calc(100vh - 320px)
+    max-height: calc(100vh - 420px)
     overflow: auto
 
     border-style: var(--tw-border-style)
@@ -74,8 +151,6 @@
 
       margin: calc(var(--spacing) * 2)
 
-    
-    // Override Table component's built-in container to remove its overflow
     [data-slot="table-container"]
       overflow: visible !important
       

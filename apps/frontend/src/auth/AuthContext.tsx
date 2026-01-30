@@ -18,6 +18,10 @@ const AuthContext = createContext<AuthContextValue>({
   refetch: async () => {},
 });
 
+export const AuthLoadingView: React.FC = () => (
+  <div style={{ padding: 24 }}>Loading…</div>
+);
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AuthState>({ status: "loading" });
 
@@ -51,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // 初期化中は「描画前のゲート」としてローディングを表示
   if (state.status === "loading") {
-    return <div style={{ padding: 24 }}>Loading…</div>;
+    return <AuthLoadingView />;
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

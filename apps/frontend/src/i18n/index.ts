@@ -24,7 +24,6 @@ async function loadLanguageResources(language: TagsOfSupportedLanguages): Promis
     const homeModule = await import(`./locales/${language}/home.json`);
     resources.home = homeModule.default;
 
-
     const costAggregationScenarioModule = await import(`./locales/${language}/costAggregationScenario.json`);
     resources.costAggregationScenario = costAggregationScenarioModule.default;
 
@@ -110,6 +109,9 @@ const initializeLanguageResources = async (language: TagsOfSupportedLanguages): 
   Object.keys(resources).forEach((namespace) => {
     i18n.addResourceBundle(language, namespace, resources[namespace], true, true);
   });
+
+  // リソース追加後、react-i18next に再描画を促す（追加だけでは languageChanged が発火しないため）
+  await i18n.changeLanguage(i18n.language);
 };
 
 // 保存された言語設定を取得
@@ -173,9 +175,10 @@ i18n.use(initReactI18next).init({
   },
 });
 
-// 初期言語リソースの読み込み
+// 初期言語リソースの読み込み（アプリ描画前に await するために export）
 const initialLanguage = getInitialLanguage();
-initializeLanguageResources(initialLanguage as TagsOfSupportedLanguages);
+export const whenInitialResourcesLoaded: Promise<void> =
+  initializeLanguageResources(initialLanguage as TagsOfSupportedLanguages);
 
 // 言語切り替え関数
 export async function changeLanguage(language: TagsOfSupportedLanguages): Promise<void> {

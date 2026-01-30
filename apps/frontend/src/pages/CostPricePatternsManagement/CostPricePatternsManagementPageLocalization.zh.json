@@ -1,13 +1,13 @@
 {
-  "topHeading": "原価登録ー原価項目パターン",
+  "topHeading": "成本注册 - 成本项目模式",
   "guidances": {
-    "tableDataDisplaying": "原価項目一覧の表示、原価パターン種類の管理を行うには、事業部を選んでから原価バージョンを指定して下さい。",
-    "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
-    "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
-    "costPricesPatternSetupSucceeded": "原価項目パターンの設定が完了しました。",
+    "tableDataDisplaying": "要显示成本项目列表或管理成本模式类型，请先选择事业部，再选择成本版本。",
+    "noBusinessUnits": "暂无事业部数据，无法显示相关成本注册数据。",
+    "noDataToDisplay": "没有符合当前筛选条件的数据。",
+    "costPricesPatternSetupSucceeded": "成本项目模式设置已完成。",
     "screenReaderOnly": {
-      "tableDataLoadingInProgress": "原価項目表データを取得中です。しばらくお待ちください。",
-      "costPricesPatternSetupInProgress": "原価項目パターンを設定中です。しばらくお待ちください。"
+      "tableDataLoadingInProgress": "正在获取成本项目表数据，请稍候。",
+      "costPricesPatternSetupInProgress": "正在设置成本项目模式，请稍候。"
     }
   },
   "controls": {
@@ -16,58 +16,58 @@
     },
     "dropDownLists": {
       "businessUnits": {
-        "label": "事業部",
+        "label": "事业部",
         "placeholders": {
-          "normal": "事業部を選択",
-          "noData": "事業部がありません"
+          "normal": "请选择事业部",
+          "noData": "暂无事业部"
         }
       },
       "costPriceVersions": {
-        "label": "原価バージョン",
+        "label": "成本版本",
         "placeholders": {
-          "normal": "原価バージョンを選択",
-          "noData": "原価バージョンがありません"
+          "normal": "请选择成本版本",
+          "noData": "暂无成本版本"
         }
       },
       "costPricesPatternsTypes": {
-        "label": "原価パターン種類",
+        "label": "成本模式类型",
         "placeholders": {
-          "normal": "原価パターン種類を選択",
-          "noData": "原価パターン種類がありません"
+          "normal": "请选择成本模式类型",
+          "noData": "暂无成本模式类型"
         }
       }
     },
     "buttons": {
-      "dataSaving": { "label": "設定" },
-      "costPricesPatternsTypesManagementDialogOpening": { "label": "原価パターン種類管理" },
-      "retryingOfBusinessUnitsDataRetrieving": { "label": "再取得" },
-      "retryingOfCostPricesVersionsDropDownListItemsRetrieving": { "label": "再取得" },
-      "retryingOfCostPricesPatternsTypesListItemsRetrieving": { "label": "再取得" },
-      "retryingOfTableDataRetrieving": { "label": "再取得" }
+      "dataSaving": { "label": "设置" },
+      "costPricesPatternsTypesManagementDialogOpening": { "label": "成本模式类型管理" },
+      "retryingOfBusinessUnitsDataRetrieving": { "label": "重新获取" },
+      "retryingOfCostPricesVersionsDropDownListItemsRetrieving": { "label": "重新获取" },
+      "retryingOfCostPricesPatternsTypesListItemsRetrieving": { "label": "重新获取" },
+      "retryingOfTableDataRetrieving": { "label": "重新获取" }
     }
   },
   "table": {
     "headers": {
-      "selecting": "選択",
-      "businessUnitCode": "事業部原価項目コード",
-      "businessUnitName": "事業部原価項目名",
-      "costPriceType": "原価種類",
-      "currencyCode": "通貨",
-      "costPricePatternLocalizedName": "原価パターン種類",
-      "patternCd": "パターンコード"
+      "selecting": "选择",
+      "businessUnitCode": "事业部成本项目代码",
+      "businessUnitName": "事业部成本项目名称",
+      "costPriceType": "成本类型",
+      "currencyCode": "货币",
+      "costPricePatternLocalizedName": "成本模式类型",
+      "patternCd": "模式代码"
     },
     "bodyCells": {
       "costPriceType": {
-        "amount": "額",
-        "rate": "レート"
+        "amount": "金额",
+        "rate": "费率"
       }
     },
     "noSearchResults": "未找到符合搜索条件的数据"
   },
   "errors": {
-    "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中不具合が発生しました。",
-    "costPriceVersionsDropDownListItemsRetrievingFailed": "絞り込みに必要な原価バージョンデータの取得中不具合が発生しました。",
-    "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
-    "costPricesDataRegistrationFailed": "原価登録中不具合が発生しました。"
+    "businessUnitsDataRetrievingFailed": "获取筛选所需的事业部数据时发生错误。",
+    "costPriceVersionsDropDownListItemsRetrievingFailed": "获取筛选所需的成本版本数据时发生错误。",
+    "tableDataRetrievingFailed": "获取显示数据时发生错误。",
+    "costPricesDataRegistrationFailed": "成本注册时发生错误。"
   }
 }

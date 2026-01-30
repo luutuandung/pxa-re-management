@@ -1,85 +1,85 @@
 {
-  "topHeading": "原価登録",
+  "topHeading": "成本注册",
   "guidances": {
-    "tableDataDisplaying": "原価登録データを表示させるには、事業部を選んでから原価バージョンを選んで下さい。その後、任意で原価パターン種類で絞りめます。",
-    "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
-    "noCostPriceVersions": "選択された事業部と関連している原価登録バージョンデータはありません。",
-    "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
-    "importedFromExcelDataSubmittingSucceeded": "エクセルファイルを元に原価登録データが更新されました。",
+    "tableDataDisplaying": "要显示成本注册数据，请先选择事业部，再选择成本版本。之后可按成本模式类型进行筛选。",
+    "noBusinessUnits": "暂无事业部数据，无法显示相关成本注册数据。",
+    "noCostPriceVersions": "所选事业部没有关联的成本版本数据。请选择其他事业部。",
+    "noDataToDisplay": "没有符合当前筛选条件的数据。",
+    "importedFromExcelDataSubmittingSucceeded": "已根据 Excel 文件更新成本注册数据。",
     "screenReaderOnly": {
-      "tableDataLoadingInProgress": "原価登録データを取得中です。しばらくお待ちください。",
-      "excelFileExportingInProgress": "ただいまExcelファイルを処理中です。しばらくお待ちください。"
+      "tableDataLoadingInProgress": "正在获取成本注册数据，请稍候。",
+      "excelFileExportingInProgress": "正在处理 Excel 文件，请稍候。"
     }
   },
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "事業部",
+        "label": "事业部",
         "placeholders": {
-          "normal": "事業部を選択",
-          "noData": "事業部がありません"
+          "normal": "请选择事业部",
+          "noData": "暂无事业部"
         }
       },
       "costPriceVersions": {
-        "label": "原価バージョン",
+        "label": "成本版本",
         "placeholders": {
-          "normal": "原価バージョンを選択",
-          "noData": "原価バージョンがありません"
+          "normal": "请选择成本版本",
+          "noData": "暂无成本版本"
         }
       },
       "constPricePatterns": {
-        "label": "原価パターン種類",
+        "label": "成本模式类型",
         "placeholders": {
-          "normal": "原価パターン種類を選択",
-          "noData": "原価パターン種類はありません"
+          "normal": "请选择成本模式类型",
+          "noData": "暂无成本模式类型"
         },
-        "selectAll": "全選択"
+        "selectAll": "全选"
       }
     },
     "buttons": {
-      "businessUnitsDataRetrievingRetrying": { "label": "再取得" },
-      "costPriceVersionsDropDownListItemsRetrievingRetrying": { "label": "再取得" },
-      "tableDataRetrievingRetrying": { "label": "再取得" },
-      "excelFileDownloading": { "label": "Excelダウンロード" },
-      "excelFileUploading": { "label": "Excelアップロード" }
+      "businessUnitsDataRetrievingRetrying": { "label": "重新获取" },
+      "costPriceVersionsDropDownListItemsRetrievingRetrying": { "label": "重新获取" },
+      "tableDataRetrievingRetrying": { "label": "重新获取" },
+      "excelFileDownloading": { "label": "下载 Excel" },
+      "excelFileUploading": { "label": "上传 Excel" }
     }
   },
   "table": {
     "headers": {
-      "businessUnitCostPriceCode": "事業部原価登録コード",
-      "businessUnitCostPriceLocalizedName": "事業原価登録名",
-      "costPriceType": "原価種類",
-      "currency": "通貨",
-      "costPricePatternLocalizedName": "原価パターン種類",
-      "formattedModelCategoriesNames": "機種カテゴリ",
-      "formattedSalesDestinations": "販売先カテゴリ",
-      "formattedSecondSalesDestinations": "2次販売先カテゴリ",
-      "startYearAndMonth__YYYYMM": "適用年月",
-      "costPriceAmount": "原価値"
+      "businessUnitCostPriceCode": "事业部成本注册代码",
+      "businessUnitCostPriceLocalizedName": "事业部成本注册名称",
+      "costPriceType": "成本类型",
+      "currency": "货币",
+      "costPricePatternLocalizedName": "成本模式类型",
+      "formattedModelCategoriesNames": "机型类别",
+      "formattedSalesDestinations": "销售对象类别",
+      "formattedSecondSalesDestinations": "二次销售对象类别",
+      "startYearAndMonth__YYYYMM": "适用年月",
+      "costPriceAmount": "成本值"
     },
     "bodyCells": {
       "costPriceType": {
-        "amount": "額",
-        "rate": "レート"
+        "amount": "金额",
+        "rate": "费率"
       }
     }
   },
   "errors": {
-    "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中不具合が発生しました。",
-    "hasCostPriceVersionsDropDownListItemsFailed": "原価バージョン絞り込みに必要なデータの取得中不具合が発生しました。",
-    "tableDataRetrievingFailed": "表示データの取得中不具合が発生しました。",
-    "excelDataParsingFailed": "エクセルファイルの読み込み中不具合が発生しました。",
+    "businessUnitsDataRetrievingFailed": "获取筛选所需的事业部数据时发生错误。",
+    "hasCostPriceVersionsDropDownListItemsFailed": "获取筛选所需的成本版本数据时发生错误。",
+    "tableDataRetrievingFailed": "获取显示数据时发生错误。",
+    "excelDataParsingFailed": "读取 Excel 文件时发生错误。",
     "excelFileValidation": {
-      "intro": "インポートされたエクセルファイルにおいて下記の不備がありました。",
-      "lineNumberTitle": "{{ lineNumber }}行目",
-      "COST_PRICE_REGISTRATION_ID-NOT_EXISTS": "原価登録のIDが必須になっていますが、指定されていません。",
-      "COST_PRICE_REGISTRATION_ID-EXISTS_BUT_NOT_STRING": "原価登録のIDが指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
-      "COST_PRICE_REGISTRATION_ID-STRING_BUT_EMPTY": "原価登録のIDが指定され、文字列になってはいますが、空文字です。",
-      "COST_PRICE_REGISTRATION_ID-HAS_DUPLICATE": "同じIDの行がファイルの中に複数存在します。",
-      "COST_PRICE_REGISTRATION_VALUE-NOT_EXISTS": "原価登録の値が必須になっていますが、指定されていません。",
-      "COST_PRICE_REGISTRATION_VALUE-EXISTS_BUT_NOT_NUMBER": "原価登録の値が指定されていますが、数型になっておらず、{{ actualType }}になっています。",
-      "COST_PRICE_REGISTRATION_VALUE-LESS_THAN_0": "原価登録の値がゼロより小さくなっています。"
+      "intro": "导入的 Excel 文件中存在以下问题：",
+      "lineNumberTitle": "第 {{ lineNumber }} 行",
+      "COST_PRICE_REGISTRATION_ID-NOT_EXISTS": "成本注册 ID 为必填项，但未填写。",
+      "COST_PRICE_REGISTRATION_ID-EXISTS_BUT_NOT_STRING": "成本注册 ID 已填写，但类型为 {{ actualType }}，应为字符串。",
+      "COST_PRICE_REGISTRATION_ID-STRING_BUT_EMPTY": "成本注册 ID 已填写为字符串，但内容为空。",
+      "COST_PRICE_REGISTRATION_ID-HAS_DUPLICATE": "同一 ID 在文件中出现多次。",
+      "COST_PRICE_REGISTRATION_VALUE-NOT_EXISTS": "成本注册值为必填项，但未填写。",
+      "COST_PRICE_REGISTRATION_VALUE-EXISTS_BUT_NOT_NUMBER": "成本注册值已填写，但类型为 {{ actualType }}，应为数字。",
+      "COST_PRICE_REGISTRATION_VALUE-LESS_THAN_0": "成本注册值不能小于零。"
     },
-    "importedFromExcelDataSubmittingFailed": "エクセルファイルからインポートされたデータの送信中に不具合が発生しました。"
+    "importedFromExcelDataSubmittingFailed": "上传从 Excel 导入的数据时发生错误。"
   }
 }

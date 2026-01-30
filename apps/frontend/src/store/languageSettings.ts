@@ -1,6 +1,6 @@
 import { TagsOfSupportedLanguages } from '@pxa-re-management/shared';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { changeLanguage as changeI18nLanguage } from '../i18n';
 
 
@@ -10,7 +10,7 @@ export function isSupportedLanguageTag(languageTag: string): languageTag is Tags
   return (Object.values(TagsOfSupportedLanguages) as Array<string>).includes(languageTag);
 }
 
-// 言語設定のatom（初期値はデフォルト、後でi18nと同期）
+// 言語設定のatom
 const languageAtom = atom<TagsOfSupportedLanguages>(TAG_OF_DEFAULT_LANGUAGE);
 
 
@@ -52,17 +52,6 @@ export const useLanguageSelectors = () => {
 // 言語設定のフック（読み書き両方）
 export const useLanguage = () => {
   const [currentLanguage, setLanguage] = useAtom(languageAtom);
-
-  // i18nと同期（初回レンダリング時）
-  useEffect(() => {
-    // i18nを動的にimportしてcircular dependencyを回避
-    import('../i18n').then(({ default: i18n }) => {
-      const i18nLang = i18n.language || (i18n.options?.lng as string) || 'ja';
-      if (isSupportedLanguageTag(i18nLang) && currentLanguage !== i18nLang) {
-        setLanguage(i18nLang);
-      }
-    });
-  }, []); // 初回のみ実行
 
   const changeLanguage = useCallback(
     async (language: TagsOfSupportedLanguages) => {

@@ -1,24 +1,24 @@
 {
   "table": {
     "columnTitles": {
-      "number": "番号",
-      "ordering": "並べ替え",
-      "category": "カテゴリー",
-      "otherActions": "その他の操作"
+      "number": "序号",
+      "ordering": "排序",
+      "category": "类别",
+      "otherActions": "其他操作"
     }
   },
   "controls": {
     "buttons": {
-      "swapWithPreviousCategory": { "accessibilityGuidance": "直前のカテゴリーと並べ替える" },
-      "swapWithNextCategory": { "accessibilityGuidance": "直後のカテゴリーと並べ替える" },
-      "categoryAdding": { "label": "追加" },
-      "categoryDeleting": { "label": "削除" }
+      "swapWithPreviousCategory": { "accessibilityGuidance": "与上一类别交换顺序" },
+      "swapWithNextCategory": { "accessibilityGuidance": "与下一类别交换顺序" },
+      "categoryAdding": { "label": "添加" },
+      "categoryDeleting": { "label": "删除" }
     },
     "dropDownLists": {
       "category": {
         "placeholders": {
-          "normal": "カテゴリー",
-          "noData": "データがありません"
+          "normal": "类别",
+          "noData": "暂无数据"
         }
       }
     }

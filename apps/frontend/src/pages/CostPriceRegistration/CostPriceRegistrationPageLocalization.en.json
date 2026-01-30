@@ -3,7 +3,7 @@
   "guidances": {
     "tableDataDisplaying": "To display cost prices data table, please select the business unit, then the cost price version. After that, it is possible additionally to filter by cost price pattern.",
     "noBusinessUnits": "No data cost price registration data to display because no business units available.",
-    "noCostPriceVersions": "No cost prices version data available for selected business usit. Please select another business unit.",
+    "noCostPriceVersions": "No cost prices version data available for selected business unit. Please select another business unit.",
     "noDataToDisplay": "No data satisfying to current filtering.",
     "importedFromExcelDataSubmittingSucceeded": "The cost prices registrations has been updated according to data from Excel file.",
     "screenReaderOnly": {
@@ -42,6 +42,20 @@
       "tableDataRetrievingRetrying": { "label": "Retry" },
       "excelFileDownloading": { "label": "Download Excel" },
       "excelFileUploading": { "label": "Upload Excel" }
+    },
+    "filters": {
+      "title": "Filters",
+      "period": {
+        "label": "Period",
+        "fromPlaceholder": "From (YYYYMM)",
+        "toPlaceholder": "To (YYYYMM)",
+        "separator": "to"
+      },
+      "currency": { "label": "Currency", "placeholder": "Select currency" },
+      "costItem": { "label": "Cost Item", "placeholder": "Name or code" },
+      "modelCategory": { "label": "Model Category", "placeholder": "Partial match" },
+      "salesCategory": { "label": "Sales Category", "placeholder": "Partial match" },
+      "secondSalesCategory": { "label": "2nd Sales Category", "placeholder": "Partial match" }
     }
   },
   "table": {

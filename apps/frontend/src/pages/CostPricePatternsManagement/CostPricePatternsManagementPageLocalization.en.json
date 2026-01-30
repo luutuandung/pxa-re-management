@@ -1,13 +1,15 @@
 {
   "topHeading": "Cost Registration - Cost Item Pattern",
   "guidances": {
-    "tableDataDisplaying": "To display cost price patterns data table or manager the cost prices categories types, please select the business unit then select the cost price version.",
+    "tableDataDisplaying": "To display the cost price patterns data table or manage cost price pattern types, please select the business unit and then select the cost price version.",
     "noBusinessUnits": "No data to display because no business units available.",
     "noDataToDisplay": "No data satisfying to current filtering.",
     "costPricesPatternSetupSucceeded": "Cost price registration complete.",
+    "costPricesPatternUnregisterSucceeded": "The cost price pattern has been unregistered.",
     "screenReaderOnly": {
       "tableDataLoadingInProgress": "The cost price patterns data table is loading now. Please wait.",
-      "costPricesPatternSetupInProgress": "The cost prices registration in progress. Please wait."
+      "costPricesPatternSetupInProgress": "The cost prices registration in progress. Please wait.",
+      "costPricesPatternUnregisterInProgress": "Cost price pattern unregister is in progress. Please wait."
     }
   },
   "controls": {
@@ -43,7 +45,8 @@
       "retryingOfBusinessUnitsDataRetrieving": { "label": "Retry" },
       "retryingOfCostPricesVersionsDropDownListItemsRetrieving": { "label": "Retry" },
       "retryingOfCostPricesPatternsTypesListItemsRetrieving": { "label": "Retry" },
-      "retryingOfTableDataRetrieving": { "label": "Retry" }
+      "retryingOfTableDataRetrieving": { "label": "Retry" },
+       "unregister": { "label": "Unregister"} 
     }
   },
   "table": {
@@ -68,6 +71,8 @@
     "businessUnitsDataRetrievingFailed": "The malfunction has occurred during the retrieving of business units data which requires for filtering.",
     "costPriceVersionsDropDownListItemsRetrievingFailed": "The malfunction has occurred during the retrieving of cost prices versions data which requires for filtering.",
     "tableDataRetrievingFailed": "The malfunction has occurred during the table data retrieving.",
-    "costPricesDataRegistrationFailed": "The malfunction has occurred during the cost prices registration."
+    "costPricesDataRegistrationFailed": "The malfunction has occurred during the cost prices registration.",
+    "costPricesPatternSetupFailed": "Failed to set up the cost price pattern.",
+    "costPricesPatternUnregisterFailed": "Failed to unregister the cost price pattern."
   }
 }

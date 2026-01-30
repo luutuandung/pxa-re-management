@@ -2,24 +2,29 @@
   "title": "原価集計シナリオ画面",
   "description": "原価集計シナリオの設定・実行を行います",
   "form": {
-    "classification": "区分",
-    "aggregationMonth": "集計月",
-    "thereafter": "以降",
-    "scenarioType": "シナリオ種類",
-    "aggregationCurrency": "集計通貨",
+    "scenarioName": "シナリオ名",
+    "applicationStartDate": "適用開始",
+    "applicationEndDate": "適用終了",
+    "aggregationBusiness": "集計事業",
     "aggregationAxis": "集計軸",
+    "aggregationCurrency": "通貨",
+    "rateType": "為替レート区分",
     "consolidationTarget": "連結対象",
     "child": "子",
     "parent": "親",
-    "aggregationBusiness": "集計事業",
-    "finalAggregation": "最終集計"
+    "description": "説明",
+    "classification": "区分",
+    "scenarioType": "シナリオ種類",
+    "finalAggregation": "最終集計",
+    "selectPlaceholder": "選択してください",
+    "selectShortPlaceholder": "選択"
   },
   "table": {
     "headers": {
-      "base": "拠点",
+      "base": "事業部",
       "classification": "区分",
       "salesVersion": "販売バージョン（締め）",
-      "costType": "原価種類"
+      "costType": "原価バージョン"
     },
     "classification": {
       "axis": "集計軸",
@@ -46,6 +51,13 @@
       "confirm": "OK",
       "cancel": "キャンセル"
     }
+  },
+  "messages": {
+    "uploadSuccess": "シナリオ実行に成功しました。",
+    "uploadError": "Azure Blob Storageへのアップロードに失敗しました。ローカルにダウンロードします。",
+    "noAggregationAxis": "実行前に集計軸を選択してください。",
+    "noScenarioDetails": "シナリオ詳細が見つかりません。親または子の対象を選択するか、集計軸が選択されていることを確認してください。",
+    "noScenarioType": "実行前にシナリオ種類を選択してください。"
   },
   "options": {
     "classification": {

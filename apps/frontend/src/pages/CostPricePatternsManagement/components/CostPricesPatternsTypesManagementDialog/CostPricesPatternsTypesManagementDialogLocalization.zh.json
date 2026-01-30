@@ -1,59 +1,59 @@
 {
-  "heading": "原価パターン種類管理",
+  "heading": "成本价格模式类型管理",
   "listView": {
-    "title": "原価パターン種類"
+    "title": "成本价格模式类型"
   },
   "controls": {
     "buttons": {
-      "beingInputtingOfNewCostPricesPatternData": { "label": "追加" },
-      "retryingOfCostPricesPatternsListItemsRetrieving": { "label": "再試験" },
+      "beingInputtingOfNewCostPricesPatternData": { "label": "添加" },
+      "retryingOfCostPricesPatternsListItemsRetrieving": { "label": "重试" },
       "savingOfNewCostPricePattern": { "label": "保存" },
-      "closing": { "label": "閉じる" }
+      "closing": { "label": "关闭" }
     },
     "textBoxes": {
       "costPricePatternNames": {
-        "japanese": { "label": "原価パターン種類 日本語名" },
-        "english": { "label": "原価パターン種類 英語名" },
-        "chinese": { "label": "原価パターン種類 中国語名" }
+        "japanese": { "label": "成本价格模式类型 日语名称" },
+        "english": { "label": "成本价格模式类型 英语名称" },
+        "chinese": { "label": "成本价格模式类型 中文名称" }
       }
     },
     "costPricePatternsCategoriesManagers": {
-      "modelsCategories": { "title": "機種カテゴリ" },
-      "salesCategories": { "title": "販売先カテゴリ" },
-      "resailingCategories": { "title": "2次販売先カテゴリ" }
+      "modelsCategories": { "title": "机型类别" },
+      "salesCategories": { "title": "销售对象类别" },
+      "resailingCategories": { "title": "二次销售对象类别" }
     }
   },
   "guidances": {
-    "noCostPricesPatternsListItems": "選択された事業部に該当している原価パターン種類はありません。",
-    "newCostPricePatternDataSubmittingSuccess": "原価パターン種類が追加されました。",
-    "existingCostPricePatternDataSubmittingSuccess": "原価パターン種類が更新されました。",
+    "noCostPricesPatternsListItems": "所选事业部没有对应的成本价格模式类型。",
+    "newCostPricePatternDataSubmittingSuccess": "已添加成本价格模式类型。",
+    "existingCostPricePatternDataSubmittingSuccess": "已更新成本价格模式类型。",
     "screenReaderOnly": {
-      "tableDataLoadingInProgress": "原価パターン種類は取得中です。しばらくお待ちください。",
-      "newCostPricePatternDataSubmittingInProgress": "新規原価パターン種類データを保存中です・・・",
-      "existingCostPricePatternDataSubmittingInProgress": "新規原価パターン種類を保存中です・・・"
+      "tableDataLoadingInProgress": "正在获取成本价格模式类型，请稍候。",
+      "newCostPricePatternDataSubmittingInProgress": "正在保存新成本价格模式类型数据…",
+      "existingCostPricePatternDataSubmittingInProgress": "正在更新成本价格模式类型数据…"
     }
   },
   "errors": {
-    "costPricesPatternsListItemsRetrievingFailed": "原価パターン種類一覧取得の際不具合が発生しました。",
-    "newCostPricePatternDataSubmittingFailed": "新規原価パターン種類の保存中不具合が発生しました。",
-    "existingCostPricePatternDataSubmittingFailed": "原価パターン種類の保存中不具合が発生しました。",
+    "costPricesPatternsListItemsRetrievingFailed": "获取成本价格模式类型列表时发生错误。",
+    "newCostPricePatternDataSubmittingFailed": "保存新成本价格模式类型时发生错误。",
+    "existingCostPricePatternDataSubmittingFailed": "更新成本价格模式类型时发生错误。",
     "validation": {
-      "intro": "入力された原価パターン種類に下記の不備があります。",
-      "COMMON_JAPANESE_NAMING-STRING_BUT_EMPTY": "原価パターン種類の日本語名は必須ですが指定されていません。",
-      "COMMON_JAPANESE_NAMING-INVALID_CHARACTERS": "原価パターン種類の日本語名に禁止文字が含まれています。{{ commaSeparatedFoundInvalidCharacters }}。",
-      "COMMON_ENGLISH_NAMING-STRING_BUT_EMPTY": "原価パターン種類の英語名は必須ですが指定されていません。",
-      "COMMON_ENGLISH_NAMING-INVALID_CHARACTERS": "原価パターン種類の英語名に禁止文字が含まれています。{{ commaSeparatedFoundInvalidCharacters }}。",
-      "COMMON_CHINESE_NAMING-STRING_BUT_EMPTY": "原価パターン種類の中国語名は必須ですが指定されていません。",
-      "COMMON_CHINESE_NAMING-INVALID_CHARACTERS": "原価パターン種類の中国語名は下記の禁止文字を含めています。{{ commaSeparatedFoundInvalidCharacters }}。",
-      "COST_PRICE_PATTERN_TYPE-CATEGORY-NO_ONE": "カテゴリーは少なくともひとつ以上設定が必要です。"
+      "intro": "输入的成本价格模式类型存在以下问题。",
+      "COMMON_JAPANESE_NAMING-STRING_BUT_EMPTY": "成本价格模式类型的日语名称为必填项，但未填写。",
+      "COMMON_JAPANESE_NAMING-INVALID_CHARACTERS": "成本价格模式类型的日语名称包含以下禁止字符：{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COMMON_ENGLISH_NAMING-STRING_BUT_EMPTY": "成本价格模式类型的英语名称为必填项，但未填写。",
+      "COMMON_ENGLISH_NAMING-INVALID_CHARACTERS": "成本价格模式类型的英语名称包含以下禁止字符：{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COMMON_CHINESE_NAMING-STRING_BUT_EMPTY": "成本价格模式类型的中文名称为必填项，但未填写。",
+      "COMMON_CHINESE_NAMING-INVALID_CHARACTERS": "成本价格模式类型的中文名称包含以下禁止字符：{{ commaSeparatedFoundInvalidCharacters }}。",
+      "COST_PRICE_PATTERN_TYPE-CATEGORY-NO_ONE": "请至少设置一个类别。"
     }
   },
   "confirmationSubdialog": {
-    "title": "入力内容廃棄の確認",
-    "question": "入力された情報が破棄されます。よろしいですか？",
+    "title": "确认放弃输入内容",
+    "question": "输入的内容将被放弃。是否继续？",
     "buttons": {
-      "confirmation": { "label": "廃棄する" },
-      "cancellation": { "label": "入力を続ける" }
+      "confirmation": { "label": "放弃" },
+      "cancellation": { "label": "继续输入" }
     }
   },
   "labels": {

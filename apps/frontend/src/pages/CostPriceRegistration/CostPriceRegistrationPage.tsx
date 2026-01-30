@@ -92,6 +92,15 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     hasCostPricePatternsDropDownListItemsRetrievingErrorOccurred: false,
     selectedCostPricePatternID: null,
 
+    /* ╍╍╍ Table Filters ╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍╍ */
+    filterPeriodFrom: "",
+    filterPeriodTo: "",
+    filterCurrency: "",
+    filterCostItem: "",
+    filterModelCategory: "",
+    filterSalesCategory: "",
+    filterSecondSalesCategory: "",
+
     /* ┅┅┅ Table Data ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     tableData: null,
     hasTableDataRetrievingForCurrentFilteringNotStartedYet: true,
@@ -409,7 +418,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
         this.getLocalizedString("table.headers.startYearAndMonth__YYYYMM"),
         this.getLocalizedString("table.headers.costPriceAmount"),
       ],
-      bodyCellsContent: this.state.tableData.rows,
+      bodyCellsContent: this.filteredTableRows,
       transformItemToCellsArray: (rowData: CostPriceRegistrationPageBFF.TableData.Row): Array<string | number | boolean> =>
           {
 
@@ -495,8 +504,8 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
           return ({
             costPriceRegistrationID: cellsContent[CostPriceRegistrationPage.ExcelFile.ColumnsIndexes.costPriceRegisterID],
             costPriceRegistrationValue:
-                typeof costPriceRegistrationRawValue === "string" && costPriceRegistrationRawValue.length > 0 ?
-                    costPriceRegistrationRawValue : 0
+                 typeof costPriceRegistrationRawValue === "undefined" || costPriceRegistrationRawValue == "" ? 
+                    null : costPriceRegistrationRawValue
           });
 
         },
@@ -598,9 +607,11 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
         { this.actionBar }
 
+        { this.filterBar }
+
         { this.upperErrorsMessagesBoxes }
 
-        <div className={ `${CSS_Classes["table-decorativeWrapper"]} overflow-auto max-h-[70vh]` }>
+        <div className={ CSS_Classes["table-decorativeWrapper"] }>
           { this.tableView }
         </div>
 
@@ -665,44 +676,6 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
           className={ CSS_Classes["actionBar-dropDownList"] }
         />
 
-        <DropDownList
-          label={ this.getLocalizedString("controls.dropDownLists.constPricePatterns.label") }
-          placeholder={
-            this.getLocalizedString(
-              "controls.dropDownLists.constPricePatterns.placeholders." +
-                  (this.state.costPricePatternsDropDownListItems.length > 0 ? "normal" : "noData")
-            )
-          }
-          itemsData={
-            [
-              {
-                key: "__ALL__",
-                value: "__ALL__",
-                displayingNode: this.getLocalizedString("controls.dropDownLists.constPricePatterns.selectAll")
-              },
-              ...this.state.costPricePatternsDropDownListItems.map(
-                (
-                  {
-                    costPricePatternID,
-                    costPricePatternName
-                  }: CostPriceRegistrationPageBFF.CostPricePatternsDropDownListItemsRetrieving.ResponseData.Item
-                ): DropDownList.ItemData =>
-                    ({
-                      key: costPricePatternID,
-                      value: costPricePatternID,
-                      displayingNode: costPricePatternName
-                    })
-              )
-            ]
-          }
-          value={ this.state.selectedCostPricePatternID === null ? "__ALL__" : this.state.selectedCostPricePatternID }
-          onValueChange={ this.onCostPricePatternSelected.bind(this) }
-          isVerticalOrientation={ true }
-          disabled={ this.state.costPricePatternsDropDownListItems.length === 0 }
-          loading={ this.state.isCostPricePatternsDropDownListItemsRetrievingInProgress }
-          className={ CSS_Classes["actionBar-dropDownList"] }
-        />
-
         <Button
           onClick={ this.onExcelFileDownloadingButtonClicked.bind(this) }
           disabled={ this.state.tableData === null || this.state.tableData.rows.length === 0 }
@@ -726,6 +699,171 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
           onChange={ this.onExcelFilePicked.bind(this) }
         />
 
+      </div>
+    );
+  }
+
+  /* ┅┅┅ Filter Bar ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+  private get filterBar(): React.ReactNode {
+    const currencyOptions = this.currencyFilterOptions;
+
+    return (
+      <div className={ CSS_Classes.filterBar }>
+        <div className={ CSS_Classes["filterBar-title"] }>
+          { this.getLocalizedString("controls.filters.title") }
+        </div>
+
+        <div className={ CSS_Classes.filterRow }>
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.dropDownLists.constPricePatterns.label") }
+            </span>
+            <DropDownList
+              placeholder={
+                this.getLocalizedString(
+                  "controls.dropDownLists.constPricePatterns.placeholders." +
+                      (this.state.costPricePatternsDropDownListItems.length > 0 ? "normal" : "noData")
+                )
+              }
+              itemsData={
+                [
+                  {
+                    key: "__ALL__",
+                    value: "__ALL__",
+                    displayingNode: this.getLocalizedString("controls.dropDownLists.constPricePatterns.selectAll")
+                  },
+                  ...this.state.costPricePatternsDropDownListItems.map(
+                    (
+                      {
+                        costPricePatternID,
+                        costPricePatternName
+                      }: CostPriceRegistrationPageBFF.CostPricePatternsDropDownListItemsRetrieving.ResponseData.Item
+                    ): DropDownList.ItemData =>
+                        ({
+                          key: costPricePatternID,
+                          value: costPricePatternID,
+                          displayingNode: costPricePatternName
+                        })
+                  )
+                ]
+              }
+              value={ this.state.selectedCostPricePatternID === null ? "__ALL__" : this.state.selectedCostPricePatternID }
+              onValueChange={ this.onCostPricePatternSelected.bind(this) }
+              isVerticalOrientation={ true }
+              disabled={ this.state.costPricePatternsDropDownListItems.length === 0 }
+              loading={ this.state.isCostPricePatternsDropDownListItemsRetrievingInProgress }
+              className={ CSS_Classes["filterBar-dropDownList"] }
+            />
+          </label>
+
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.costItem.label") }
+            </span>
+            <input
+              className={ CSS_Classes["filterItem-input"] }
+              type="text"
+              value={ this.state.filterCostItem }
+              placeholder={ this.getLocalizedString("controls.filters.costItem.placeholder") }
+              onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                  { this.setState({ filterCostItem: event.target.value }); } }
+            />
+          </label>
+
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.currency.label") }
+            </span>
+            <select
+              className={ CSS_Classes["filterItem-select"] }
+              value={ this.state.filterCurrency }
+              onChange={ (event: React.ChangeEvent<HTMLSelectElement>): void =>
+                  { this.setState({ filterCurrency: event.target.value }); } }
+            >
+              <option value="">
+                { this.getLocalizedString("controls.filters.currency.placeholder") }
+              </option>
+              {
+                currencyOptions.map((currency: string) => (
+                  <option key={ currency } value={ currency }>
+                    { currency }
+                  </option>
+                ))
+              }
+            </select>
+          </label>
+
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.period.label") }
+            </span>
+            <div className={ CSS_Classes["filterItem-inputGroup"] }>
+              <input
+                className={ CSS_Classes["filterItem-input"] }
+                type="month"
+                value={ this.state.filterPeriodFrom }
+                placeholder={ this.getLocalizedString("controls.filters.period.fromPlaceholder") }
+                onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                    { this.setState({ filterPeriodFrom: event.target.value }); } }
+              />
+              <span className={ CSS_Classes["filterItem-separator"] }>
+                { this.getLocalizedString("controls.filters.period.separator") }
+              </span>
+              <input
+                className={ CSS_Classes["filterItem-input"] }
+                type="month"
+                value={ this.state.filterPeriodTo }
+                placeholder={ this.getLocalizedString("controls.filters.period.toPlaceholder") }
+                onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                    { this.setState({ filterPeriodTo: event.target.value }); } }
+              />
+            </div>
+          </label>
+        </div>
+
+        <div className={ CSS_Classes.filterRow }>
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.modelCategory.label") }
+            </span>
+            <input
+              className={ CSS_Classes["filterItem-input"] }
+              type="text"
+              value={ this.state.filterModelCategory }
+              placeholder={ this.getLocalizedString("controls.filters.modelCategory.placeholder") }
+              onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                  { this.setState({ filterModelCategory: event.target.value }); } }
+            />
+          </label>
+
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.salesCategory.label") }
+            </span>
+            <input
+              className={ CSS_Classes["filterItem-input"] }
+              type="text"
+              value={ this.state.filterSalesCategory }
+              placeholder={ this.getLocalizedString("controls.filters.salesCategory.placeholder") }
+              onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                  { this.setState({ filterSalesCategory: event.target.value }); } }
+            />
+          </label>
+
+          <label className={ CSS_Classes.filterItem }>
+            <span className={ CSS_Classes["filterItem-label"] }>
+              { this.getLocalizedString("controls.filters.secondSalesCategory.label") }
+            </span>
+            <input
+              className={ CSS_Classes["filterItem-input"] }
+              type="text"
+              value={ this.state.filterSecondSalesCategory }
+              placeholder={ this.getLocalizedString("controls.filters.secondSalesCategory.placeholder") }
+              onChange={ (event: React.ChangeEvent<HTMLInputElement>): void =>
+                  { this.setState({ filterSecondSalesCategory: event.target.value }); } }
+            />
+          </label>
+        </div>
       </div>
     );
   }
@@ -812,6 +950,8 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   /* ┅┅┅ Table View ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   private get tableView(): React.ReactNode {
+    const filteredRowsCount: number = this.filteredTableRows.length;
+
     if (this.state.hasTableDataRetrievingForCurrentFilteringNotStartedYet) {
       return this.tableWithDataRetrievingGuidance;
     } else if (this.state.businessUnits.length === 0) {
@@ -824,7 +964,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
       return this.tableLoadingPlaceholder;
     } else if (this.state.hasTableDataRetrievingErrorOccurred) {
       return this.tableWithDataRetrievingError;
-    } else if (this.state.tableData?.rows?.length === 0) {
+    } else if ((this.state.tableData?.rows?.length ?? 0) === 0 || filteredRowsCount === 0) {
       return this.tableWithNoDataMessage;
     } else {
       return this.tableWithData;
@@ -835,7 +975,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
         </Table>
 
@@ -854,7 +994,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
         </Table>
 
@@ -871,7 +1011,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   private get tableLoadingPlaceholder(): React.ReactNode {
     return (
-      <Table className="min-w-full">
+      <Table>
 
         <TableCaption className="sr-only">
           { this.getLocalizedString("guidances.screenReaderOnly.tableDataLoadingInProgress") }
@@ -931,7 +1071,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
         </Table>
 
@@ -950,7 +1090,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
         </Table>
 
@@ -973,7 +1113,7 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
     return (
       <>
 
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
         </Table>
 
@@ -989,13 +1129,15 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
   }
 
   private get tableWithData(): React.ReactNode {
+    const filteredRows: ReadonlyArray<CostPriceRegistrationPageBFF.TableData.Row> = this.filteredTableRows;
+
     return (
       <>
-        <Table className="min-w-full">
+        <Table>
           { this.tableHeader }
           <TableBody className="bg-white">
             {
-              (this.state.tableData?.rows ?? []).map(
+              filteredRows.map(
                 (rowData: CostPriceRegistrationPageBFF.TableData.Row): React.ReactNode => (
                   <TableRow
                     key={ rowData.costPriceRegisterID }
@@ -1017,6 +1159,9 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
                       { rowData.costPricePatternLocalizedName ?? "" }
                     </TableCell>
                     <TableCell className={ CSS_Classes["table-bodyCell"] }>
+                      { rowData.startYearAndMonth__YYYYMM ?? "" }
+                    </TableCell>
+                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
                       { rowData.formattedModelCategoriesNames }
                     </TableCell>
                     <TableCell className={ CSS_Classes["table-bodyCell"] }>
@@ -1024,9 +1169,6 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
                     </TableCell>
                     <TableCell className={ CSS_Classes["table-bodyCell"] }>
                       { rowData.formattedResellingDestinations }
-                    </TableCell>
-                    <TableCell className={ CSS_Classes["table-bodyCell"] }>
-                      { rowData.startYearAndMonth__YYYYMM ?? "" }
                     </TableCell>
                     <TableCell className={ CSS_Classes["table-bodyCell"] }>
                       { rowData.costPriceAmount ?? "" }
@@ -1067,6 +1209,9 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
           <TableHead className={ CSS_Classes["table-headerCell"] }>
             { this.getLocalizedString("table.headers.costPricePatternLocalizedName") }
           </TableHead>
+          <TableHead className={ `${ CSS_Classes["table-headerCell"] } ${ CSS_Classes["table-headerCell__medium"] }` }>
+            { this.getLocalizedString("table.headers.startYearAndMonth__YYYYMM") }
+          </TableHead>
           <TableHead className={ CSS_Classes["table-headerCell"] }>
             { this.getLocalizedString("table.headers.formattedModelCategoriesNames") }
           </TableHead>
@@ -1075,9 +1220,6 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
           </TableHead>
           <TableHead className={ CSS_Classes["table-headerCell"] }>
             { this.getLocalizedString("table.headers.formattedSecondSalesDestinations") }
-          </TableHead>
-          <TableHead className={ `${ CSS_Classes["table-headerCell"] } ${ CSS_Classes["table-headerCell__medium"] }` }>
-            { this.getLocalizedString("table.headers.startYearAndMonth__YYYYMM") }
           </TableHead>
           <TableHead className={ `${ CSS_Classes["table-headerCell"] } ${ CSS_Classes["table-headerCell__large"] }` }>
             { this.getLocalizedString("table.headers.costPriceAmount") }
@@ -1095,6 +1237,87 @@ class CostPriceRegistrationPage extends React.Component<CostPriceRegistrationPag
 
   private resetExcelFilePicker(): void {
     (this.reactReferences.excelFilePicker.current ?? { value: "" }).value = "";
+  }
+
+  private get filteredTableRows(): ReadonlyArray<CostPriceRegistrationPageBFF.TableData.Row> {
+    const rows: ReadonlyArray<CostPriceRegistrationPageBFF.TableData.Row> = this.state.tableData?.rows ?? [];
+
+    const periodFromFilter: string = this.normalizeFilterValue(this.state.filterPeriodFrom);
+    const periodToFilter: string = this.normalizeFilterValue(this.state.filterPeriodTo);
+    const currencyFilter: string = this.normalizeFilterValue(this.state.filterCurrency);
+    const costItemFilter: string = this.normalizeFilterValue(this.state.filterCostItem);
+    const modelCategoryFilter: string = this.normalizeFilterValue(this.state.filterModelCategory);
+    const salesCategoryFilter: string = this.normalizeFilterValue(this.state.filterSalesCategory);
+    const secondSalesCategoryFilter: string = this.normalizeFilterValue(this.state.filterSecondSalesCategory);
+
+    if (
+      periodFromFilter === "" &&
+          periodToFilter === "" &&
+          currencyFilter === "" &&
+          costItemFilter === "" &&
+          modelCategoryFilter === "" &&
+          salesCategoryFilter === "" &&
+          secondSalesCategoryFilter === ""
+    ) {
+      return rows;
+    }
+
+    return rows.filter((row: CostPriceRegistrationPageBFF.TableData.Row): boolean => {
+      const costItemCandidate: string = `${ row.businessUnitCostPriceCode ?? "" } ${ row.businessUnitCostPriceLocalizedName ?? "" }`;
+
+      return (
+        this.matchesPeriodFilter(row.startYearAndMonth__YYYYMM, periodFromFilter, periodToFilter) &&
+            this.matchesFilter(row.currencyCode, currencyFilter) &&
+            this.matchesFilter(costItemCandidate, costItemFilter) &&
+            this.matchesFilter(row.formattedModelCategoriesNames, modelCategoryFilter) &&
+            this.matchesFilter(row.formattedSalesDestinations, salesCategoryFilter) &&
+            this.matchesFilter(row.formattedResellingDestinations, secondSalesCategoryFilter)
+      );
+    });
+  }
+
+  private normalizeFilterValue(value: string): string {
+    return value.trim().toLowerCase();
+  }
+
+  private matchesFilter(value: string | null | undefined, filter: string): boolean {
+    if (filter === "") {
+      return true;
+    }
+
+    return (value ?? "").toLowerCase().includes(filter);
+  }
+
+  private matchesPeriodFilter(value: string | null | undefined, from: string, to: string): boolean {
+    if (from === "" && to === "") {
+      return true;
+    }
+
+    const normalizedValue = this.normalizeFilterValue(value ?? "");
+
+    if (from !== "" && normalizedValue < from) {
+      return false;
+    }
+
+    if (to !== "" && normalizedValue > to) {
+      return false;
+    }
+
+    return normalizedValue !== "";
+  }
+
+  private get currencyFilterOptions(): ReadonlyArray<string> {
+    const rows: ReadonlyArray<CostPriceRegistrationPageBFF.TableData.Row> = this.state.tableData?.rows ?? [];
+    const currencySet = new Set<string>();
+
+    rows.forEach((row: CostPriceRegistrationPageBFF.TableData.Row): void => {
+      const currency = row.currencyCode?.trim();
+      if (currency) {
+        currencySet.add(currency);
+      }
+    });
+
+    return Array.from(currencySet).sort((a, b) => a.localeCompare(b));
   }
 
 }
@@ -1129,6 +1352,14 @@ namespace CostPriceRegistrationPage {
     isCostPricePatternsDropDownListItemsRetrievingInProgress: boolean;
     hasCostPricePatternsDropDownListItemsRetrievingErrorOccurred: boolean;
     selectedCostPricePatternID: string | null;
+
+    filterPeriodFrom: string;
+    filterPeriodTo: string;
+    filterCurrency: string;
+    filterCostItem: string;
+    filterModelCategory: string;
+    filterSalesCategory: string;
+    filterSecondSalesCategory: string;
 
     /* ┅┅┅ Table Data ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
     tableData: CostPriceRegistrationPageBFF.TableData | null;

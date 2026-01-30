@@ -42,6 +42,20 @@
       "tableDataRetrievingRetrying": { "label": "再取得" },
       "excelFileDownloading": { "label": "Excelダウンロード" },
       "excelFileUploading": { "label": "Excelアップロード" }
+    },
+    "filters": {
+      "title": "絞り込み",
+      "period": {
+        "label": "期間",
+        "fromPlaceholder": "From (YYYYMM)",
+        "toPlaceholder": "To (YYYYMM)",
+        "separator": "〜"
+      },
+      "currency": { "label": "通貨", "placeholder": "選択してください" },
+      "costItem": { "label": "原価項目", "placeholder": "原価項目名/コード" },
+      "modelCategory": { "label": "機種カテゴリ", "placeholder": "部分一致で検索" },
+      "salesCategory": { "label": "販売先カテゴリ", "placeholder": "部分一致で検索" },
+      "secondSalesCategory": { "label": "2次販売先カテゴリ", "placeholder": "部分一致で検索" }
     }
   },
   "table": {

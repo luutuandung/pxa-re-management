@@ -11,7 +11,7 @@ type Props = {
   value?: { buCostCd: string; costType: 'G' | 'R' | 'K' };
   onChange: (v: { buCostCd: string; costType: 'G' | 'R' | 'K' }) => void;
   label?: string;
-  excludeZero?: boolean;
+  excludeZero?: boolean; // 除算時にZEROを除外するフラグ
 };
 
 const CostItemSelector = ({ buCostCodes, buCostItems, value, onChange, label, excludeZero = false }: Props) => {

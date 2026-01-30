@@ -414,13 +414,64 @@ class CostPricePatternsManagementPage extends React.Component<
 
     }
 
+    // チェック状態をクリア
+    this.setState({ selectedTableRowsData: new Map() });
 
     this.stickyMessageAtom.addSuccessMessage({
       text: this.getLocalizedString("guidances.costPricesPatternSetupSucceeded")
     });
 
+    if (this.state.selectedBusinessUnitID !== null && this.state.selectedCostPriceVersionID !== null) {
+      this.retrieveTableData().
+          catch((error: unknown): void => { console.error(error); });
+    }    
   }
 
+  /* ┅┅┅ Data Unregister ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
+  private async onUnregisterButtonClicked(): Promise<void> {
+    if (
+      this.state.selectedBusinessUnitID === null ||
+      this.state.selectedCostPriceVersionID === null ||
+      this.state.selectedTableRowsData.size === 0
+    ) {
+      throw new Error(
+        "論理エラー：意図に反し「onUnregisterButtonClicked」が呼び出された時点で必要な状態が未初期化。"
+      );
+    }
+    Backdrop.display({
+      accessibilityGuidance: this.getLocalizedString("guidances.screenReaderOnly.costPricesPatternUnregisterInProgress"),
+    });
+    try {
+      // BFF は拡張メソッドとして呼び出し（型の厳格さを保つため any キャスト）
+      await (this.BFF as any).unregisterCostPricesForAllPairwiseCategoriesCombinations({
+        businessUnitID: this.state.selectedBusinessUnitID,
+        costPriceVersionID: this.state.selectedCostPriceVersionID,
+        // パターンIDは解除では不要。DTO互換性のため渡さない/無視されても OK
+        businessUnitsCostItems: Array.from(this.state.selectedTableRowsData.values()).map(
+          (buItem) => ({
+            ID: buItem.ID,
+            costPriceType: buItem.costPriceType,
+          })
+        ),
+      });
+    } catch (error: unknown) {
+      this.stickyMessageAtom.addErrorMessage({
+        text: this.getLocalizedString("errors.costPricesPatternUnregisterFailed"),
+      });
+      console.error(error);
+      return;
+    } finally {
+      Backdrop.dismiss();
+    }
+    // チェック状態をクリア
+    this.setState({ selectedTableRowsData: new Map() });
+    this.stickyMessageAtom.addSuccessMessage({
+      text: this.getLocalizedString("guidances.costPricesPatternUnregisterSucceeded"),
+    });
+    if (this.state.selectedBusinessUnitID !== null && this.state.selectedCostPriceVersionID !== null) {
+      this.retrieveTableData().catch((error: unknown): void => { console.error(error); });
+    }
+  }
 
   /* ┅┅┅ Table Viewing ┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅ */
   private onToggleTableRowSelecting(
@@ -585,19 +636,32 @@ class CostPricePatternsManagementPage extends React.Component<
           className={ CSS_Classes["actionBar-dropDownList"] }
         />
 
-        <Button
-          onClick={ this.onDataSavingButtonClicked.bind(this) }
-          disabled={
-            this.state.selectedBusinessUnitID === null ||
-                this.state.selectedCostPriceVersionID === null ||
-                this.state.selectedCostPricePatternTypeID === null ||
-                this.state.selectedTableRowsData.size === 0
-          }
-          className={ CSS_Classes["actionBar-button"] }
-        >
-          { this.getLocalizedString("controls.buttons.dataSaving.label") }
-        </Button>
+        <div className={ `${ CSS_Classes.buttonBox }` }>
+          <Button
+            onClick={ this.onDataSavingButtonClicked.bind(this) }
+            disabled={
+              this.state.selectedBusinessUnitID === null ||
+                  this.state.selectedCostPriceVersionID === null ||
+                  this.state.selectedCostPricePatternTypeID === null ||
+                  this.state.selectedTableRowsData.size === 0
+            }
+            className={ CSS_Classes["actionBar-button"] }
+          >
+            { this.getLocalizedString("controls.buttons.dataSaving.label") }
+          </Button>
 
+          <Button
+            onClick={ this.onUnregisterButtonClicked.bind(this) }
+            disabled={
+              this.state.selectedBusinessUnitID === null ||
+              this.state.selectedCostPriceVersionID === null ||
+              this.state.selectedTableRowsData.size === 0
+            }
+            className={ CSS_Classes["actionBar-button"] }
+          >
+            { this.getLocalizedString("controls.buttons.unregister.label") }
+          </Button>
+        </div>
       </div>
     );
   }

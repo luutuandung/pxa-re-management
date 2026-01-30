@@ -21,8 +21,7 @@ const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({ onApply, onExecut
         <DialogTrigger asChild>
           <Button
             onClick={() => setOpenApply(true)}
-            size="lg"
-            className="rounded-full bg-[#34B2D0] hover:bg-white border border-[#34B2D0] color-white hover:color-[#34B2D0] text-lg text-white hover:text-[#34B2D0]"
+            className="rounded bg-blue-600 text-white hover:bg-blue-700 px-4 py-2"
           >
             {t('buttons.apply')}
           </Button>
@@ -52,8 +51,7 @@ const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({ onApply, onExecut
         <DialogTrigger asChild>
           <Button
             onClick={() => setOpenExecute(true)}
-            size="lg"
-            className="rounded-full bg-[#34B2D0] hover:bg-white border border-[#34B2D0] color-white hover:color-[#34B2D0] text-lg text-white hover:text-[#34B2D0]"
+            className="rounded bg-blue-600 text-white hover:bg-blue-700 px-4 py-2"
           >
             {t('buttons.execute')}
           </Button>
@@ -82,8 +80,7 @@ const ActionButtonGroup: React.FC<ActionButtonGroupProps> = ({ onApply, onExecut
       <Button
         onClick={onCancel}
         variant="outline"
-        size="lg"
-        className="rounded-full text-lg text-[#34B2D0] hover:bg-[#34B2D0] hover:text-white"
+        className="rounded border-blue-600 text-blue-600 bg-white hover:bg-blue-50 px-4 py-2"
       >
         {t('buttons.cancel')}
       </Button>

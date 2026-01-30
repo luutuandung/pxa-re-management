@@ -1940,7 +1940,6 @@ class BusinessUnitsCostPricesItemsSettingsPage extends React.Component<
     (this.reactReferences.excelFilePicker.current ?? { value: "" }).value = "";
   }
 
-
 }
 
 

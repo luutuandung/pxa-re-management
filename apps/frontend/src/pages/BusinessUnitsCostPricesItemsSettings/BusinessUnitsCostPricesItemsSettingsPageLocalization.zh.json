@@ -1,129 +1,129 @@
 {
-  "topHeading": "事業部原価項目設定",
+  "topHeading": "事业部成本项目设置",
   "guidances": {
-    "tableDataDisplaying": "事業部原価項目データを表示させるには、事業部を選んで下さい。なお、任意で事業部原価項目名でで絞りめます。",
-    "noBusinessUnits": "事業部データがないので、表示可能な関連原価登録データはありません。",
-    "noDataToDisplay": "指定された絞り込みに該当しているデータはありません。",
-    "dataSavingSucceeded": "事業部原価項目データの保存が完了しました。",
-    "importedFromExcelDataSubmittingSucceeded": "ファイルのアップロードが完了しました",
+    "tableDataDisplaying": "要显示事业部成本项目数据，请先选择事业部。此外，可按成本项目名称进行筛选。",
+    "noBusinessUnits": "暂无事业部数据，无法显示相关成本注册数据。",
+    "noDataToDisplay": "没有符合当前筛选条件的数据。",
+    "dataSavingSucceeded": "事业部成本项目数据已保存完成。",
+    "importedFromExcelDataSubmittingSucceeded": "文件上传已完成",
     "screenReaderOnly": {
-      "tableDataLoadingInProgress": "事業部原価項目データを取得中です。しばらくお待ちください。",
-      "dataSavingInProgress": "事業部原価項目データを保存中です。しばらくお待ちください。",
-      "excelFileExportingInProgress": "ただいまExcelファイルを処理中です。しばらくお待ちください。"
+      "tableDataLoadingInProgress": "正在获取事业部成本项目数据，请稍候。",
+      "dataSavingInProgress": "正在保存事业部成本项目数据，请稍候。",
+      "excelFileExportingInProgress": "正在处理 Excel 文件，请稍候。"
     }
   },
   "controls": {
     "dropDownLists": {
       "businessUnits": {
-        "label": "事業部",
+        "label": "事业部",
         "placeholders": {
-          "normal": "事業部を選択",
-          "noData": "事業部がありません"
+          "normal": "请选择事业部",
+          "noData": "暂无事业部"
         }
       },
-      "yearOfActualityStarting": { "accessibilityGuidance": "適用開始年" },
-      "monthOfActualityStarting": { "accessibilityGuidance": "適用開始月" },
-      "yearOfActualityEnding": { "accessibilityGuidance": "適用終了年" },
-      "monthOfActualityEnding": { "accessibilityGuidance": "適用終了月" },
+      "yearOfActualityStarting": { "accessibilityGuidance": "适用开始年" },
+      "monthOfActualityStarting": { "accessibilityGuidance": "适用开始月" },
+      "yearOfActualityEnding": { "accessibilityGuidance": "适用结束年" },
+      "monthOfActualityEnding": { "accessibilityGuidance": "适用结束月" },
       "yearOfBusinessUnitsCostPricesItemActualityEnding": {
-        "emptyOptionLabel": "指定取り消し"
+        "emptyOptionLabel": "取消指定"
       },
       "monthOfBusinessUnitsCostPricesItemActualityEnding": {
-        "emptyOptionLabel": "指定取り消し"
+        "emptyOptionLabel": "取消指定"
       }
     },
     "searchingBoxes": {
       "businessCostPriceItemName": {
-        "label": "原価項目名検索",
-        "placeholder": "原価項目名を入力..."
+        "label": "成本项目名称搜索",
+        "placeholder": "请输入成本项目名称..."
       }
     },
     "buttons": {
       "dataSaving": { "label": "保存" },
-      "businessUnitsDataRetrievingRetrying": { "label": "再取得" },
-      "codesOfAvailableCurrenciesRetrievingRetrying": { "label": "再取得" },
-      "tableDataRetrievingRetrying": { "label": "再取得" },
-      "excelFileUploading": { "label": "ファイルU/L" },
-      "excelFileDownloading": { "label": "ファイルD/L" },
-      "rowDuplicating": { "label": "複製" }
+      "businessUnitsDataRetrievingRetrying": { "label": "重新获取" },
+      "codesOfAvailableCurrenciesRetrievingRetrying": { "label": "重新获取" },
+      "tableDataRetrievingRetrying": { "label": "重新获取" },
+      "excelFileUploading": { "label": "文件上传" },
+      "excelFileDownloading": { "label": "文件下载" },
+      "rowDuplicating": { "label": "复制" }
     }
   },
   "table": {
     "headers": {
-      "businessUnitCostPriceCode": "コード",
-      "businessUnitCostPriceItemLocalizedName": "原価項目名",
-      "yearAndMonthOfActualityStarting": "適用開始年月",
-      "yearAndMonthOfActualityEnding": "適用終了年月",
-      "currencyCode": "通貨",
-      "isAmountValid": "額",
-      "isRateValid": "レート",
-      "isCalculationValid": "計算",
-      "isDataLinkageAvailable": "自動作成",
+      "businessUnitCostPriceCode": "代码",
+      "businessUnitCostPriceItemLocalizedName": "成本项目名称",
+      "yearAndMonthOfActualityStarting": "适用开始年月",
+      "yearAndMonthOfActualityEnding": "适用结束年月",
+      "currencyCode": "货币",
+      "isAmountValid": "金额",
+      "isRateValid": "费率",
+      "isCalculationValid": "计算",
+      "isDataLinkageAvailable": "自动创建",
       "actions": "操作"
     },
     "labels": {
-      "new": "新規",
-      "hasDuplicate": "重複有り",
+      "new": "新建",
+      "hasDuplicate": "重复",
       "year": "年",
       "month": "月"
     }
   },
   "errors": {
-    "businessUnitsDataRetrievingFailed": "絞り込みに必要な事業部データの取得中に不具合が発生しました。",
-    "codesOfAvailableCurrenciesRetrievingFailed": "利用可能な通貨コードの取得中に不具合が発生しました。エクセルファイルからデータをアプロードする場合、再取得してみ下さい。",
-    "tableDataRetrievingFailed": "表示データの取得中に不具合が発生しました。",
-    "excelDataParsingFailed": "エクセルファイルの読み込み中に不具合が発生しました。",
-    "importedFromExcelDataSubmittingFailed": "エクセルファイルからインポートされたデータの送信中に不具合が発生しました。",
+    "businessUnitsDataRetrievingFailed": "获取筛选所需的事业部数据时发生错误。",
+    "codesOfAvailableCurrenciesRetrievingFailed": "获取可用货币代码时发生错误。若从 Excel 上传数据，请尝试重新获取。",
+    "tableDataRetrievingFailed": "获取显示数据时发生错误。",
+    "excelDataParsingFailed": "读取 Excel 文件时发生错误。",
+    "importedFromExcelDataSubmittingFailed": "上传从 Excel 导入的数据时发生错误。",
     "invalidDataInputtingPrevention": {
-      "yearAndMonthOfActualityStartingIsLaterThanYearAndMonthOfActualityEnding": "適用開始年月は適用終了年月より前の日付を設定してください。",
-      "yearAndMonthOfActualityEndingIsEarlierThanYearAndMonthOfActualityStarting": "適用開始年月は適用終了年月より前の日付を設定してください。"
+      "yearAndMonthOfActualityStartingIsLaterThanYearAndMonthOfActualityEnding": "适用开始年月必须早于适用结束年月。",
+      "yearAndMonthOfActualityEndingIsEarlierThanYearAndMonthOfActualityStarting": "适用结束年月必须晚于适用开始年月。"
     },
     "excelFileValidation": {
-      "intro": "インポートされたエクセルファイルにおいて下記の不備がありました。",
-      "lineNumberTitle": "{{ lineNumber }}行目",
-      "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "原価項目のIDが必須になっていますが、指定されていません。",
-      "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "原価項目のIDが指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
-      "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "原価項目のIDが指定され、文字列になってはいますが、空文字です。",
-      "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "このIDの原価項目が同じファイルの中に一回以上ありました。",
-      "STARTING_YEAR_MONTH-NOT_EXISTS": "適用開始年月が必須になっていますが、指定されていません。",
-      "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "適用開始年月が指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
-      "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "適用開始年月が数字以外の文字を含めていますが、「202509」のように4文字の年と2文字の月の形式で設定してください。",
-      "STARTING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "適用開始年月には正しい年月（YYYYMM）を設定してください。",
-      "STARTING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE": "適用開始年月は現在年－1～現在年＋2年の範囲のみ許可されています。（例：2025年の場合：2024～2027）",
-      "STARTING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE":  "適用開始年月は現在年－1～現在年＋2年の範囲のみ許可されています。（例：2025年の場合：2024～2027）",
-      "STARTING_YEAR_MONTH-INVALID_MONTH_NUMBER":  "適用開始年月には正しい年月（YYYYMM）を設定してください。",
-      "ENDING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "適用終了年月が指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
-      "ENDING_YEAR_MONTH-DISALLOWED_CHARACTERS": "適用終了年月が数字以外の文字を含めていますが、「202509」のように4文字の年と2文字の月の形式で設定してください",
-      "ENDING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "適用終了年月には正しい年月（YYYYMM）を設定してください。",
-      "ENDING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE": "適用終了年月は現在年～現在年＋3年の範囲、または空白のみ許可されています。（例：2025年の場合：2025~2028）",
-      "ENDING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE": "適用終了年月は現在年～現在年＋3年の範囲、または空白のみ許可されています。（例：2025年の場合：2025~2028）",
-      "ENDING_YEAR_MONTH-INVALID_MONTH_NUMBER": "適用終了年月には正しい年月（YYYYMM）を設定してください。",
-      "ENDING_YEAR_MONTH-EARLIER_THAN_STARTING_ONE": "適用開始年月は適用終了年月より前の日付を設定してください。",
-      "CURRENCY_CODE-NOT_EXISTS": "通貨コードが必須になっていますが、指定されていません。",
-      "CURRENCY_CODE-EXISTS_BUT_NOT_STRING": "通貨コード指定されていますが、文字列型になっておらず、{{ actualType }}になっています。",
-      "CURRENCY_CODE-DISALLOWED_VARIANT": "指定された通貨コードは許可されておらず、{{ commaSeparatedAllowedVariants }}のみ許可されています。",
-      "AMOUNT_VALID_FLAG-NOT_EXISTS": "金額が指定が必須になっていますが、指定されていません。",
-      "AMOUNT_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "金額が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
-      "RATE_VALID_FLAG-NOT_EXISTS": "レートが指定が必須になっていますが、指定されていません。",
-      "RATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "レートが指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
-      "CALC_VALID_FLAG-NOT_EXISTS": "計算が指定が必須になっていますが、指定されていません。",
-      "CALC_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "計算が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。",
-      "AUTO_CREATE_VALID_FLAG-NOT_EXISTS": "自動作成が指定が必須になっていますが、指定されていません。",
-      "AUTO_CREATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "自動作成が指定されていますが、TRUE/FALSE型になっておらず、{{ actualType }}になっています。"
+      "intro": "导入的 Excel 文件中存在以下问题：",
+      "lineNumberTitle": "第 {{ lineNumber }} 行",
+      "BUSINESS_COST_ITEM_ID-NOT_EXISTS": "成本项目 ID 为必填项，但未填写。",
+      "BUSINESS_COST_ITEM_ID-EXISTS_BUT_NOT_STRING": "成本项目 ID 已填写，但类型为 {{ actualType }}，应为字符串。",
+      "BUSINESS_COST_ITEM_ID-STRING_BUT_EMPTY": "成本项目 ID 已填写为字符串，但内容为空。",
+      "BUSINESS_COST_ITEM_ID-HAS_DUPLICATE": "该 ID 的成本项目在同一文件中出现多次。",
+      "STARTING_YEAR_MONTH-NOT_EXISTS": "适用开始年月为必填项，但未填写。",
+      "STARTING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "适用开始年月已填写，但类型为 {{ actualType }}，应为字符串。",
+      "STARTING_YEAR_MONTH-DISALLOWED_CHARACTERS": "适用开始年月包含非数字字符，请按「202509」格式（4位年+2位月）填写。",
+      "STARTING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "请填写有效的适用开始年月（YYYYMM）。",
+      "STARTING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE": "适用开始年份早于允许的最早年份。",
+      "STARTING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE": "适用开始年份晚于允许的最晚年份。",
+      "STARTING_YEAR_MONTH-INVALID_MONTH_NUMBER": "请填写有效的适用开始年月（YYYYMM）。",
+      "ENDING_YEAR_MONTH-EXISTS_BUT_NOT_STRING": "适用结束年月已填写，但类型为 {{ actualType }}，应为字符串。",
+      "ENDING_YEAR_MONTH-DISALLOWED_CHARACTERS": "适用结束年月包含非数字字符，请按「202509」格式（4位年+2位月）填写。",
+      "ENDING_YEAR_MONTH-WRONG_DIGITS_AT_SPECIFIC_POSITIONS": "请填写有效的适用结束年月（YYYYMM）。",
+      "ENDING_YEAR_MONTH-YEAR_IS_EARLIER_THAN_EARLIEST_ONE": "适用结束年份应在当前年～当前年+3年范围内，或留空。",
+      "ENDING_YEAR_MONTH-YEAR_IS_LATER_THAN_LATEST_ONE": "适用结束年份应在当前年～当前年+3年范围内，或留空。",
+      "ENDING_YEAR_MONTH-INVALID_MONTH_NUMBER": "请填写有效的适用结束年月（YYYYMM）。",
+      "ENDING_YEAR_MONTH-EARLIER_THAN_STARTING_ONE": "适用开始年月必须早于适用结束年月。",
+      "CURRENCY_CODE-NOT_EXISTS": "货币代码为必填项，但未填写。",
+      "CURRENCY_CODE-EXISTS_BUT_NOT_STRING": "货币代码已填写，但类型为 {{ actualType }}，应为字符串。",
+      "CURRENCY_CODE-DISALLOWED_VARIANT": "填写的货币代码无效，仅允许：{{ commaSeparatedAllowedVariants }}。",
+      "AMOUNT_VALID_FLAG-NOT_EXISTS": "金额有效标志为必填项，但未填写。",
+      "AMOUNT_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "金额有效标志已填写，但类型为 {{ actualType }}，应为布尔值。",
+      "RATE_VALID_FLAG-NOT_EXISTS": "费率有效标志为必填项，但未填写。",
+      "RATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "费率有效标志已填写，但类型为 {{ actualType }}，应为布尔值。",
+      "CALC_VALID_FLAG-NOT_EXISTS": "计算有效标志为必填项，但未填写。",
+      "CALC_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "计算有效标志已填写，但类型为 {{ actualType }}，应为布尔值。",
+      "AUTO_CREATE_VALID_FLAG-NOT_EXISTS": "自动创建有效标志为必填项，但未填写。",
+      "AUTO_CREATE_VALID_FLAG-EXISTS_BUT_NOT_BOOLEAN": "自动创建有效标志已填写，但类型为 {{ actualType }}，应为布尔值。"
     },
     "checkingForDuplications": {
-      "intro": "原価項目コード・通貨の組み合わせが重複している項目があります。",
-      "row": "原価項目名：{{ businessUnitCostPriceItemLocalizedName }}、通貨コード：{{ currencyCode }}"
+      "intro": "存在成本项目代码与货币组合重复的项。",
+      "row": "成本项目名称：{{ businessUnitCostPriceItemLocalizedName }}、货币代码：{{ currencyCode }}"
     },
-    "dataSavingFailed": "事業部原価項目データの保存中不具合が発生しました。",
-    "exportingToExcelFileFailed": "エクセルファイルの書き出し中不具合が発生しました。"
+    "dataSavingFailed": "保存事业部成本项目数据时发生错误。",
+    "exportingToExcelFileFailed": "导出 Excel 文件时发生错误。"
   },
   "confirmationSubdialog": {
-    "title": "入力内容破棄の確認",
-    "question": "入力された情報が破棄されます。よろしいですか？",
+    "title": "确认放弃输入内容",
+    "question": "输入的内容将被放弃。是否继续？",
     "buttons": {
-      "confirmation": { "label": "破棄する" },
-      "cancellation": { "label": "入力を続ける" }
+      "confirmation": { "label": "放弃" },
+      "cancellation": { "label": "继续输入" }
     }
   }
 }

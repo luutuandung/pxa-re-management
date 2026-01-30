@@ -1,16 +1,16 @@
 {
   "controls": {
     "dropDownLists": {
-      "itemsPerPageCount": { "label": "表示件数" }
+      "itemsPerPageCount": { "label": "每页显示条数" }
     },
     "buttons": {
-      "switchingToFirstPage": { "accessibilityGuidance": "最初のページへ" },
-      "switchingToPreviousPage": { "accessibilityGuidance": "前のページへ" },
-      "switchingToNextPage": { "accessibilityGuidance": "次のページへ" },
-      "switchingToLastPage": { "accessibilityGuidance": "最後のページへ" }
+      "switchingToFirstPage": { "accessibilityGuidance": "跳转到第一页" },
+      "switchingToPreviousPage": { "accessibilityGuidance": "跳转到上一页" },
+      "switchingToNextPage": { "accessibilityGuidance": "跳转到下一页" },
+      "switchingToLastPage": { "accessibilityGuidance": "跳转到最后一页" }
     }
   },
   "labels": {
-    "currentPage": "ページ{{ selectedPageNumber__numerationFrom1 }} / {{ totalPagesCount }}"
+    "currentPage": "第 {{ selectedPageNumber__numerationFrom1 }} 页 / 共 {{ totalPagesCount }} 页"
   }
 }

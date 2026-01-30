@@ -6,16 +6,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 type CostAggregationTableProps = {
   data: TableRowData[];
-  salesVersionOptions: SelectOption[];
-  costTypeOptions: SelectOption[];
+  buCdOptionsCache: Record<string, { salesVersions: SelectOption[]; costTypes: SelectOption[] }>;
   onSalesVersionChange?: (index: number, value: string) => void;
   onCostTypeChange?: (index: number, value: string) => void;
 };
 
 const CostAggregationTable: React.FC<CostAggregationTableProps> = ({
   data,
-  salesVersionOptions,
-  costTypeOptions,
+  buCdOptionsCache,
   onSalesVersionChange,
   onCostTypeChange,
 }) => {
@@ -44,43 +42,38 @@ const CostAggregationTable: React.FC<CostAggregationTableProps> = ({
                     : t('table.classification.child')}
               </TableCell>
               <TableCell>
-                {row.rowType === 'axis' ? (
-                  <span className="text-gray-500">-</span>
-                ) : (
-                  <Select
-                    value={row.salesVersion}
-                    onValueChange={(value) => onSalesVersionChange?.(data.indexOf(row), value)}
-                  >
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="選択してください" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {salesVersionOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select
+                  value={row.salesVersion || ''}
+                  onValueChange={(value) => onSalesVersionChange?.(data.indexOf(row), value)}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder={t('form.selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {(row.buCd ? buCdOptionsCache[row.buCd]?.salesVersions ?? [] : []).map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </TableCell>
               <TableCell>
-                {row.rowType === 'axis' ? (
-                  <span className="text-gray-500">-</span>
-                ) : (
-                  <Select value={row.costType} onValueChange={(value) => onCostTypeChange?.(data.indexOf(row), value)}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="選択してください" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {costTypeOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                <Select 
+                  value={row.costType || ''} 
+                  onValueChange={(value) => onCostTypeChange?.(data.indexOf(row), value)}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder={t('form.selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {(row.buCd ? buCdOptionsCache[row.buCd]?.costTypes ?? [] : []).map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </TableCell>
             </TableRow>
           ))}

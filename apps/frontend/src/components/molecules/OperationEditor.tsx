@@ -1,4 +1,4 @@
-import type { CalcOperation, OperatorType } from '@pxa-re-management/shared';
+import type { CalcOperation } from '@pxa-re-management/shared';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import CostItemSelector from '@/components/molecules/CostItemSelector';
@@ -17,9 +17,9 @@ type Props = {
 const OperationEditor = ({ label, buCostCodes, buCostItems, value, opeSeq, onChange }: Props) => {
   const { t } = useTranslation('calcRegister');
   const isFirstOperation = opeSeq === 1;
-  const availableOperators: readonly OperatorType[] = opeSeq === undefined
-    ? (['S', '+', '-', '*', '/', '(', ')'] as const)
-    : (['+', '-', '*', '/', '(', ')'] as const);
+  const availableOperators = opeSeq === undefined
+    ? (['S', '+', '-', '*', '/'] as const)
+    : (['+', '-', '*', '/'] as const);
   
   const currentOperator = value?.opeOperator ?? (opeSeq === undefined ? 'S' : '+');
   
@@ -37,15 +37,10 @@ const OperationEditor = ({ label, buCostCodes, buCostItems, value, opeSeq, onCha
           <Select 
             value={currentOperator} 
             onValueChange={(v) => {
-              const newOperator = v as OperatorType;
-              if (newOperator === ')') {
-                onChange({ opeOperator: newOperator, opeBuCostCd: '', opeCostType: 'G' });
-              } else {
-                onChange({ opeOperator: newOperator });
-              }
+              onChange({ opeOperator: v as 'S' | '+' | '-' | '*' | '/' });
             }}
           >
-            <SelectTrigger className="w-32 min-w-0">
+            <SelectTrigger className="w-24 min-w-0">
               <SelectValue placeholder={t('placeholders.selectOperator')} />
             </SelectTrigger>
             <SelectContent>
@@ -57,15 +52,13 @@ const OperationEditor = ({ label, buCostCodes, buCostItems, value, opeSeq, onCha
             </SelectContent>
           </Select>
         )}
-        
-        {currentOperator !== ')' && (
-          <CostItemSelector
-            buCostCodes={buCostCodes}
-            buCostItems={buCostItems}
-            value={{ buCostCd: value?.opeBuCostCd ?? '', costType: (value?.opeCostType ?? 'G') as 'G' | 'R' | 'K' }}
-            onChange={(v) => onChange({ opeBuCostCd: v.buCostCd, opeCostType: v.costType })}
-          />
-        )}
+        <CostItemSelector
+          buCostCodes={buCostCodes}
+          buCostItems={buCostItems}
+          value={{ buCostCd: value?.opeBuCostCd ?? '', costType: (value?.opeCostType ?? 'G') as 'G' | 'R' | 'K' }}
+          onChange={(v) => onChange({ opeBuCostCd: v.buCostCd, opeCostType: v.costType })}
+          excludeZero={currentOperator === '/'}
+        />
       </div>
     </div>
   );

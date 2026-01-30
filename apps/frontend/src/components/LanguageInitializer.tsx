@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { changeLanguage as changeI18nLanguage } from '../i18n';
 import { isSupportedLanguageTag, useLanguage } from '../store/languageSettings';
 import { useAuth } from "../auth/AuthContext";
+import { TagsOfSupportedLanguages } from '@pxa-re-management/shared';
 
 interface LanguageInitializerProps {
   children: React.ReactNode;
@@ -10,15 +11,18 @@ interface LanguageInitializerProps {
 
 const LanguageInitializer: React.FC<LanguageInitializerProps> = ({ children }) => {
   const auth = useAuth();
-  const { user } = auth;
+  const { user, status } = auth;
 
   const { changeLanguage } = useLanguage();
 
   useEffect(() => {
     const initializeLanguage = async () => {
-
-      if (typeof user === "undefined") {
-        throw new Error("論理エラー：期待に反し`useAuth()`フックの`user`変数がアクセスされた呼び出された時点nullになっている。");
+      // 認証されていない、またはユーザー情報が取得できない場合は早期リターン
+      if (status !== "authenticated" || !user) {
+        // デフォルト言語（日本語）を設定
+        await changeI18nLanguage(TagsOfSupportedLanguages.japanese);
+        await changeLanguage(TagsOfSupportedLanguages.japanese);
+        return;
       }
 
       if (user.languageCode === null) {
@@ -36,7 +40,7 @@ const LanguageInitializer: React.FC<LanguageInitializerProps> = ({ children }) =
     };
 
     initializeLanguage();
-  }, [changeLanguage]);
+  }, [changeLanguage, status, user]);
 
   return <>{children}</>;
 };

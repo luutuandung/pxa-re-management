@@ -17,6 +17,7 @@ const Header: React.FC = () => {
     costRegistration: false,
     quantity: false,
     master: false,
+    language: false,
     user: false,
   });
 
@@ -35,6 +36,7 @@ const Header: React.FC = () => {
             costRegistration: false,
             quantity: false,
             master: false,
+            language: false,
             user: false,
           });
         }
@@ -55,6 +57,7 @@ const Header: React.FC = () => {
         costRegistration: false,
         quantity: false,
         master: false,
+        language: false,
         user: false,
       };
 
@@ -66,36 +69,36 @@ const Header: React.FC = () => {
   };
 
   const calculationItems = [
-    { label: '製造工場設計書', href: '#' },
-    { label: '販社工場設計書', href: '#' },
+    { label: t('navigation.items.calculation.manufacturingPlantDesign'), href: '#' },
+    { label: t('navigation.items.calculation.salesPlantDesign'), href: '#' },
   ];
 
   const costRegistrationItems = [
-    { label: '材料費登録', href: '#' },
-    { label: '工数登録', href: '#' },
-    { label: '製造原価登録', href: '#' },
-    { label: '加工レート登録', href: '#' },
-    { label: '計画PL登録', href: '#' },
-    { label: '業務ウェイト登録', href: '#' },
-    { label: '販社原価登録', href: '#' },
-    { label: '販社原価レート登録', href: '#' },
+    { label: t('navigation.items.costRegistration.materialCost'), href: '#' },
+    { label: t('navigation.items.costRegistration.manHours'), href: '#' },
+    { label: t('navigation.items.costRegistration.manufacturingCost'), href: '#' },
+    { label: t('navigation.items.costRegistration.processingRate'), href: '#' },
+    { label: t('navigation.items.costRegistration.planPL'), href: '#' },
+    { label: t('navigation.items.costRegistration.businessWeight'), href: '#' },
+    { label: t('navigation.items.costRegistration.salesCost'), href: '#' },
+    { label: t('navigation.items.costRegistration.salesCostRate'), href: '#' },
   ];
 
-  const quantityItems = [{ label: '台数マスタ登録', href: '#' }];
+  const quantityItems = [{ label: t('navigation.items.quantity.quantityMaster'), href: '#' }];
 
   const masterItems = [
-    { label: '機種マスタ登録', href: '#' },
-    { label: '製造仕向け地マスタ登録', href: '#' },
-    { label: '製造仕向け地マスタ自動引き込み', href: '#' },
-    { label: '製造仕向け地変換マスタ', href: '#' },
-    { label: '販社仕向け地マスタ登録', href: '#' },
-    { label: '販社仕向け地マスタ自動引き込み', href: '#' },
-    { label: '為替レートマスタ登録', href: '#' },
-    { label: '販社コードマスタ登録', href: '#' },
-    { label: '製造連結対象機種マスタ登録', href: '#' },
-    { label: '製造連結マッピングマスタ登録', href: '#' },
-    { label: '建値マスタ登録', href: '#' },
-    { label: '台数連携機種品番変換マスタ登録', href: '#' },
+    { label: t('navigation.items.master.modelMaster'), href: '#' },
+    { label: t('navigation.items.master.manufacturingDestinationMaster'), href: '#' },
+    { label: t('navigation.items.master.manufacturingDestinationMasterAutoImport'), href: '#' },
+    { label: t('navigation.items.master.manufacturingDestinationConversionMaster'), href: '#' },
+    { label: t('navigation.items.master.salesDestinationMaster'), href: '#' },
+    { label: t('navigation.items.master.salesDestinationMasterAutoImport'), href: '#' },
+    { label: t('navigation.items.master.exchangeRateMaster'), href: '#' },
+    { label: t('navigation.items.master.salesCompanyCodeMaster'), href: '#' },
+    { label: t('navigation.items.master.manufacturingConsolidationTargetModelMaster'), href: '#' },
+    { label: t('navigation.items.master.manufacturingConsolidationMappingMaster'), href: '#' },
+    { label: t('navigation.items.master.listPriceMaster'), href: '#' },
+    { label: t('navigation.items.master.quantityLinkageModelNumberConversionMaster'), href: '#' },
   ];
 
   return (
@@ -145,7 +148,7 @@ const Header: React.FC = () => {
 
           {/* Language Selector and User Menu */}
           <div className="flex items-center space-x-4">
-            <LanguageSelector />
+            <LanguageSelector isOpen={headerMenus.language} onToggle={() => toggleHeaderMenu('language')} />
             <UserMenu isOpen={headerMenus.user} onToggle={() => toggleHeaderMenu('user')} />
           </div>
         </div>
